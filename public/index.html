@@ -18,32 +18,47 @@
     <div class="layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
         <main>
             <div class="mdl-grid ">
-                <div class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+                <!-- <div class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
                     <span>A</span>
-                </div>
-                <div class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--7-col-desktop mdl-grid">
-                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--12-col" width="200px"
-                        height="200px">B</span>
-                    <div id="map" class="mdl-color--white mdl-cell mdl-cell--12-col"> 
+                </div> -->
+                <div
+                    class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--7-col-desktop mdl-grid">
+                    <div class="mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--8-col-phone">
+                        <div>
+                            <button class="mdl-button mdl-js-button mdl-button--fab">
+                                <i class="material-icons">play_arrow</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-phone mdl-cell--8-col-table">
+                        <div>
+                            <svg id="slider-range"></svg>
+                        </div>
+                    </div>
+                    <div id="map" class="mdl-color--white mdl-cell mdl-cell--8-col">
                     </div>
                 </div>
-                <div class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--5-col mdl-cell--12-tablet mdl-grid">
+                <div
+                    class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--5-col mdl-cell--12-tablet mdl-grid">
                     <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
                         height="200px">F</span>
-                        <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
+                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
                         height="200px">G</span>
-                        <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
+                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
                         height="200px">H</span>
-                        <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
+                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
                         height="200px">I</span>
-                        <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
+                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
                         height="200px">J</span>
-                    </div>
                 </div>
             </div>
-        </main>
+    </div>
+    </main>
     </div>
 </body>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
@@ -54,3 +69,4 @@
 <script src="lib/leaflet.heat.js"></script>
 <script src="js/covidmap.js"></script>
 <script src="js/main.js"></script>
+<script src="js/slider.js"></script>
