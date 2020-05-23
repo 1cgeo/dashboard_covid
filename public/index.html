@@ -25,81 +25,75 @@
     <link rel="stylesheet" href="css/main.css" />
   </head>
 
-  <body>
-    <div
-      class="layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header"
-    >
-      <main>
-        <div class="mdl-grid">
-          <div
-            class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"
-          >
-            <span
-              >Dashboard de acompanhamento do avanço da COVID-19 no Brasil</span
-            >
-          </div>
-          <div
-            class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--7-col-desktop mdl-grid"
-          >
-            <span
-              class="mdl-cell mdl-cell--4-col mdl-cell--12-col"
-              width="200px"
-              height="200px"
-              >B</span
-            >
-            <div
-              id="map"
-              class="mdl-color--white mdl-cell mdl-cell--12-col"
-            ></div>
-          </div>
-          <div
-            class="mdl-cell mdl-cell--5-col mdl-cell--12-tablet mdl-grid mdl-grid--no-spacing"
-          >
-            <div
-              class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"
-            >
-              F
+<head>
+    <meta charset=utf-8 />
+    <title>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <div class="layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <main>
+            <div class="mdl-grid ">
+               <div class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+                    <span>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</span>
+                </div>
+                <div
+                    class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--7-col-desktop mdl-grid">
+                    <div class="mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--8-col-phone">
+                        <div>
+                            <button class="mdl-button mdl-js-button mdl-button--fab">
+                                <i class="material-icons">play_arrow</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-phone mdl-cell--8-col-table">
+                        <div>
+                            <svg id="slider-range"></svg>
+                        </div>
+                    </div>
+                    <div id="map" class="mdl-color--white mdl-cell mdl-cell--8-col">
+                    </div>
+                </div>
+                <div
+                    class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--5-col mdl-cell--12-tablet mdl-grid">
+                    <span class="chart mdl-cell mdl-cell--12-col" width="200px"
+                        height="200px">F</span>
+                    <span class="chart mdl-cell mdl-cell--12-col" width="200px"
+                        height="200px">G</span>
+                    <span class="chart mdl-cell mdl-cell--12-col" width="200px"
+                        height="200px">H</span>
+                    <span class="chart mdl-cell mdl-cell--12-col" width="200px"
+                        height="200px">I</span>
+                    <span class="chart mdl-cell mdl-cell--12-col" width="200px"
+                        height="200px">Desenvolvido pelo 1º CGEO
+                      <br/>
+                      Fonte de dados: github.com/wcota/covid19br
+                    </span>
+                </div>
             </div>
-            <div
-              class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"
-            >
-              G
-            </div>
-            <div
-              class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"
-            >
-              H
-            </div>
-            <div
-              class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"
-            >
-              I
-            </div>
-            <div
-              class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-card__supporting-text mdl-color-text--grey-600"
-            >
-              Desenvolvido pelo 1ºCGEO.
-              <br />
-              Fonte de dados: https://github.com/wcota/covid19br
-            </div>
-          </div>
-        </div>
-      </main>
     </div>
-  </body>
-  <script
-    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
-    crossorigin="anonymous"
-  ></script>
-  <script
-    src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    </main>
+    </div>
+</body>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
     integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""
-  ></script>
-  <script src="https://unpkg.com/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.js"></script>
-  <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-  <script src="lib/leaflet.heat.js"></script>
-  <script src="js/covidmap.js"></script>
-  <script src="js/main.js"></script>
-</html>
+    crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.js"></script>
+<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<script src="lib/leaflet.heat.js"></script>
+<script src="js/covidmap.js"></script>
+<script src="js/main.js"></script>
+<script src="js/slider.js"></script>

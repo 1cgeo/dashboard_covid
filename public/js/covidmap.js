@@ -298,7 +298,7 @@ var ChoroplethTheme = function () {
             for (var i = data.length; i--;) {
                 var id = $this.options.layer.getIdField()
                 var found = geojson.find(element => element[id] == data[i].feature.properties[id])
-                if(!found){
+                if (!found) {
                     $this.options.layer.setFeatureStyle(
                         data[i].feature.properties[id],
                         $this.getStyle(0)
