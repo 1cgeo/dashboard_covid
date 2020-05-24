@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "download": "node ./server/data/covid19br/download.js"
   },
   "engines": {
     "node": ">=11.0.0",
@@ -20,6 +21,7 @@
     "express-jwt": "5.3.3",
     "geojson-vt": "^3.2.1",
     "http-errors": "1.7.3",
+    "json2csv": "^5.0.1",
     "jsonwebtoken": "8.5.1",
     "mongoose": "5.9.15",
     "morgan": "1.10.0",
