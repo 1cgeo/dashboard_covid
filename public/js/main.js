@@ -1,3 +1,9 @@
+var dateSlider = createDateRangeSlider({
+    parentId: "map-container",
+    elementId: "slider-range"
+})
+
+
 var covidmap = createCovidMap({
     divId: "map",
     bounds: [

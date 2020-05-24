@@ -11,52 +11,42 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
     <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/graphs.css">
     <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
     <div class="layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
         <main>
-            <div class="mdl-grid ">
-                <!-- <div class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+            <div class="mdl-grid mdl-grid--no-spacing">
+                <!-- <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
                     <span>A</span>
                 </div> -->
-                <div
-                    class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--7-col-desktop mdl-grid">
-                    <div class="mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--8-col-phone">
-                        <div>
-                            <button class="mdl-button mdl-js-button mdl-button--fab">
-                                <i class="material-icons">play_arrow</i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mdl-cell mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-phone mdl-cell--8-col-table">
-                        <div>
-                            <svg id="slider-range"></svg>
-                        </div>
-                    </div>
-                    <div id="map" class="mdl-color--white mdl-cell mdl-cell--8-col">
+                <div id="map-container"
+                    class="mdl-color--white mdl-cell mdl-cell--12-col mdl-cell--7-col-desktop mdl-grid">
+                    <div id="slider-range" class="mdl-grid mdl-grid--no-spacing"></div>
+                    <div id="map"
+                        class="mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
                     </div>
                 </div>
-                <div
-                    class="default mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--5-col mdl-cell--12-tablet mdl-grid">
-                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
-                        height="200px">F</span>
-                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
-                        height="200px">G</span>
-                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
-                        height="200px">H</span>
-                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
-                        height="200px">I</span>
-                    <span class="chart mdl-cell mdl-cell--4-col mdl-cell--5-col-desktop" width="200px"
-                        height="200px">J</span>
+                <div id="statistic-container"
+                    class="mdl-color--white mdl-cell mdl-cell--5-col-desktop mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--12-tablet mdl-grid">
+                    <div class="mdl-cell mdl-cell--12-col mdl-cell--10-col-desktop">
+                    </div>
+                    <div
+                        class="mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
+                        <div id="graph-cases"></div>
+                    </div>
+                    <div
+                        class="mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
+                        <div><svg id="graph-deaths"></svg></div>
+                    </div>
                 </div>
             </div>
-    </div>
-    </main>
+        </main>
     </div>
 </body>
-<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/d3-simple-slider"></script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -68,5 +58,7 @@
 <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script src="lib/leaflet.heat.js"></script>
 <script src="js/covidmap.js"></script>
-<script src="js/main.js"></script>
 <script src="js/slider.js"></script>
+<!-- <script src="js/graphs.js"></script> -->
+<script src="js/main.js"></script>
+
