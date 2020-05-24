@@ -67,6 +67,8 @@ module.exports.totalDiarioBrasil = (cb) => {
     return {
       deaths: info.deaths,
       totalCases: info.totalCases,
+      newDeaths: info.newDeaths,
+      newCases: info.newCases,
       date: info.date,
     };
   });
