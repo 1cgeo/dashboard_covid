@@ -80,6 +80,25 @@ const download = (url, dest, cb) => {
     });
 };
 
+const csv_brasil = (file, output) => {
+  const dataArray = [];
+  fs.createReadStream(file)
+    .pipe(csv())
+    .on("data", function (data) {
+      if (data.state == "TOTAL") {
+        dataArray.push(data);
+      }
+    })
+    .on("end", function () {
+      const fields = Object.keys(dataArray[0]);
+      const opts = { fields };
+      const parser = new Parser(opts);
+      const result = parser.parse(dataArray);
+
+      fs.writeFileSync(output, result);
+    });
+};
+
 const modify_csv_estado = (file, output) => {
   const dataArray = [];
   fs.createReadStream(file)
@@ -217,6 +236,10 @@ download(
     modify_csv_estado(
       path.join(__dirname, "estados_original.csv"),
       path.join(__dirname, "estados.csv")
+    );
+    csv_brasil(
+      path.join(__dirname, "estados_original.csv"),
+      path.join(__dirname, "brasil.csv")
     );
   }
 );
