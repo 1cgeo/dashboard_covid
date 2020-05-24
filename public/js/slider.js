@@ -5,7 +5,7 @@ var createDateRangeSlider = function (options) {
 
     var sliderId = "slider"
     var playBtnContainer = $("<div></div>")
-        .attr("class", "mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--4-col-phone")
+        .attr("class", "mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--1-col-phone")
     var button = $("<button></button>")
         .attr('class', 'mdl-button mdl-js-button mdl-button--fab')
     var icon = $("<i></i>").attr('class', 'material-icons').text('play_arrow')
@@ -14,10 +14,9 @@ var createDateRangeSlider = function (options) {
             .append(button.append(icon)))
     var sliderContainer = $("<div></div>")
         .attr("id", sliderId)
-        .attr("class", "mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--4-col-phone")
+        .attr("class", "mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--1-col-phone")
     $(`#${options.elementId}`)
         .append(playBtnContainer, sliderContainer)
-
     var parent = document.getElementById(options.parentId)
     var factor = 210
     var sliderRange = d3
@@ -36,7 +35,7 @@ var createDateRangeSlider = function (options) {
     var gRange = d3
         .select(`#${sliderId}`)
         .append('svg')
-        .attr('width', 700)
+        .attr('width', parent.offsetWidth)
         .attr('height', 100)
         .append('g')
         .attr('transform', 'translate(30,30)');
