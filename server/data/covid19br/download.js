@@ -75,7 +75,7 @@ const download = (url, dest, cb) => {
     })
     .on("error", function (err) {
       // Handle errors
-      fs.unlink(dest); // Delete the file async. (But we don't check the result)
+      fs.unlinkSync(dest); // Delete the file async. (But we don't check the result)
       if (cb) cb(err.message);
     });
 };
@@ -245,7 +245,7 @@ download(
 );
 
 download(
-  "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities.csv",
+  "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv",
   path.join(__dirname, "cidades_original.csv"),
   function (err, data) {
     if (err) return console.error(err);
