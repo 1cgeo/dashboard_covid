@@ -30,9 +30,10 @@ function BarChart() {
       "months": this.months,
       "shortMonths": this.shortMonthsLabel
     })
-    this.x = d3.scaleBand().padding(0.1)
+    this.x = d3.scaleBand().padding(0.3)
     this.y = d3.scaleLinear()
     this.parent = document.getElementById(this.options.elementId)
+    d3.select(`#${this.options.elementId}`).append('span').attr("class", "chartTitle").text(this.options.title)
     this.svg = d3.select(`#${this.options.elementId}`)
       .append('svg')
       .attr('width', this.parent.offsetWidth)
@@ -78,7 +79,7 @@ function BarChart() {
         .style("top", d3.event.pageY - 110 + "px")
         .style("display", "inline-block")
         .html(`
-        <b>${new Date(d[$this.options.attributeX]).getDate()} ${$this.months[new Date(d[$this.options.attributeX]).getMonth()]}</b>
+        <b>${new Date(d[$this.options.attributeX]).getDate()} de ${$this.months[new Date(d[$this.options.attributeX]).getMonth()]}</b>
         <br>
         ${d[$this.options.attributeY]} casos`)
     }
@@ -108,8 +109,8 @@ function BarChart() {
     }
     this.svg.attr('width', this.parent.offsetWidth)
     var bounds = this.svg.node().getBoundingClientRect(),
-      width = bounds.width - this.getMargin().left - this.getMargin().right,
-      height = bounds.height - this.getMargin().top - this.getMargin().bottom;
+      width = bounds.width //- this.getMargin().left - this.getMargin().right,
+    height = bounds.height - this.getMargin().top - this.getMargin().bottom;
 
     this.x.rangeRound([0, width]);
     this.y.rangeRound([height, 0]);

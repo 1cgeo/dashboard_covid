@@ -1,14 +1,12 @@
-text {
-    font-family: sans-serif;
-  }
-
-  
+ 
   .axis--x path {
     display: none;
   }
 
 
-  
+.chartTitle {
+  color: #999;
+}
 
 
 .toolTip {
@@ -42,7 +40,7 @@ text {
 #graph-cases .line-chart {
   fill: none;
   stroke: #cf1111;
-  stroke-width: 3;
+  stroke-width: 1.5;
 }
 
 #graph-cases .area {
@@ -83,8 +81,8 @@ text {
 
 #graph-deaths .line-chart {
   fill: none;
-  stroke: #c0b4b4;
-  stroke-width: 3;
+  stroke: #6e6d6d;
+  stroke-width: 1.5;
 }
 
 #graph-deaths .area {

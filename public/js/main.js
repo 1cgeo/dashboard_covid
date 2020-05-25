@@ -5,7 +5,7 @@ var dateSlider = createDateRangeSlider({
 
 var barChartCases = createBarChart({
     elementId: "graph-cases",
-    data: d3.range(0, 30).map(function (d) {
+    data: d3.range(0, 120).map(function (d) {
         var timeN = new Date(2020, 0, 1 + d).getTime()
         return {
             date: timeN,
@@ -13,13 +13,14 @@ var barChartCases = createBarChart({
         }
     }),
     attributeX: "date",
-    attributeY: "value"
+    attributeY: "value",
+    title: "Casos"
 })
 
 
 var barChartDeaths = createBarChart({
     elementId: "graph-deaths",
-    data: d3.range(0, 30).map(function (d) {
+    data: d3.range(0, 120).map(function (d) {
         var timeN = new Date(2020, 0, 1 + d).getTime()
         return {
             date: timeN,
@@ -27,7 +28,8 @@ var barChartDeaths = createBarChart({
         }
     }),
     attributeX: "date",
-    attributeY: "value"
+    attributeY: "value",
+    title: "Mortes"
 })
 
 var covidmap = createCovidMap({
@@ -56,13 +58,13 @@ var covidmap = createCovidMap({
                 },
                 {
                     name: "Taxa de crescimento de casos",
-                    attributeName: "totalCases",
+                    attributeName: "nrDiasDobraCasos",
                     type: "choroplethmap",
                     urlData: `${window.location.origin}/api/maptheme/choropleth/state`,
                 },
                 {
                     name: "Taxa de crescimento de óbitos",
-                    attributeName: "deaths",
+                    attributeName: "nrDiasDobraMortes",
                     type: "choroplethmap",
                     urlData: `${window.location.origin}/api/maptheme/choropleth/state`
                 },
@@ -104,13 +106,13 @@ var covidmap = createCovidMap({
                 },
                 {
                     name: "Taxa de crescimento de casos",
-                    attributeName: "totalCases",
+                    attributeName: "nrDiasDobraCasos",
                     type: "choroplethmap",
                     urlData: `${window.location.origin}/api/maptheme/choropleth/city`,
                 },
                 {
                     name: "Taxa de crescimento de óbitos",
-                    attributeName: "deaths",
+                    attributeName: "nrDiasDobraMortes",
                     type: "choroplethmap",
                     urlData: `${window.location.origin}/api/maptheme/choropleth/city`
                 },

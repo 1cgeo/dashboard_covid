@@ -11,32 +11,66 @@ var CovidMap = function (options) {
     this.options = {}
 
     this.initialize = function (options) {
-        this.setOptions(options)
-        this.createMap()
-        this.createLayersOptions(this.options.layers, this.loadMapLayer.bind(this))
+        this.setOptions(this.options, options)
+        this.map = this.createMap(this.options)
+        this.featureGroup = L.featureGroup().addTo(this.map)
+        this.featureGroup = this.createFeatureGroup(this.map)
+        this.layersButtons = this.createLayersButtons(
+            this.map,
+            this.options.layers,
+            this.loadMapLayer.bind(this)
+        )
         this.loadMapLayer(0)
     }
 
-    this.loadMapLayer = function (layerIdx) {
-        this.createThemesOptions(this.options.layers[layerIdx].themes, this.loadTheme.bind(this))
-        this.loadTheme(0)
-        this.loadVectorTile(layerIdx)
-    }
-
-    this.createMap = function () {
-        this.map = L.map(this.options.divId, { minZoom: 1, zoomControl: false })
-            .fitBounds(this.options.bounds);
-    }
-
-    this.setOptions = function (options) {
-        for (var key in options) {
-            this.options[key] = options[key]
+    this.setOptions = function (options, newOptions) {
+        for (var key in newOptions) {
+            options[key] = newOptions[key]
         }
     }
 
-    this.createLayersOptions = function (buttons, cb) {
-        this.groupButtonsLayers = L.control({ position: 'topleft' })
-        this.groupButtonsLayers.onAdd = function (map) {
+    this.createMap = function (options) {
+        var $this = this
+        return L.map(options.divId, { minZoom: 1, zoomControl: false })
+            .fitBounds(options.bounds).on('click', function (e) {
+                var clickBounds = L.latLngBounds(e.latlng, e.latlng);
+                var intersectingFeatures = [];
+                for (var l in $this.map._layers) {
+                    var overlay = $this.map._layers[l];
+                    //console.log(overlay)
+                    if (overlay._layers) {
+                        for (var f in overlay._layers) {
+                            var feature = overlay._layers[f];
+                            var bounds;
+                            if (feature.getBounds) bounds = feature.getBounds();
+                            else if (feature._latlng) {
+                                bounds = L.latLngBounds(feature._latlng, feature._latlng);
+                            }
+                            if (bounds && clickBounds.intersects(bounds)) {
+                                intersectingFeatures.push(feature);
+                            }
+                        }
+                    }
+                }
+                //console.log(intersectingFeatures)
+                // if at least one feature found, show it
+                /* if (intersectingFeatures.length) {
+                    var html = "Found features: " + intersectingFeatures.length
+
+                    $this.map.openPopup(html, e.latlng, {
+                        offset: L.point(0, -24)
+                    });
+                } */
+            })
+    }
+
+    this.createFeatureGroup = function (map) {
+        return L.featureGroup().addTo(map)
+    }
+
+    this.createLayersButtons = function (map, buttons, cb) {
+        var layersButtons = L.control({ position: 'topleft' })
+        layersButtons.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'layersOptions')
             var buttonsDiv = $("<div></div>").attr("class", "mdl-button-group")
             buttons.forEach(function (elem, idx) {
@@ -50,38 +84,40 @@ var CovidMap = function (options) {
             $(this._div).append(buttonsDiv)
             return this._div;
         }
-        this.groupButtonsLayers.addTo(this.map)
+        layersButtons.addTo(map)
         buttons.forEach(function (elem, idx) {
             $(`#${elem.name.concat(idx)}`).on('click', function () { cb(idx); });
         })
+        return layersButtons
     }
 
-    this.loadVectorTile = function (layerIdx) {
-        var layerOption = this.options.layers[layerIdx]
-        if (!layerOption) return
-        if (this.currentLayer && this.currentLayer.getName() == layerOption.name) return
-        layerOption.map = this.map
-        if (!this.currentLayer) {
-            this.currentLayer = createVectorTileLayer(layerOption)
-            return
+    this.getLayerThemes = function (layerIdx) {
+        return this.options.layers[layerIdx].themes
+    }
+
+    this.loadMapLayer = function (layerIdx) {
+        if (this.currentThemesButtons) {
+            this.map.removeControl(this.currentThemesButtons)
         }
-        this.currentLayer.clean()
-        this.currentLayer = createVectorTileLayer(layerOption)
+        this.currentThemesOptions = this.getLayerThemes(layerIdx)
+        this.currentThemesButtons = this.createThemesButtons(
+            this.currentThemesOptions,
+            this.map,
+            this.loadTheme.bind(this)
+        )
+        this.loadTheme(0)
+        this.loadVectorTile(layerIdx)
     }
 
-    this.createThemesOptions = function (themes, cb) {
+    this.createThemesButtons = function (themes, map, cb) {
         if (themes.length < 1) return
-        if (this.themesButtons) {
-            this.map.removeControl(this.themesButtons)
-        }
-        this.themesOptions = themes
-        this.themesButtons = L.control({ position: 'topleft' });
-        this.themesButtons.onAdd = function (map) {
+        var themesButtons = L.control({ position: 'topleft' });
+        themesButtons.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'themesOptions');
             this.update();
             return this._div;
         };
-        this.themesButtons.update = function (props) {
+        themesButtons.update = function (props) {
             var buttonsDiv = $("<div></div>")
             themes.forEach(function (elem, idx) {
                 var label = $("<label></label>")
@@ -103,24 +139,37 @@ var CovidMap = function (options) {
             })
             $(this._div).append(buttonsDiv)
         };
-        this.themesButtons.addTo(this.map);
-        $("input[name='theme']").change(function (e) { cb($(this).val()) });
+        themesButtons.addTo(map);
+        $("input[name='theme']").change(function (e) { cb($(this).val()) })
+        return themesButtons
     }
 
     this.loadTheme = function (themeIdx) {
-        var theme = this.themesOptions[themeIdx]
+        var theme = Object.assign({}, this.currentThemesOptions[themeIdx])
         if (!theme) return
-        theme.map = this.map
-        theme.layer = this.currentLayer
-        if (!this.currentTheme) {
-            this.currentTheme = createMapTheme(theme)
-            return
+        if (this.currentTheme) {
+            this.currentTheme.remove()
         }
-        this.currentTheme.clean()
+        theme.layer = this.currentLayer
+        theme.featureGroup = this.featureGroup
+        theme.map = this.map
         this.currentTheme = createMapTheme(theme)
     }
 
+    this.loadVectorTile = function (layerIdx) {
+        var layerOption = Object.assign({}, this.options.layers[layerIdx])
+        if (!layerOption) return
+        if (this.currentLayer && this.currentLayer.getName() == layerOption.name) return
+        if (this.currentLayer) {
+            this.currentLayer.remove()
+        }
+        layerOption.map = this.map
+        layerOption.featureGroup = this.featureGroup
+        this.currentLayer = createVectorTileLayer(layerOption)
+    }
+
     this.zoomToBBOX = function (bbox) { this.map.fitBounds(bbox) }
+
 }
 
 
@@ -165,13 +214,13 @@ var CirclesTheme = function () {
         this.create()
     }
 
-    this.clean = function () {
+    this.remove = function (group, map) {
         this.isActive = false
         if (this.currentLegend) {
             this.options.map.removeControl(this.currentLegend)
         }
         if (this.layerTheme) {
-            this.options.map.removeLayer(this.layerTheme)
+            this.options.featureGroup.removeLayer(this.layerTheme)
         }
     }
 
@@ -204,7 +253,7 @@ var CirclesTheme = function () {
                         })
                     }
                 }
-            ).addTo($this.options.map)
+            ).addTo($this.options.featureGroup)
             $this.updatePropSymbols()
             $this.createLegend()
         })
@@ -275,9 +324,10 @@ var ChoroplethTheme = function () {
         }
     }
 
-    this.clean = function () {
+    this.remove = function () {
         this.isActive = false
-        this.options.layer.resetDefaultStyle()
+        this.options.featureGroup.removeLayer(this.layerTheme.getLayerMap())
+        this.options.featureGroup.addLayer(this.options.layer.getLayerMap())
     }
 
     this.getType = function () { return "choroplethmap" }
@@ -294,23 +344,42 @@ var ChoroplethTheme = function () {
         httpGetAsync(this.options.urlData, (geoJsonString) => {
             if (!geoJsonString || !$this.isActive) return
             var geojson = JSON.parse(geoJsonString)
-            var data = $this.options.layer.getAllLayers()
-            for (var i = data.length; i--;) {
-                var id = $this.options.layer.getIdField()
-                var found = geojson.find(element => element[id] == data[i].feature.properties[id])
-                if (!found) {
-                    $this.options.layer.setFeatureStyle(
-                        data[i].feature.properties[id],
-                        $this.getStyle(0)
-                    )
-                    continue
+            $this.options.featureGroup.removeLayer($this.options.layer.getLayerMap())
+            $this.layerTheme = createVectorTileLayer({
+                urlVectorTile: $this.options.layer.getUrlVectorTile(),
+                map: $this.options.map,
+                featureGroup: $this.options.featureGroup,
+                getDefaultStyle: function (feat) {
+                    var found = geojson.find((element) => {
+                        return element[$this.options.layer.getIdField()] === feat[$this.options.layer.getIdField()]
+                    });
+                    return $this.getStyle(found ? found[$this.options.attributeName] : 0)
                 }
-                $this.options.layer.setFeatureStyle(
-                    found[id],
-                    $this.getStyle(+found[$this.options.attributeName])
-                )
-            }
+            })
         })
+    }
+
+    this.getStyle = function (value) {
+        return {
+            weight: 1,
+            opacity: 1,
+            color: 'black',
+            dashArray: '2',
+            fill: true,
+            fillOpacity: 0.7,
+            fillColor: this.getColor(value)
+        };
+    }
+
+    this.getColor = function (d) {
+        return d < 2 ? '#800026' :
+            d < 4 ? '#BD0026' :
+                d < 6 ? '#E31A1C' :
+                    d < 8 ? '#FC4E2A' :
+                        d < 10 ? '#FD8D3C' :
+                            d < 12 ? '#FEB24C' :
+                                d < 1 ? '#FED976' :
+                                    '#FFEDA0';
     }
 
     this.getPopupContent = function (layer) { }
@@ -336,29 +405,6 @@ var ChoroplethTheme = function () {
         };
         legend.addTo(map); */
     }
-
-    this.getStyle = function (value) {
-        return {
-            weight: 1,
-            opacity: 1,
-            color: 'white',
-            dashArray: '2',
-            fill: true,
-            fillOpacity: 0.7,
-            fillColor: this.getColor(value)
-        };
-    }
-
-    this.getColor = function (d) {
-        return d > 1000 ? '#800026' :
-            d > 500 ? '#BD0026' :
-                d > 200 ? '#E31A1C' :
-                    d > 100 ? '#FC4E2A' :
-                        d > 50 ? '#FD8D3C' :
-                            d > 20 ? '#FEB24C' :
-                                d > 10 ? '#FED976' :
-                                    '#FFEDA0';
-    }
 }
 
 
@@ -379,10 +425,9 @@ var HeatTheme = function () {
         }
     }
 
-    this.clean = function () {
+    this.remove = function () {
         this.isActive = false
-        if (!this.layerTheme) return
-        this.options.map.removeLayer(this.layerTheme)
+        this.options.featureGroup.removeLayer(this.layerTheme)
     }
 
     this.getType = function () { return "heatmap" }
@@ -407,6 +452,7 @@ var HeatTheme = function () {
                 locations.push(jsonData[i].latlong.concat(jsonData[i][$this.options.attributeName]))
             }
             $this.layerTheme = L.heatLayer(locations, {
+                interactive: true,
                 radius: 25,
                 blur: 15,
                 gradient: {
@@ -417,7 +463,7 @@ var HeatTheme = function () {
                     1.0: 'red'
                 },
                 minOpacity: 0.5
-            }).addTo($this.options.map)
+            }).addTo($this.options.featureGroup)
             $this.createLegend()
         })
     }
@@ -447,16 +493,27 @@ const createVectorTileLayer = (options) => {
 
 var VectorTileLayer = function () {
 
-    this.options = {}
+    this.options = {
+        getDefaultStyle: function (feat) {
+            return {
+                weight: 1,
+                opacity: 0.7,
+                color: 'white',
+                fill: true,
+                fillOpacity: 0.7,
+                fillColor: "#cfcfcf"
+            };
+        }
+    }
+
+    this.currentLoopKey = ""
 
     this.initialize = function (options) {
         this.setOptions(options)
-        this.createLayer()
+        this.create()
     }
 
     this.getName = function () { return this.options.name }
-
-    this.clean = function () { this.options.map.removeLayer(this.layer) }
 
     this.setOptions = function (options) {
         for (var key in options) {
@@ -464,16 +521,26 @@ var VectorTileLayer = function () {
         }
     }
 
-    this.createLayer = function () {
+    this.remove = function () {
+        this.options.featureGroup.removeLayer(this.layer)
+    }
+
+    this.getUrlVectorTile = function () {
+        return this.options.urlVectorTile
+    }
+
+    this.getLayerMap = function () {
+        return this.layer
+    }
+
+    this.create = function () {
         var idField = this.options.idField
         this.layer = L.vectorGrid.protobuf(
             this.options.urlVectorTile,
             {
                 rendererFactory: L.canvas.tile,
                 vectorTileLayerStyles: {
-                    "data": (feature) => {
-                        return this.getDefaultStyle()
-                    }
+                    "data": this.options.getDefaultStyle
                 },
                 interactive: true,
                 getFeatureId: function (feature) {
@@ -481,7 +548,7 @@ var VectorTileLayer = function () {
                 }
             }
         )
-        this.options.map.addLayer(this.layer)
+        this.options.featureGroup.addLayer(this.layer)
     }
 
     this.setFeatureStyle = function (id, styleOptions) { this.layer.setFeatureStyle(id, styleOptions) }
@@ -501,25 +568,4 @@ var VectorTileLayer = function () {
     }
 
     this.getIdField = function () { return this.options.idField }
-
-    this.resetDefaultStyle = function () {
-        var data = this.getAllLayers()
-        for (var key in data) {
-            this.layer.setFeatureStyle(
-                data[key].feature.properties[this.getIdField()],
-                this.getDefaultStyle()
-            )
-        }
-    }
-
-    this.getDefaultStyle = function () {
-        return {
-            weight: 1,
-            opacity: 0.7,
-            color: 'white',
-            fill: true,
-            fillOpacity: 0.7,
-            fillColor: "#cfcfcf"
-        };
-    }
 }
