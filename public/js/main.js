@@ -3,6 +3,32 @@ var dateSlider = createDateRangeSlider({
     elementId: "slider-range"
 })
 
+var barChartCases = createBarChart({
+    elementId: "graph-cases",
+    data: d3.range(0, 30).map(function (d) {
+        var timeN = new Date(2020, 0, 1 + d).getTime()
+        return {
+            date: timeN,
+            value: Math.floor(Math.random() * 10) + 1
+        }
+    }),
+    attributeX: "date",
+    attributeY: "value"
+})
+
+
+var barChartDeaths = createBarChart({
+    elementId: "graph-deaths",
+    data: d3.range(0, 30).map(function (d) {
+        var timeN = new Date(2020, 0, 1 + d).getTime()
+        return {
+            date: timeN,
+            value: Math.floor(Math.random() * 10) + 1
+        }
+    }),
+    attributeX: "date",
+    attributeY: "value"
+})
 
 var covidmap = createCovidMap({
     divId: "map",

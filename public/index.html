@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
         integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
         crossorigin="" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
     <link rel="stylesheet" href="css/map.css">
-    <link rel="stylesheet" href="css/graphs.css">
+    <link rel="stylesheet" href="css/barCharts.css">
     <link rel="stylesheet" href="css/main.css">
 </head>
 
@@ -19,7 +22,8 @@
     <div class="layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
         <main>
             <div class="mdl-grid">
-                <div class="mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
+                <div
+                    class="title mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
                     <span>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</span>
                 </div>
                 <div id="map-container"
@@ -33,20 +37,17 @@
                     class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--5-col-desktop mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--12-tablet mdl-grid">
                     <div class="mdl-cell mdl-cell--12-col mdl-cell--10-col-desktop">
                     </div>
-                    <div
-                        class="mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <div id="graph-cases"></div>
+                    <div id="graph-cases"
+                        class="mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table mdl-grid--no-spacing">
+
                     </div>
-                    <div
+                    <div id="graph-deaths"
                         class="mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <div><svg id="graph-deaths"></svg></div>
                     </div>
-                    <div class="chart mdl-cell mdl-cell--12-col" width="200px"
-                        height="200px"></div>
-                    <span class="chart mdl-cell mdl-cell--12-col" width="200px"
-                        height="200px">Desenvolvido pelo 1º CGEO
-                      <br/>
-                      Fonte de dados: github.com/wcota/covid19br
+                    <div class="chart mdl-cell mdl-cell--12-col" width="200px" height="200px"></div>
+                    <span class="chart mdl-cell mdl-cell--12-col" width="200px" height="200px">Desenvolvido pelo 1º CGEO
+                        <br />
+                        Fonte de dados: github.com/wcota/covid19br
                     </span>
                 </div>
             </div>
@@ -66,5 +67,5 @@
 <script src="lib/leaflet.heat.js"></script>
 <script src="js/covidmap.js"></script>
 <script src="js/slider.js"></script>
-<script src="js/graphs.js"></script>
+<script src="js/barChart.js"></script>
 <script src="js/main.js"></script>

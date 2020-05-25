@@ -1,0 +1,107 @@
+text {
+    font-family: sans-serif;
+  }
+
+  
+  .axis--x path {
+    display: none;
+  }
+
+
+  
+
+
+.toolTip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #999;
+  padding: 14px;
+  text-align: left;
+}
+
+
+
+.toolTip::after {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  background-color: white;
+  left: 45px;
+  top: 59px;
+  transform:rotate(45deg)
+}
+
+
+#graph-cases .line-chart {
+  fill: none;
+  stroke: #cf1111;
+  stroke-width: 3;
+}
+
+#graph-cases .area {
+  fill: rgba(207, 17, 17, 0.1);
+  stroke: none;
+}
+
+#graph-cases text {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  fill: #999;
+}
+
+#graph-cases line {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  stroke: #999;
+}
+
+#graph-cases .bar {
+  fill: #fac9c7;
+}
+
+#graph-cases .bar:hover {
+  fill: #fc6d6d;
+}
+
+#graph-deaths .bar {
+  fill: #c4c0c0;
+}
+
+#graph-deaths .bar:hover {
+  fill: #7a7a7a;
+}
+
+
+#graph-deaths .line-chart {
+  fill: none;
+  stroke: #c0b4b4;
+  stroke-width: 3;
+}
+
+#graph-deaths .area {
+  fill: rgba(83, 81, 81, 0.1);
+  stroke: none;
+}
+
+#graph-deaths text {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  fill: #999;
+}
+
+#graph-deaths line {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  stroke: #999;
+}

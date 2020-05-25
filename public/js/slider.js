@@ -26,7 +26,7 @@ var createDateRangeSlider = function (options) {
         .width(parent.offsetWidth - factor)
         .tickFormat(d3.timeFormat("%Y-%d-%m"))
         .ticks(5)
-        .default([new Date(1998, 10, 3), new Date(1998, 10, 10)])
+        .default([d3.min(dataTime), d3.max(dataTime)])
         .fill('#2196f3')
         .on('onchange', val => {
             //
@@ -48,5 +48,8 @@ var createDateRangeSlider = function (options) {
     }
 
     window.addEventListener("resize", draw);
-
+    return {
+        button: button,
+        sliderRange: sliderRange
+    }
 }
