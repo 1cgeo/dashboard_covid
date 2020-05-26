@@ -23,21 +23,21 @@ const SUMMARY_CITIES_FILE_PATH = path.join(
   "cidades.csv"
 );
 
-let dadosBrasil;
+var dadosBrasil;
 csv()
   .fromFile(SUMMARY_BRASIL_FILE_PATH)
   .then(function (jsonData) {
     dadosBrasil = jsonData;
   });
 
-let dadosEstados;
+var dadosEstados;
 csv()
   .fromFile(SUMMARY_STATES_FILE_PATH)
   .then(function (jsonData) {
     dadosEstados = jsonData;
   });
 
-let dadosCidades;
+var dadosCidades;
 csv()
   .fromFile(SUMMARY_CITIES_FILE_PATH)
   .then(function (jsonData) {
@@ -62,7 +62,7 @@ getFeaturePointTemplate = () => {
   };
 };
 
-module.exports.totalDiarioCidades= (cb) => {
+module.exports.totalDiarioCidades = (cb) => {
   var total = dadosCidades.map((info) => {
     return {
       deaths: info.deaths,
