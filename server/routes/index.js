@@ -16,4 +16,16 @@ router
     .route('/maptheme/:theme/:place')
     .get(mapthemeCtrl.getThemeData)
 
+/* router
+    .route('/info/states/:id')
+    .get(mapthemeCtrl.getStatesInfo)
+
+router
+    .route('/info/cities/:id')
+    .get(mapthemeCtrl.getCitesInfo) */
+
+router
+    .route('/info/country')
+    .get(mapthemeCtrl.getCountryInfo)
+
 module.exports = router;

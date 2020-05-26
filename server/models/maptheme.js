@@ -62,6 +62,33 @@ getFeaturePointTemplate = () => {
   };
 };
 
+module.exports.totalDiarioCidades= (cb) => {
+  var total = dadosCidades.map((info) => {
+    return {
+      deaths: info.deaths,
+      totalCases: info.totalCases,
+      newDeaths: info.newDeaths,
+      newCases: info.newCases,
+      date: info.date,
+    };
+  });
+  cb(total);
+};
+
+
+module.exports.totalDiarioEstados = (cb) => {
+  var total = dadosEstados.map((info) => {
+    return {
+      deaths: info.deaths,
+      totalCases: info.totalCases,
+      newDeaths: info.newDeaths,
+      newCases: info.newCases,
+      date: info.date,
+    };
+  });
+  cb(total);
+};
+
 module.exports.totalDiarioBrasil = (cb) => {
   var totalBrasil = dadosBrasil.map((info) => {
     return {

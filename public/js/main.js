@@ -4,31 +4,21 @@ var dateSlider = createDateRangeSlider({
 })
 
 var barChartCases = createBarChart({
+    parentId: "statistic-container",
     elementId: "graph-cases",
-    data: d3.range(0, 120).map(function (d) {
-        var timeN = new Date(2020, 0, 1 + d).getTime()
-        return {
-            date: timeN,
-            value: Math.floor(Math.random() * 10) + 1
-        }
-    }),
+    urlData: `${window.location.origin}/api/info/country`,
     attributeX: "date",
-    attributeY: "value",
+    attributeY: "totalCases",
     title: "Casos"
 })
 
 
 var barChartDeaths = createBarChart({
+    parentId: "statistic-container",
     elementId: "graph-deaths",
-    data: d3.range(0, 120).map(function (d) {
-        var timeN = new Date(2020, 0, 1 + d).getTime()
-        return {
-            date: timeN,
-            value: Math.floor(Math.random() * 10) + 1
-        }
-    }),
+    urlData: `${window.location.origin}/api/info/country`,
     attributeX: "date",
-    attributeY: "value",
+    attributeY: "deaths",
     title: "Mortes"
 })
 

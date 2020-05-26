@@ -19,8 +19,21 @@ module.exports.getThemeData = async (req, res) => {
         res.end("Not found")
         return
     }
-    functionDataSource( function (themeData) {
+    functionDataSource(function (themeData) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(themeData))
+    })
+}
+
+
+module.exports.getCountryInfo = async (req, res) => {
+    mapthemeModel.totalDiarioBrasil(function (info) {
+        if (!info) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' })
+            res.end("Not found")
+            return
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(info))
     })
 }
