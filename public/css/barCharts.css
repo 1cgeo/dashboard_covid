@@ -4,10 +4,6 @@
   }
 
 
-.chartTitle {
-  color: #999;
-}
-
 
 .toolTip {
   position: absolute;
@@ -32,8 +28,8 @@
   border-bottom: 1px solid #999;
   border-right: 1px solid #999;
   background-color: white;
-  left: 45px;
-  top: 59px;
+  left: 84px;
+  top: 58px;
   transform:rotate(45deg)
 }
 
@@ -53,7 +49,7 @@
   position: absolute;
   left: 0;
   bottom: 2px;
-  fill: #999;
+  fill: #333;
 }
 
 #graph-cases line {
@@ -95,7 +91,7 @@
   position: absolute;
   left: 0;
   bottom: 2px;
-  fill: #999;
+  fill: #333;
 }
 
 #graph-deaths line {

@@ -1,51 +1,40 @@
 
-function createBarChart(options) {
-  var obj = new BarChart()
-  obj.initialize(options)
-  return obj
-}
-
-function BarChart() {
-
-  this.options = {
-    parentId: "statistic-container"
+class BarChart {
+  constructor(newOptions) {
+    this.options = {}
+    this.setOptions(newOptions)
+    this.currentData = undefined
+    this.months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+    this.shortMonthsLabel = ["Jan.", "Fev.", "Mar.", "Abr.", "Maio", "Jun.", "Jul.", "Ago.", "Set.", "Out.", "Nov.", "Dez."]
+    this.init()
   }
-  this.currentData = undefined
-  this.months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-  this.shortMonthsLabel = ["Jan.", "Fev.", "Mar.", "Abr.", "Maio", "Jun.", "Jul.", "Ago.", "Set.", "Out.", "Nov.", "Dez."]
 
-  this.initialize = function (options) {
-    this.setOptions(options)
+  init() {
     this.setLocale()
     this.createAxis()
     this.parent = document.getElementById(this.options.parentId)
     this.svg = this.loadSvg()
     this.g = this.loadGroup()
-    this.createTitle()
-    
+    //this.createTitle()
     this.createTooltip()
     this.createLineChart()
     this.createAreaChart()
-    var $this = this
-    httpGetAsync(this.options.urlData, function (data) {
-      $this.currentData = $this.formatInputData(JSON.parse(data))
-      window.addEventListener("resize", () => {
-        $this.draw()
-      })
-      $this.loadData()
-      $this.draw()
+    window.addEventListener("resize", () => {
+      this.draw()
     })
+    this.loadData()
+
   }
 
-  this.loadSvg = function () {
+  loadSvg() {
     return d3.select(`#${this.options.elementId}`)
       //.append('svg')
-      .attr('width', this.parent.offsetWidth)
-      .attr('height', 200)
+      .attr('width', this.parent.offsetWidth - 100)
+      .attr('height', 150)
     //.attr('height', 600)
   }
 
-  this.loadGroup = function () {
+  loadGroup() {
     var g = this.svg.append("g")
       .attr("transform", "translate(" + this.getMargin().left + "," + this.getMargin().top + ")")
     g.append("g")
@@ -55,16 +44,16 @@ function BarChart() {
     return g
   }
 
-  this.createTitle = function () {
-    this.g.append('text').attr("class", "chartTitle").text(this.options.title)
+  createTitle() {
+    this.g.append('text').attr("class", "chartTitle").attr('y', 5).text(this.options.title)
   }
 
-  this.createAxis = function () {
+  createAxis() {
     this.x = d3.scaleBand().padding(0.3)
     this.y = d3.scaleLinear()
   }
 
-  this.setLocale = function () {
+  setLocale() {
     d3.timeFormatDefaultLocale({
       "decimal": ".",
       "thousands": ",",
@@ -81,84 +70,97 @@ function BarChart() {
     })
   }
 
-  this.getMax = function (items) {
+  getMax(items) {
     return items.reduce((acc, val) => {
       acc = (acc === undefined || val > acc) ? val : acc
       return acc;
     })
   }
 
-  this.formatInputData = function (jsonData) {
+
+  formatInputData(jsonData) {
     var attributeX = this.options.attributeX
     var attributeY = this.options.attributeY
     this.maxValue = this.getMax(jsonData.map(elem => +elem[attributeY]))
-    return jsonData.map((elem) => {
+    var data = jsonData.map((elem) => {
       var d = {}
-      d[attributeX] = new Date(
-        elem[attributeX].split('-')[0],
-        elem[attributeX].split('-')[1] - 1,
-        elem[attributeX].split('-')[2]
-      ).getTime()
+      d[attributeX] = new Date(elem[attributeX].replace('-', '/')).getTime()
       d[attributeY] = (+elem[attributeY] / this.maxValue)
       return d
     })
+    return data.sort(function (a, b) {
+      var dateA = new Date(a[attributeX]), dateB = new Date(b[attributeX]);
+      return dateA - dateB;
+    });
   }
 
-  this.getFormatedValue = function (value) {
+  updateDataTimeInterval(rangeTimestamp) {
+  }
+
+  getFormatedValue(value) {
     return Number((+value * +this.maxValue).toFixed(1))
   }
 
-  this.setOptions = function (options) {
+  setOptions(options) {
     for (var key in options) {
       this.options[key] = options[key]
     }
   }
 
-  this.loadData = function () {
-    var $this = this
-    this.x.domain(this.currentData.map(function (d) { return d[$this.options.attributeX]; }));
-    this.y.domain([0, d3.max(this.currentData, function (d) { return d[$this.options.attributeY]; })])
+  loadData() {
+    this.options.dataSource.getBarChartData(
+      (function (data) {
+        this.currentData = []
+        if (data.length > 0){
+          this.currentData = this.formatInputData(data)
+        }
+        this.x.domain(this.currentData.map((function (d) {
+          return d[this.options.attributeX];
+        }).bind(this)));
+        this.y.domain([0, d3.max(this.currentData, (function (d) {
+          return d[this.options.attributeY];
+        }).bind(this))])
+        this.draw()
+      }).bind(this))
   }
 
-  this.getMargin = function () {
-    return { top: 10, right: 0, bottom: 20, left: 20 }
+  getMargin() {
+    return { top: 10, right: 0, bottom: 30, left: 20 }
   }
 
-  this.createTooltip = function () {
-    var $this = this
+  createTooltip() {
     this.tooltip = d3.select("body").append("div").attr("class", "toolTip")
     this.tootipMouseover = function (d) { }
-    this.tooltipMousemove = function (d) {
-      $this.tooltip
-        .style("left", d3.event.pageX - 50 + "px")
+    this.tooltipMousemove = (function (d) {
+      this.tooltip
+        .style("left", d3.event.pageX - 100 + "px")
         .style("top", d3.event.pageY - 110 + "px")
         .style("display", "inline-block")
         .html(`
-        <b>${new Date(d[$this.options.attributeX]).getDate()} de ${$this.months[new Date(d[$this.options.attributeX]).getMonth()]}</b>
+        <b>${new Date(d[this.options.attributeX]).getDate()} de 
+        ${this.months[new Date(d[this.options.attributeX]).getMonth()]}</b>
         <br>
-        ${$this.getFormatedValue(d[$this.options.attributeY])} casos`)
-    }
-    this.tooltipMouseleave = function (d) { $this.tooltip.style("display", "none") }
+        ${this.getFormatedValue(d[this.options.attributeY])} casos`)
+    }).bind(this)
+    this.tooltipMouseleave = (function (d) { this.tooltip.style("display", "none") }).bind(this)
   }
 
-  this.createLineChart = function () {
-    var $this = this
+
+  createLineChart() {
     this.line = d3.line()
-      .x(function (d) { return $this.x(d[$this.options.attributeX]) + $this.x.bandwidth() / 2 })
-      .y(function (d) { return $this.y(d[$this.options.attributeY]) })
+      .x((function (d) { return this.x(d[this.options.attributeX]) + this.x.bandwidth() / 2 }).bind(this))
+      .y((function (d) { return this.y(d[this.options.attributeY]) }).bind(this))
       .curve(d3.curveMonotoneX)
   }
 
-  this.createAreaChart = function () {
-    var $this = this
+  createAreaChart() {
     this.area = d3.area()
-      .x(function (d) { return $this.x(d[$this.options.attributeX]) + $this.x.bandwidth() / 2; })
-      .y1(function (d) { return $this.y(d[$this.options.attributeY]); })
+      .x((function (d) { return this.x(d[this.options.attributeX]) + this.x.bandwidth() / 2; }).bind(this))
+      .y1((function (d) { return this.y(d[this.options.attributeY]); }).bind(this))
       .curve(d3.curveMonotoneX)
   }
 
-
-  this.drawArea = function (height) {
+  drawArea(height) {
     this.area.y0(height)
     if (this.g.select(".area").size() < 1) {
       this.g.append("path")
@@ -172,11 +174,17 @@ function BarChart() {
     }
   }
 
-  this.drawAxisX = function (width, height) {
+  drawAxisX(width, height) {
     this.x.rangeRound([0, width]);
     this.g.select(".axis--x")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(this.x).tickFormat(d3.timeFormat('%b')))
+      .selectAll("text")
+      .attr("y", 0)
+      .attr("x", 9)
+      .attr("dy", ".35em")
+      .attr("transform", "rotate(45)")
+      .style("text-anchor", "start")
     var xTicks = this.g.select(".axis--x").selectAll(".tick text").nodes()
     var xTickNames = xTicks.map((n) => n.textContent)
     xTicks.forEach((n, idx) => {
@@ -187,7 +195,7 @@ function BarChart() {
     })
   }
 
-  this.drawAxisY = function (height) {
+  drawAxisY(height) {
     this.y.rangeRound([height, 0]);
     this.g.select(".axis--y")
       .call(d3.axisLeft(this.y).ticks(0).tickSize(0))
@@ -199,52 +207,52 @@ function BarChart() {
     }) */
   }
 
-  this.drawLine = function () {
+  drawLine() {
     this.g.select(".line-chart").remove()
     this.g.append("path")
       .attr("class", "line-chart")
       .attr("d", this.line(this.currentData))
   }
 
-  this.drawBars = function (height) {
+  drawBars(height) {
     var bars = this.g.selectAll(".bar").data(this.currentData)
-    var $this = this
     bars
       .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function (d) { return $this.x(d[$this.options.attributeX]); })
-      .attr("y", function (d) { return $this.y(d[$this.options.attributeY]); })
+      .attr("x", (function (d) { return this.x(d[this.options.attributeX]); }).bind(this))
+      .attr("y", (function (d) { return this.y(d[this.options.attributeY]); }).bind(this))
       .attr("width", this.x.bandwidth())
-      .attr("height", function (d) { return height - $this.y(d[$this.options.attributeY]); })
+      .attr("height", (function (d) { return height - this.y(d[this.options.attributeY]); }).bind(this))
 
     this.g.selectAll(".bar")
-      .on("mouseover", $this.tootipMouseover)
-      .on("mousemove", $this.tooltipMousemove)
-      .on("mouseleave", $this.tooltipMouseleave)
+      .on("mouseover", this.tootipMouseover)
+      .on("mousemove", this.tooltipMousemove)
+      .on("mouseleave", this.tooltipMouseleave)
 
-    bars.attr("x", function (d) { return $this.x(d[$this.options.attributeX]); })
-      .attr("y", function (d) { return $this.y(d[$this.options.attributeY]); })
+    bars.attr("x", (function (d) { return this.x(d[this.options.attributeX]); }).bind(this))
+      .attr("y", (function (d) { return this.y(d[this.options.attributeY]); }).bind(this))
       .attr("width", this.x.bandwidth())
-      .attr("height", function (d) { return height - $this.y(d[$this.options.attributeY]); })
+      .attr("height", (function (d) { return height - this.y(d[this.options.attributeY]); }).bind(this))
 
     bars.exit().remove()
   }
 
-  this.getCurrentHeigth = function () {
+  getCurrentHeigth() {
     var bounds = this.svg.node().getBoundingClientRect()
     return bounds.height - this.getMargin().top - this.getMargin().bottom
   }
 
-  this.getCurrentWidth = function () {
+  getCurrentWidth() {
     var bounds = this.svg.node().getBoundingClientRect()
-    return width = bounds.width - this.getMargin().left - this.getMargin().right
+    return bounds.width - this.getMargin().left - this.getMargin().right
   }
 
-  this.draw = function (newData) {
-    if (newData) {
+
+  draw(newData) {
+    /* if (newData) {
       this.currentData = newData
       this.loadData()
-    }
+    } */
     this.svg.attr('width', this.parent.offsetWidth)
     var width = this.getCurrentWidth()
     var height = this.getCurrentHeigth()
@@ -252,7 +260,8 @@ function BarChart() {
     this.drawAxisY(height)
     this.drawArea(height)
     this.drawBars(height)
-    this.drawLine()
+    //this.drawLine()
   }
+
 
 }

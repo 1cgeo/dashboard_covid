@@ -1,55 +1,65 @@
-var createDateRangeSlider = function (options) {
-    var dataTime = d3.range(0, 1000).map(function (d) {
-        return new Date(1995 + d, 10, 3);
-    });
-
-    var sliderId = "slider"
-    var playBtnContainer = $("<div></div>")
-        .attr("class", "mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--1-col-phone")
-    var button = $("<button></button>")
-        .attr('class', 'mdl-button mdl-js-button mdl-button--fab')
-    var icon = $("<i></i>").attr('class', 'material-icons').text('play_arrow')
-    playBtnContainer
-        .append($("<div></div>")
-            .append(button.append(icon)))
-    var sliderContainer = $("<div></div>")
-        .attr("id", sliderId)
-        .attr("class", "mdl-cell mdl-cell--1-col mdl-cell--1-col-desktop mdl-cell--8-col-table mdl-cell--1-col-phone")
-    $(`#${options.elementId}`)
-        .append(playBtnContainer, sliderContainer)
-    var parent = document.getElementById(options.parentId)
-    var factor = 210
-    var sliderRange = d3
-        .sliderBottom()
-        .min(d3.min(dataTime))
-        .max(d3.max(dataTime))
-        .width(parent.offsetWidth - factor)
-        .tickFormat(d3.timeFormat("%Y-%d-%m"))
-        .ticks(5)
-        .default([d3.min(dataTime), d3.max(dataTime)])
-        .fill('#2196f3')
-        .on('onchange', val => {
-            //
-        });
-
-    var gRange = d3
-        .select(`#${sliderId}`)
-        .append('svg')
-        .attr('width', parent.offsetWidth)
-        .attr('height', 100)
-        .append('g')
-        .attr('transform', 'translate(30,30)');
-
-    gRange.call(sliderRange);
-
-    function draw() {
-        sliderRange.width(parent.offsetWidth - 200)
-        gRange.call(sliderRange);
+class SliderDate {
+    constructor(options) {
+        this.months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+        this.shortMonthsLabel = ["Jan.", "Fev.", "Mar.", "Abr.", "Maio", "Jun.", "Jul.", "Ago.", "Set.", "Out.", "Nov.", "Dez."]
+        this.options = {}
+        this.setOptions(options)
+        this.dateSlider = this.createSlider()
+        this.elementIds = ["start-date", "end-date"]
+        this.connectUpdateEvent((values, handle) => {
+            var date = new Date(values[handle]), text
+            if (handle === 0) {
+                text = `Data inicial:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
+            }else{
+                text = `Data final:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
+            }
+            
+            $(`#${this.elementIds[handle]}`).text(text)
+        })
     }
 
-    window.addEventListener("resize", draw);
-    return {
-        button: button,
-        sliderRange: sliderRange
+    setOptions(options) {
+        for (var key in options) {
+            this.options[key] = options[key]
+        }
+    }
+
+    createSlider() {
+        var dateSlider = document.getElementById("slider-date");
+        noUiSlider.create(dateSlider, {
+            range: {
+                min: this.options.dataTimeInterval[0],
+                max: this.options.dataTimeInterval[1]
+            },
+            //tooltips: [true, true],
+            connect: true,
+            step: 24 * 60 * 60 * 1000,
+            start: this.options.dataTimeInterval,
+            format: {
+                from: Number,
+                to: function (value) {
+                    return new Date(value);
+                }
+            }
+        })
+        return dateSlider
+    }
+
+    timestamp(str) {
+        return new Date(str).getTime();
+    }
+
+    connectEndChange(cb) {
+        this.dateSlider.noUiSlider.on('end', cb)
+    }
+
+    disconnectEndChange(cb) {
+        this.dateSlider.noUiSlider.off('end', cb)
+    }
+
+    connectUpdateEvent(cb) {
+        this.dateSlider.noUiSlider.on('update', function (values, handle) {
+            cb(values, handle)
+        })
     }
 }

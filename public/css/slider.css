@@ -1,0 +1,25 @@
+.noUi-tooltip {
+    display: none;
+}
+.noUi-active .noUi-tooltip {
+    display: block;
+}
+
+
+.play-button { grid-area: button; }
+.slider-time { grid-area: slider;}
+.footer-start { grid-area: footer-start;}
+.footer-end { grid-area: footer-end;}
+
+.footer-end, .footer-start{
+    white-space: pre;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-areas:    
+    'button slider slider'
+    'button footer-start footer-end';
+    grid-gap:10px;
+ 
+}

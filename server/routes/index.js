@@ -8,24 +8,29 @@ router
     .route('/layer/tile/:place/:z/:x/:y.pbf')
     .get(layersCtrl.getVectorTilePbf);
 
-router
-    .route('/layer/:place/:id')
-    .get(layersCtrl.getGeoJSON)
 
 router
-    .route('/maptheme/:theme/:place')
-    .get(mapthemeCtrl.getThemeData)
+    .route('/maptheme/circle')
+    .get(mapthemeCtrl.getCircleThemeData)
 
-/* router
-    .route('/info/states/:id')
-    .get(mapthemeCtrl.getStatesInfo)
 
 router
-    .route('/info/cities/:id')
-    .get(mapthemeCtrl.getCitesInfo) */
+    .route('/maptheme/heat')
+    .get(mapthemeCtrl.getHeatThemeData)
+
 
 router
-    .route('/info/country')
-    .get(mapthemeCtrl.getCountryInfo)
+    .route('/maptheme/choropleth')
+    .get(mapthemeCtrl.getChoroplethThemeData)
+
+
+router
+    .route('/information/country')
+    .get(mapthemeCtrl.getCountryInformation)
+
+router
+    .route('/information')
+    .get(mapthemeCtrl.getInformation)
+
 
 module.exports = router;

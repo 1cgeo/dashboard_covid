@@ -1,129 +1,62 @@
-var dateSlider = createDateRangeSlider({
-    parentId: "map-container",
-    elementId: "slider-range"
+this.startDate = new Date('2020/02/24').getTime()
+this.endDate = new Date().getTime()
+
+var dataSource = new DataSource({
+    dataTimeInterval: [startDate, endDate]
 })
 
-var barChartCases = createBarChart({
+var locationStatus = new Status(dataSource)
+
+
+var dateSlider = new SliderDate({
+    dataTimeInterval: [startDate, endDate],
+    dateValues: [
+        document.getElementById('start-date'),
+        document.getElementById('end-date')
+    ]
+})
+
+var barChartCases = new BarChart({
     parentId: "statistic-container",
     elementId: "graph-cases",
-    urlData: `${window.location.origin}/api/info/country`,
+    dataSource: dataSource,
+    dataLocation: 'country',
     attributeX: "date",
     attributeY: "totalCases",
     title: "Casos"
 })
 
 
-var barChartDeaths = createBarChart({
+var barChartDeaths = new BarChart({
     parentId: "statistic-container",
     elementId: "graph-deaths",
-    urlData: `${window.location.origin}/api/info/country`,
+    dataSource: dataSource,
     attributeX: "date",
     attributeY: "deaths",
-    title: "Mortes"
+    title: "Óbitos"
 })
 
-var covidmap = createCovidMap({
-    divId: "map",
-    bounds: [
-        [5.7908968128719565, -33.7553522173281],
-        [-35.6037187406973, -98.00339909232811]
-    ],
-    layers: [
-        {
-            name: "Estados",
-            idField: 'CD_GEOCUF',
-            urlVectorTile: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
-            themes: [
-                {
-                    name: "Mapa de calor de casos",
-                    attributeName: "totalCases",
-                    type: "heatmap",
-                    urlData: `${window.location.origin}/api/maptheme/heat/city`
-                },
-                {
-                    name: "Mapa de calor de óbitos",
-                    attributeName: "deaths",
-                    type: "heatmap",
-                    urlData: `${window.location.origin}/api/maptheme/heat/city`
-                },
-                {
-                    name: "Taxa de crescimento de casos",
-                    attributeName: "nrDiasDobraCasos",
-                    type: "choroplethmap",
-                    urlData: `${window.location.origin}/api/maptheme/choropleth/state`,
-                },
-                {
-                    name: "Taxa de crescimento de óbitos",
-                    attributeName: "nrDiasDobraMortes",
-                    type: "choroplethmap",
-                    urlData: `${window.location.origin}/api/maptheme/choropleth/state`
-                },
-                {
-                    name: "Número de casos",
-                    attributeName: "totalCases",
-                    type: "circlemap",
-                    scaleFactor: 0.003,
-                    scaleLenged: [10000, 50000, 100000],
-                    urlData: `${window.location.origin}/api/maptheme/circle/state`
-                },
-                {
-                    name: "Número de óbitos",
-                    attributeName: "deaths",
-                    type: "circlemap",
-                    scaleFactor: 0.05,
-                    scaleLenged: [500, 5000, 10000],
-                    urlData: `${window.location.origin}/api/maptheme/circle/state`
-                },
+var factories = new Factories()
+var covidmap = factories.createMap(
+    'covidMap',
+    dataSource,
+    {
+        elementId: "map"
+    }
+)
 
-            ]
-        },
-        {
-            name: "Municípios",
-            idField: 'CD_GEOCMU',
-            urlVectorTile: `${window.location.origin}/api/layer/tile/city/{z}/{x}/{y}.pbf`,
-            themes: [
-                {
-                    name: "Mapa de calor de casos",
-                    attributeName: "totalCases",
-                    type: "heatmap",
-                    urlData: `${window.location.origin}/api/maptheme/heat/city`
-                },
-                {
-                    name: "Mapa de calor de óbitos",
-                    attributeName: "deaths",
-                    type: "heatmap",
-                    urlData: `${window.location.origin}/api/maptheme/heat/city`
-                },
-                {
-                    name: "Taxa de crescimento de casos",
-                    attributeName: "nrDiasDobraCasos",
-                    type: "choroplethmap",
-                    urlData: `${window.location.origin}/api/maptheme/choropleth/city`,
-                },
-                {
-                    name: "Taxa de crescimento de óbitos",
-                    attributeName: "nrDiasDobraMortes",
-                    type: "choroplethmap",
-                    urlData: `${window.location.origin}/api/maptheme/choropleth/city`
-                },
-                {
-                    name: "Número de casos",
-                    attributeName: "totalCases",
-                    type: "circlemap",
-                    scaleFactor: 0.003,
-                    scaleLenged: [10000, 50000, 100000],
-                    urlData: `${window.location.origin}/api/maptheme/circle/city`
-                },
-                {
-                    name: "Número de óbitos",
-                    attributeName: "deaths",
-                    type: "circlemap",
-                    scaleFactor: 0.05,
-                    scaleLenged: [500, 5000, 10000],
-                    urlData: `${window.location.origin}/api/maptheme/circle/city`
-                },
 
-            ]
-        }
-    ]
+dateSlider.connectEndChange((timeInterval) => {
+    dataSource.setDataTimeInterval(timeInterval)
+    locationStatus.update()
+    barChartCases.loadData()
+    barChartDeaths.loadData()
+    covidmap.reloadMapData()
+})
+
+covidmap.on('changeLocation', (layerClicked) => {
+    dataSource.setCurrentLayer(layerClicked)
+    locationStatus.update()
+    barChartCases.loadData()
+    barChartDeaths.loadData()
 })
