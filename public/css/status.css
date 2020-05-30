@@ -1,48 +1,47 @@
-#cases-values, #deaths-values {
+#cases-values,
+#deaths-values {
     font-size: 30px;
 }
 
-#location{
+#tag-location {
     font-size: 40px;
     text-align: center;
     text-anchor: middle;
 }
 
-#status{
+#status {
     color: #333;
 }
 
-
-.location { 
-    grid-area: location; 
+.location {
+    grid-area: location;
     text-align: center;
+    align-self: center;
 }
-.tag-cases { 
+
+.tag-cases {
     grid-area: tag-cases;
     text-align: center;
 }
-.ncases { 
+
+.ncases {
     grid-area: ncases;
     text-align: center;
 }
-.tag-deaths { 
+
+.tag-deaths {
     grid-area: tag-deaths;
     text-align: center;
 }
-.ndeaths { 
+
+.ndeaths {
     grid-area: ndeaths;
     text-align: center;
 }
 
-
 .grid-container-status {
-  display: grid;
-  grid-template-areas:    
-    'location location location location'
-    'location location location location'
-    'tag-cases tag-cases tag-deaths tag-deaths'
-    'ncases ncases ndeaths ndeaths';
-
-    grid-gap:10px;
- 
+    display: grid;
+    grid-template-areas: 'location location location location' 'tag-cases tag-cases tag-deaths tag-deaths' 'ncases ncases ndeaths ndeaths';
+    /*     max-height: 100px;
+ */
 }

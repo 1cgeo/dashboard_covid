@@ -1,51 +1,59 @@
-body *{
-    font-family: 'Alegreya', serif;
+body * {
+    font-family: 'Public Sans', sans-serif !important;
 }
 
+.leaflet-sidebar-tabs {
+    background-color: #607d8b;
+}
 
-  .material-icons {
+#sidebar {
+    max-width: 350px !important;
+}
+
+.leaflet-sidebar-left .leaflet-sidebar-content {
+    min-width: 390px !important;
+    opacity: 0.8;
+}
+
+.leaflet-sidebar-header,
+.leaflet-sidebar-tabs>li.active,
+.leaflet-sidebar-tabs>ul>li.active {
+    background-color: #607d8b !important;
+}
+
+.material-icons {
     font-family: 'Material Icons'!important;
 }
 
-.title {
-   
-
-}
-
-
-
-.eb-img { 
+.eb-img {
     grid-area: eb-img;
     text-align: center;
     align-self: center;
-    
 }
 
 .eb-img img {
     max-width: 57px;
-    max-height: 85px;
+    max-height: 80px;
 }
 
-.title { 
+.title {
     grid-area: title;
     text-align: center;
     align-self: center;
 }
-.dsg-img { 
-    
+
+.dsg-img {
     grid-area: dsg-img;
     text-align: center;
     align-self: center;
 }
+
 .dsg-img img {
     max-width: 57px;
     max-height: 85px;
 }
 
-
 .grid-container-title {
-  display: grid;
-  grid-template-areas:    
-    'eb-img title dsg-img';
- 
+    display: grid;
+    grid-template-areas: 'eb-img title dsg-img';
 }

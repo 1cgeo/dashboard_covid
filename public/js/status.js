@@ -1,5 +1,3 @@
-
-
 class Status {
     constructor(dataSource) {
         this.dataSource = dataSource
@@ -9,50 +7,45 @@ class Status {
     init() {
         this.dataSource.getStatusData((data, locationName) => {
             this.setLocationName(locationName)
-            if(data.length < 1){
+            if (data.length < 1) {
                 this.clean()
                 return
             }
-            var lastData = this.getLastData(data, "date")
-            this.setTotalCases(lastData)
-            this.setTotalDeaths(lastData)
+            this.setTotalCases(data.reduce((acc, obj) => {
+                if (!acc) {
+                    return +obj.newCases
+                }
+                return (+acc + +obj.newCases)
+            }))
+            this.setTotalDeaths(data.reduce((acc, obj) => {
+                if (!acc) {
+                    return +obj.newDeaths
+                }
+                return (+acc + +obj.newDeaths)
+            }))
         })
     }
 
-    update(){
+    update() {
         this.init()
     }
 
-    clean(){
+    clean() {
         $("#cases-values").text('Sem dados')
         $("#deaths-values").text('Sem dados')
     }
 
     setLocationName(locationName) {
-        $("#location").text(locationName)
+        $("#tag-location").text(
+            (locationName.charAt(0).toUpperCase() + locationName.slice(1).toLowerCase())
+        )
     }
 
-    setTotalCases(lastData) {
-        $("#cases-values").text(lastData.totalCases)
+    setTotalCases(total) {
+        $("#cases-values").text(total)
     }
 
-    setTotalDeaths(lastData) {
-        $("#deaths-values").text(lastData.deaths)
-    }
-
-    getLastData(data, dateField) {
-        var lastData
-        for (var i = data.length; i--;) {
-            if (!lastData) {
-                lastData = data[i]
-                continue
-            }
-            var currentDate = new Date(lastData[dateField].replace('-', '/'))
-            var date = new Date(data[i][dateField].replace('-', '/'))
-            if (currentDate < date) {
-                lastData = data[i]
-            }
-        }
-        return lastData
+    setTotalDeaths(total) {
+        $("#deaths-values").text(total)
     }
 }

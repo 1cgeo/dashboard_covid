@@ -22,7 +22,7 @@ var barChartCases = new BarChart({
     dataSource: dataSource,
     dataLocation: 'country',
     attributeX: "date",
-    attributeY: "totalCases",
+    attributeY: "newCases",
     title: "Casos"
 })
 
@@ -32,21 +32,28 @@ var barChartDeaths = new BarChart({
     elementId: "graph-deaths",
     dataSource: dataSource,
     attributeX: "date",
-    attributeY: "deaths",
+    attributeY: "newDeaths",
     title: "Óbitos"
 })
 
 var factories = new Factories()
 var covidmap = factories.createMap(
     'covidMap',
-    dataSource,
-    {
+    dataSource, {
         elementId: "map"
     }
 )
 
 
 dateSlider.connectEndChange((timeInterval) => {
+    dataSource.setDataTimeInterval(timeInterval)
+    locationStatus.update()
+    barChartCases.loadData()
+    barChartDeaths.loadData()
+    covidmap.reloadMapData()
+})
+
+dateSlider.connectPlay((timeInterval) => {
     dataSource.setDataTimeInterval(timeInterval)
     locationStatus.update()
     barChartCases.loadData()

@@ -1,25 +1,42 @@
 .noUi-tooltip {
     display: none;
 }
+
 .noUi-active .noUi-tooltip {
     display: block;
 }
 
+.play-button {
+    grid-area: button;
+}
 
-.play-button { grid-area: button; }
-.slider-time { grid-area: slider;}
-.footer-start { grid-area: footer-start;}
-.footer-end { grid-area: footer-end;}
+.slider-time {
+    grid-area: slider;
+}
 
-.footer-end, .footer-start{
+.footer-start {
+    grid-area: footer-start;
+}
+
+.footer-end {
+    grid-area: footer-end;
+}
+
+.footer-end,
+.footer-start {
     white-space: pre;
 }
 
 .grid-container {
-  display: grid;
-  grid-template-areas:    
-    'button slider slider'
-    'button footer-start footer-end';
-    grid-gap:10px;
- 
+    display: grid;
+    grid-template-areas: 'button slider slider null' 'button footer-start footer-end null';
+    grid-gap: 10px;
+}
+
+.slider-time {
+    max-width: 500px;
+}
+
+.noUi-connect {
+    background: #b3d4fc;
 }

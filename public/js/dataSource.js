@@ -21,7 +21,7 @@ class DataSource {
     }
 
     setCurrentLayer(layer) {
-        if(!layer){
+        if (!layer) {
             this.setLocationName('Brasil')
             this.setLocationLevel(null)
             this.setLocationId(null)
@@ -69,8 +69,7 @@ class DataSource {
     getUrl() {
         if (this.isCountry()) {
             return `${window.location.origin}/api/information/country?${this.getQueryTime()}`
-        }
-        else {
+        } else {
             return `${window.location.origin}/api/information?${this.getQueryLocationId()}&${this.getQueryTime()}`
         }
     }
@@ -98,7 +97,7 @@ class DataSource {
             url = `${window.location.origin}/api/maptheme/circle?location=state&${this.getQueryTime()}`
         }
         if (!url) return
-        httpGetAsync(url, function (data) {
+        httpGetAsync(url, function(data) {
             cb(JSON.parse(data))
         })
     }
@@ -114,7 +113,7 @@ class DataSource {
             url = `${window.location.origin}/api/maptheme/circle?location=city&${this.getQueryTime()}`
         }
         if (!url) return
-        httpGetAsync(url, function (data) {
+        httpGetAsync(url, function(data) {
             cb(JSON.parse(data))
         })
     }
@@ -163,28 +162,24 @@ class DataSource {
     }
 
     getAllLayers() {
-        return [
-            {
+        return [{
                 name: "Estados",
                 id: 0,
-                mapLayers: [
-                    {
-                        url: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
-                        style: {
-                            weight: 1,
-                            opacity: 0.7,
-                            color: 'white',
-                            fill: true,
-                            fillOpacity: 0.7,
-                            fillColor: "#cfcfcf"
-                        },
-                        idField: 'CD_GEOCUF',
-                        main: true
+                mapLayers: [{
+                    url: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
+                    style: {
+                        weight: 1,
+                        opacity: 0.7,
+                        color: 'white',
+                        fill: true,
+                        fillOpacity: 0.7,
+                        fillColor: "#cfcfcf"
+                    },
+                    idField: 'CD_GEOCUF',
+                    main: true
 
-                    }
-                ],
-                themeLayers: [
-                    {
+                }],
+                themeLayers: [{
                         name: "Mapa de calor de casos",
                         attributeName: "totalCases",
                         type: "heat",
@@ -199,6 +194,7 @@ class DataSource {
                     {
                         name: "Taxa de crescimento de casos",
                         attributeName: "nrDiasDobraCasos",
+                        attributeNameSecondary: "totalCases",
                         type: "choropleth",
                         id: 2
 
@@ -206,6 +202,7 @@ class DataSource {
                     {
                         name: "Taxa de crescimento de óbitos",
                         attributeName: "nrDiasDobraMortes",
+                        attributeNameSecondary: "totalCases",
                         type: "choropleth",
                         id: 3
 
@@ -216,7 +213,7 @@ class DataSource {
                         type: "circles",
                         id: 4,
                         attributeLabel: "NM_ESTADO",
-                        scaleFactor: 0.003,
+                        scaleFactor: 0.03,
                         scaleLenged: [10000, 50000, 100000]
 
                     },
@@ -227,8 +224,8 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         attributeLabel: "state",
-                        scaleFactor: 0.003,
-                        scaleLenged: [10000, 50000, 100000]
+                        scaleFactor: 0.1,
+                        scaleLenged: [500, 5000, 10000],
 
                     }
 
@@ -237,8 +234,7 @@ class DataSource {
             {
                 name: "Municípios",
                 id: 1,
-                mapLayers: [
-                    {
+                mapLayers: [{
                         url: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
                         style: {
                             weight: 1,
@@ -263,8 +259,7 @@ class DataSource {
                     }
 
                 ],
-                themeLayers: [
-                    {
+                themeLayers: [{
                         name: "Mapa de calor de casos",
                         attributeName: "totalCases",
                         type: "heat",
@@ -294,7 +289,7 @@ class DataSource {
                         type: "circles",
                         id: 10,
                         attributeLabel: "city",
-                        scaleFactor: 0.003,
+                        scaleFactor: 0.03,
                         scaleLenged: [10000, 50000, 100000],
                     },
                     {
@@ -303,7 +298,7 @@ class DataSource {
                         type: "circles",
                         attributeLabel: "city",
                         id: 11,
-                        scaleFactor: 0.05,
+                        scaleFactor: 0.1,
                         scaleLenged: [500, 5000, 10000],
                     },
 
