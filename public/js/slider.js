@@ -91,7 +91,7 @@ class SliderDate {
     }
 
     setPauseButtonStyle() {
-        $('.play-button i').text('pause')
+        $('.play-button i').text('stop')
         $('#start-date').addClass('active')
     }
 
@@ -116,7 +116,7 @@ class SliderDate {
             currentDate.setDate(currentDate.getDate() + 1)
             this.dateSlider.noUiSlider.set([currentDate, endDate])
             this.playCallback([startDate, currentDate])
-            await this.sleep(4000)
+            await this.sleep(2000)
         }
     }
 

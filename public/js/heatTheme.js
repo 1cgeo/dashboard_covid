@@ -94,14 +94,14 @@ class HeatLayer extends Layer {
     getVectorTileStyle(isMain) {
         if (isMain) {
             return {
-                weight: 0.5,
+                weight: 0.2,
                 opacity: 0.7,
                 color: 'black'
             }
         }
         return {
             weight: 1,
-            opacity: 0.7,
+            opacity: 0.3,
             color: 'black'
         }
     }

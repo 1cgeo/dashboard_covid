@@ -17,7 +17,6 @@ class CovidMap {
         this.createPanels()
         this.createControls()
         this.createSiderbar()
-        this.activeEventForwarder()
         this.connectEvents()
         this.createLayersButtons(
             this.dataSource.getMapLayerNames(),
@@ -50,6 +49,12 @@ class CovidMap {
         this.map.on('click', () => {
             if (this.getCurrentPopoverLayer() && !this.getCurrentPopoverLayer().eventWasReceived()) {
                 this.zoomToDefaultBounds()
+                this.map.closePopup()
+                this.triggerChangeLocation()
+            }
+        })
+        this.map.on('mousemove', () => {
+            if (this.getCurrentPopoverLayer() && !this.getCurrentPopoverLayer().eventWasReceived()) {
                 this.map.closePopup()
             }
         })
@@ -84,22 +89,6 @@ class CovidMap {
 
     setBounds(bbox) {
         this.map.fitBounds(bbox)
-    }
-
-    activeEventForwarder() {
-        const myEventForwarder = new L.eventForwarder({
-            map: this.map,
-            events: {
-                click: true,
-                mousemove: true
-            },
-            throttleMs: 100,
-            throttleOptions: {
-                leading: true,
-                trailing: false
-            }
-        });
-        myEventForwarder.enable()
     }
 
     zoomToDefaultBounds() {

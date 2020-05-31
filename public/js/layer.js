@@ -72,6 +72,10 @@ class Layer {
         return unique
     }
 
+    getPopupContent(e) {
+
+    }
+
     getReduceGeojsonFeatures(features, id, comp) {
         var listedId = [];
         var reduced = [];

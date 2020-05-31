@@ -56,7 +56,7 @@ class ChoroplethLayer extends Layer {
                 if (jsonData.length < 1) { return }
                 var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
                 var mainLayer = mapLayers.find((l) => l.main)
-                var lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
+                this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
                 if (mapLayers.length < 1) { return }
                 if (processKey !== this.currentProcessKey) return
                 for (var i = mapLayers.length; i--;) {
@@ -64,7 +64,6 @@ class ChoroplethLayer extends Layer {
                     var loadOtherStyle = (mapLayers[i].main) ? false : true
                     var layer = this.createVectorGrid(
                         mapLayers[i],
-                        lastData,
                         this.options.attributeName,
                         this.options.attributeNameSecondary,
                         loadOtherStyle
@@ -76,24 +75,21 @@ class ChoroplethLayer extends Layer {
                     }
                 }
                 if (!this.currentLegend) this.createLegend()
-                this.connectEvents()
             }
         )
     }
 
-
-
-    createVectorGrid(mapLayer, lastData, attrLabel1, attrLabel2, loadDefaultStyle) {
+    createVectorGrid(mapLayer, attrLabel1, attrLabel2, loadDefaultStyle) {
         var layer = L.vectorGrid.protobuf(
             mapLayer.url, {
                 rendererFactory: L.canvas.tile,
                 vectorTileLayerStyles: {
                     "data": (feat) => {
                         if (loadDefaultStyle) return mapLayer.style
-                        var idx = lastData.ids.indexOf(feat[mapLayer.idField])
+                        var idx = this.lastData.ids.indexOf(feat[mapLayer.idField])
                         if (idx >= 0) {
-                            feat.rate = +lastData.data[idx][attrLabel1]
-                            feat[attrLabel2] = +lastData.data[idx][attrLabel2]
+                            feat.rate = +this.lastData.data[idx][attrLabel1]
+                            feat[attrLabel2] = +this.lastData.data[idx][attrLabel2]
                             return this.getStyle(feat.rate, feat[attrLabel2])
                         }
                         feat.rate = 0
@@ -110,13 +106,6 @@ class ChoroplethLayer extends Layer {
         return layer
     }
 
-    connectEvents() {
-        this.mainVectorTile
-            .on('click', (e) => {
-                this.showPopup(e)
-            })
-    }
-
     showPopup(e) {
         L.popup({
                 pane: 'popup',
@@ -129,8 +118,38 @@ class ChoroplethLayer extends Layer {
             .openOn(this.options.map.getMap());
     }
 
+    getFeatureData(featId) {
+        if (!this.lastData) return
+        var idx = this.lastData.ids.indexOf(featId)
+        if (idx >= 0) {
+            return this.lastData.data[idx]
+        }
+    }
+
     getPopupContent(e) {
         var props = e.layer.properties
+        var featId = (props.CD_GEOCUF) ? props.CD_GEOCUF : props.CD_GEOCMU
+        var data = this.getFeatureData(featId)
+        if (!data) {
+            return `
+        <div class="grid-container-popup">
+            <div class="header-popup">
+                <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
+            </div>
+            <div class="row1-popup">
+                <div><b>Taxa de crescimento:</b></div>
+            </div>
+            <div class="value1-popup">
+                <div>Sem dados</div>
+            </div>
+            <div class="row2-popup">
+                <div><b>Número de ${(this.getAttributeName() === 'deaths')? 'óbitos' : 'casos'}:</b></div>
+            </div>
+            <div class="value2-popup">
+                <div>Sem dados</div>
+            </div>
+        </div>`
+        }
         return `
         <div class="grid-container-popup">
             <div class="header-popup">
@@ -140,13 +159,13 @@ class ChoroplethLayer extends Layer {
                 <div><b>Taxa de crescimento:</b></div>
             </div>
             <div class="value1-popup">
-                <div>${props.rate}</div>
+                <div>${data[this.options.attributeName]}</div>
             </div>
             <div class="row2-popup">
-                <div><b>Número de ${(this.options.attributeName === 'deaths')? 'óbitos' : 'casos'}:</b></div>
+                <div><b>Número de ${(this.getAttributeName() === 'deaths')? 'óbitos' : 'casos'}:</b></div>
             </div>
             <div class="value2-popup">
-                <div>${this.mFormatter((this.options.attributeName === 'deaths')? +props.deaths: +props.totalCases)}</div>
+                <div>${this.mFormatter((this.getAttributeName() === 'deaths')? +data.deaths: +data.totalCases)}</div>
             </div>
         </div>`
     }
@@ -164,49 +183,60 @@ class ChoroplethLayer extends Layer {
     }
 
     getColor(attrLabel1, attrLabel2) {
+        var colors = this.getHexColors()
         if (+attrLabel2 === 0) {
-            return '#f2f2f2'
-        } else if (+attrLabel2 < 100) {
-            return '#e6e6e6'
+            return '#238b45'
+        } else if (+attrLabel2 < this.getLimiteValue()) {
+            return '#bae4b3'
         } else {
-            return attrLabel1 < 7 ? '#ce0a05' :
-                attrLabel1 < 14 ? '#FF6E0B' :
-                attrLabel1 < 30 ? '#ffae43' :
-                '#f2df91';
+            return attrLabel1 < 7 ? colors[3] :
+                attrLabel1 < 14 ? colors[2] :
+                attrLabel1 < 30 ? colors[1] :
+                colors[0];
         }
     }
 
-    createLegend() {
-        var legend = L.control({ position: 'bottomleft' });
-        legend.onAdd = (map) => {
-            var div = L.DomUtil.create('div', '')
-            div.innerHTML = `
-            <div class="grid-choropleth-legend">
+    getAttributeName() {
+        return this.options.attributeNameSecondary
+    }
+
+    getLimiteValue() {
+        return (this.getAttributeName() === 'deaths') ? 10 : 100
+    }
+
+    getHexColors() {
+        return (this.getAttributeName() === 'deaths') ? ['#f7f7f7', '#cccccc', '#969696', '#525252'] : ['#fee5d9', '#fcae91', '#fb6a4a', '#cb181d']
+    }
+
+    getLegendContent() {
+        var colors = this.getHexColors()
+        var tag = (this.getAttributeName() === 'deaths') ? 'Óbitos' : 'Casos'
+        return `<div class="grid-choropleth-legend">
                 <div class="y">
-                    <div>Casos atualmente dobrando a cada...</div>
+                    <div>${tag} atualmente dobrando a cada...</div>
                 </div>
                 <div class="a" style="width:60px; height:15px; background-color: none; border-right:solid">
-                    <div style="width:60px; height:10px; background-color: #ce0a05;">
+                    <div style="width:60px; height:10px; background-color: ${colors[3]};">
                     </div>
                 </div>
                 <div class="b" style="width:60px; height:15px; background-color: none; border-right:solid">
-                    <div style="width:60px; height:10px; background-color: #ff6e0b;">
+                    <div style="width:60px; height:10px; background-color: ${colors[2]};">
                     </div>
                 </div>
                 <div class="c" style="width:60px; height:15px; background-color: none; border-right:solid">
-                    <div style="width:60px; height:10px; background-color: #ffae43;">
+                    <div style="width:60px; height:10px; background-color: ${colors[1]};">
                     </div>
                 </div>
                 <div class="d" style="width:80px; height:15px; background-color: none;">
-                    <div style="width:60px; height:10px; background-color: #f2df91;">
+                    <div style="width:60px; height:10px; background-color: ${colors[0]};">
                     </div>
                 </div>
                 <div class="e" style="width:70px; height:15px; background-color: none;">
-                    <div style="width:40px; height:10px; background-color: #e6e6e6;">
+                    <div style="width:40px; height:10px; background-color: #bae4b3;">
                     </div>
                 </div>
                 <div class="f" style="width:30px; height:15px; background-color: none;">
-                    <div style="width:40px; height:10px; background-color: #f2f2f2;">
+                    <div style="width:40px; height:10px; background-color: #238b45;">
                     </div>
                 </div>
                 <div class="h" style="width:50px;">
@@ -219,13 +249,19 @@ class ChoroplethLayer extends Layer {
                     <div>30 dias</div>
                 </div>
                 <div class="l" style="width:90px; height:15px; background-color: none;">
-                    <div> &lt; 100 casos</div>
+                    <div> &lt; ${this.getLimiteValue()} ${tag.toLowerCase()}</div>
                 </div>
                 <div class="m" style="width:70px; height:15px; background-color: none;">
-                    <div>Sem casos reportados</div>
+                    <div>Não reportados</div>
                 </div>
-            </div>
-            `;
+            </div>`
+    }
+
+    createLegend() {
+        var legend = L.control({ position: 'bottomright' });
+        legend.onAdd = (map) => {
+            var div = L.DomUtil.create('div', '')
+            div.innerHTML = this.getLegendContent()
             return div;
         }
         legend.addTo(this.options.map.getMap());

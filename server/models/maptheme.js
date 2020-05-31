@@ -155,6 +155,7 @@ module.exports.getCircleThemeData = (location, startTimestamp, endTimestamp, cb)
         feat.properties.state = info.state;
         feat.properties.city = info.city;
         feat.properties.date = info.date;
+        feat.properties.ibgeID = (location === 'city') ? info.ibgeID : STATES_MAP[info.state.toLowerCase()]
         return feat;
     });
     (geojson.features.length > 0) ? cb(geojson): cb();

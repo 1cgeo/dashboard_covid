@@ -85,13 +85,15 @@ class BarChart {
         var attributeX = this.options.attributeX
         var attributeY = this.options.attributeY
         this.maxValue = this.getMax(jsonData.map(elem => +elem[attributeY]))
-        var data = jsonData.map((elem) => {
+        var dataFormated = []
+        for (var i = jsonData.length; i--;) {
             var d = {}
-            d[attributeX] = new Date(elem[attributeX].replace(/\-/g, '/')).getTime()
-            d[attributeY] = (this.maxValue == 0) ? 0 : (+elem[attributeY] / this.maxValue)
-            return d
-        })
-        return data.sort(function(a, b) {
+            d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
+            d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
+            if (d[attributeY] === 0) continue
+            dataFormated.push(d)
+        }
+        return dataFormated.sort(function(a, b) {
             var dateA = new Date(a[attributeX]),
                 dateB = new Date(b[attributeX]);
             return dateA - dateB;

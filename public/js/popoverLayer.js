@@ -54,9 +54,10 @@ class PopoverLayer extends Layer {
             this.vectorTiles.push(layer)
             this.mainVectorTile = layer
             this.idField = idField
-            this.mainVectorTile.on('mouseover', (e) => {
+            this.mainVectorTile.on('mousemove', (e) => {
                     this.receivedEvent = true
                     this.highlightFeature(e.layer)
+                    this.showPopupThemeLayer(e)
                 })
                 .on('mouseout', (e) => {
                     this.receivedEvent = false
@@ -70,9 +71,19 @@ class PopoverLayer extends Layer {
                         [feat.properties.ymax, feat.properties.xmax]
                     ])
                     this.highlightFeature(feat)
+                    this.showPopupThemeLayer(e)
                     this.options.map.triggerChangeLocation(feat)
                 })
         }
+    }
+
+    showPopupThemeLayer(e) {
+        var content = this.options.map.getCurrentThemeLayer().getPopupContent(e)
+        if (!content) return
+        L.popup({ pane: 'popup' })
+            .setLatLng(e.latlng)
+            .setContent(content)
+            .openOn(this.options.map.getMap());
     }
 
     getDefaultStyle() {

@@ -31,12 +31,13 @@
 
 .grid-container {
     display: grid;
-    grid-template-areas: 'button slider slider null' 'button footer-start footer-end null';
+    grid-template-areas: 'button slider slider slider' 'button footer-start null footer-end';
     grid-gap: 10px;
+    padding-right: 100px;
 }
 
 .slider-time {
-    max-width: 500px;
+    padding-right: 30px;
 }
 
 @media only screen and (max-width: 600px) {

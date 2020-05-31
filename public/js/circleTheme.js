@@ -3,6 +3,10 @@ class CirclesLayer extends Layer {
         super(newOptions)
         this.currentProcessKey = ""
         this.layers = []
+        this.circlesData = {
+            ids: [],
+            features: []
+        }
         this.create()
     }
 
@@ -18,6 +22,8 @@ class CirclesLayer extends Layer {
             this.options.map.getFeatureGroup().removeLayer(this.layers[i])
         }
         this.layers = []
+        this.circlesData.ids = []
+        this.circlesData.features = []
     }
 
     reload() {
@@ -28,6 +34,8 @@ class CirclesLayer extends Layer {
         if (this.layer) {
             this.options.map.getFeatureGroup().removeLayer(this.layer)
         }
+        this.circlesData.ids = []
+        this.circlesData.features = []
         this.create()
     }
 
@@ -70,12 +78,15 @@ class CirclesLayer extends Layer {
                 if (processKey !== this.currentProcessKey) return
                 this.layer = L.geoJson(
                     jsonData, {
-                        pointToLayer: (feature, longlat) => {
+                        pointToLayer: (feature, latlng) => {
+                            if (!latlng.lat || !latlng.lng) return
                             var circle = L.circleMarker(
-                                longlat,
+                                latlng,
                                 this.getCircleStyle()
                             )
                             circle.getCircleStyle = this.getCircleStyle.bind(this)
+                            this.circlesData.ids.push(feature.properties.ibgeID)
+                            this.circlesData.features.push(circle)
                             return circle
                         }
                     }
@@ -96,7 +107,14 @@ class CirclesLayer extends Layer {
             var isMain = mapLayers[i].main
             var layer = this.createVectorGrid(
                 mapLayers[i],
-                mapLayers[i].style
+                (!isMain) ? mapLayers[i].style : {
+                    weight: 1,
+                    opacity: 0.4,
+                    color: 'white',
+                    fill: true,
+                    fillOpacity: 0.2,
+                    fillColor: "#cfcfcf"
+                }
             )
             if (isMain) {
                 this.mainVectorTile = layer
@@ -123,19 +141,25 @@ class CirclesLayer extends Layer {
     }
 
     getPopupContent(e) {
-        var props = e.feature.properties
+        var props = e.layer.properties
+        var featId = (props.CD_GEOCUF) ? props.CD_GEOCUF : props.CD_GEOCMU
+        var idx = this.circlesData.ids.indexOf(featId)
+        if (idx < 0) return
+        var circle = this.circlesData.features[idx]
+        if (!circle._containsPoint(e.layerPoint)) return
+        var props = e.layer.properties
         return `
-        <div class="grid-container-popup">
-            <div class="header-popup">
-                <div><b>${(props.city === 'TOTAL' )? props.state: props.city }</b></div>
-            </div>
-            <div class="row2-popup">
-                <div><b>Número de ${(this.options.attributeName === 'deaths')? 'óbitos': 'casos'}:</b></div>
-            </div>
-            <div class="value2-popup">
-                <div>${this.mFormatter(+props[this.options.attributeName])}</div>
-            </div>
-        </div>`
+            <div class="grid-container-popup">
+                <div class="header-popup">
+                    <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
+                </div>
+                <div class="row2-popup">
+                    <div><b>Número de ${(this.options.attributeName === 'deaths')? 'óbitos': 'casos'}:</b></div>
+                </div>
+                <div class="value2-popup">
+                    <div>${this.mFormatter(+circle.feature.properties[this.options.attributeName])}</div>
+                </div>
+            </div>`
     }
 
     updatePropSymbols() {
