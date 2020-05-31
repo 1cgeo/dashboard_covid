@@ -202,7 +202,7 @@ class DataSource {
                     {
                         name: "Taxa de crescimento de óbitos",
                         attributeName: "nrDiasDobraMortes",
-                        attributeNameSecondary: "totalCases",
+                        attributeNameSecondary: "deaths",
                         type: "choropleth",
                         id: 3
 
@@ -213,7 +213,7 @@ class DataSource {
                         type: "circles",
                         id: 4,
                         attributeLabel: "NM_ESTADO",
-                        scaleFactor: 0.03,
+                        scaleFactor: 0.003,
                         scaleLenged: [10000, 50000, 100000]
 
                     },
@@ -224,7 +224,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         attributeLabel: "state",
-                        scaleFactor: 0.1,
+                        scaleFactor: 0.03,
                         scaleLenged: [500, 5000, 10000],
 
                     }
@@ -263,31 +263,34 @@ class DataSource {
                         name: "Mapa de calor de casos",
                         attributeName: "totalCases",
                         type: "heat",
-                        id: 6
+                        id: 0
                     },
                     {
                         name: "Mapa de calor de óbitos",
                         attributeName: "deaths",
+
                         type: "heat",
-                        id: 7
+                        id: 1
                     },
                     {
                         name: "Taxa de crescimento de casos",
                         attributeName: "nrDiasDobraCasos",
+                        attributeNameSecondary: "totalCases",
                         type: "choropleth",
-                        id: 8
+                        id: 2
                     },
                     {
                         name: "Taxa de crescimento de óbitos",
                         attributeName: "nrDiasDobraMortes",
+                        attributeNameSecondary: "deaths",
                         type: "choropleth",
-                        id: 9
+                        id: 3
                     },
                     {
                         name: "Número de casos",
                         attributeName: "totalCases",
                         type: "circles",
-                        id: 10,
+                        id: 4,
                         attributeLabel: "city",
                         scaleFactor: 0.03,
                         scaleLenged: [10000, 50000, 100000],
@@ -297,8 +300,8 @@ class DataSource {
                         attributeName: "deaths",
                         type: "circles",
                         attributeLabel: "city",
-                        id: 11,
-                        scaleFactor: 0.1,
+                        id: 5,
+                        scaleFactor: 0.3,
                         scaleLenged: [500, 5000, 10000],
                     },
 

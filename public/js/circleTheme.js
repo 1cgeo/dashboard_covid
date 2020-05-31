@@ -2,20 +2,32 @@ class CirclesLayer extends Layer {
     constructor(newOptions) {
         super(newOptions)
         this.currentProcessKey = ""
+        this.layers = []
         this.create()
     }
 
     remove() {
         if (this.currentLegend) {
             this.options.map.getMap().removeControl(this.currentLegend)
+            this.currentLegend = null
         }
         if (this.layer) {
             this.options.map.getFeatureGroup().removeLayer(this.layer)
         }
+        for (var i = this.layers.length; i--;) {
+            this.options.map.getFeatureGroup().removeLayer(this.layers[i])
+        }
+        this.layers = []
     }
 
     reload() {
-        this.remove()
+        for (var i = this.layers.length; i--;) {
+            this.options.map.getFeatureGroup().removeLayer(this.layers[i])
+        }
+        this.layers = []
+        if (this.layer) {
+            this.options.map.getFeatureGroup().removeLayer(this.layer)
+        }
         this.create()
     }
 
@@ -38,6 +50,8 @@ class CirclesLayer extends Layer {
             color: (this.options.attributeName == 'deaths') ? '#555555' : "#cf1111",
             weight: 1,
             fillOpacity: 0.3,
+            opacity: 0.3
+                /* pane: 'popover' */
         }
     }
 
@@ -47,7 +61,7 @@ class CirclesLayer extends Layer {
         this.options.map.getDataSource().getThemeData(
             this.options.layerId,
             this.options.type,
-            ((jsonData, options) => {
+            (jsonData, options) => {
                 jsonData = this.processGeoJSON(
                     this.options.layerId,
                     this.options.attributeName,
@@ -67,52 +81,70 @@ class CirclesLayer extends Layer {
                     }
                 ).addTo(this.options.map.getFeatureGroup())
                 this.updatePropSymbols()
-                this.createLegend()
-                this.layer.on('mouseover', function(e) {});
-            })
+                if (!this.currentLegend) this.createLegend()
+                this.loadVectorTile()
+            }
 
         )
     }
 
-    handleMouseover(clickPoint) {
-        return
-        if (this.popup) this.popup._close()
-        if (!this.layer) return
-        for (var i = this.layer.getLayers().length; i--;) {
-            if (!this.layer.getLayers()[i]._containsPoint(clickPoint)) continue
-            this.popup = L.popup({
-                    pane: 'popup',
-                    closeOnClick: true,
-                    autoClose: true
-                })
-                .setLatLng(this.options.map.getMap().layerPointToLatLng(clickPoint))
-                .setContent(this.getPopupContent(this.layer.getLayers()[i]))
-                .openOn(this.options.map.getMap())
+    loadVectorTile() {
+        var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
+        if (mapLayers.length < 1) { return }
+        for (var i = mapLayers.length; i--;) {
+            this.idField = mapLayers[i].idField
+            var isMain = mapLayers[i].main
+            var layer = this.createVectorGrid(
+                mapLayers[i],
+                mapLayers[i].style
+            )
+            if (isMain) {
+                this.mainVectorTile = layer
+            }
+            this.options.map.getFeatureGroup().addLayer(layer)
+            this.layers.push(layer)
         }
     }
 
-    getPopupContent(layer) {
-        var props = layer.feature.properties
-        if (this.options.attributeName == 'totalCases') {
-            return `<div class="popup">Local: ${props[this.options.attributeLabel]} <br> 
-                Casos: ${this.mFormatter(props[this.options.attributeName])}</div>`
-        } else {
-            return `<div class="popup">Local: ${props[this.options.attributeLabel]} <br> 
-                Óbitos: ${this.mFormatter(props[this.options.attributeName])}</div>`
-        }
+    createVectorGrid(mapLayer, style) {
+        var layer = L.vectorGrid.protobuf(
+            mapLayer.url, {
+                rendererFactory: L.canvas.tile,
+                vectorTileLayerStyles: {
+                    "data": style
+                },
+                interactive: true,
+                getFeatureId: (feature) => {
+                    return feature.properties[mapLayer.idField]
+                }
+            }
+        )
+        return layer
     }
 
-    mFormatter(num) {
-        return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + ' mil' : Math.sign(num) * Math.abs(num)
+    getPopupContent(e) {
+        var props = e.feature.properties
+        return `
+        <div class="grid-container-popup">
+            <div class="header-popup">
+                <div><b>${(props.city === 'TOTAL' )? props.state: props.city }</b></div>
+            </div>
+            <div class="row2-popup">
+                <div><b>Número de ${(this.options.attributeName === 'deaths')? 'óbitos': 'casos'}:</b></div>
+            </div>
+            <div class="value2-popup">
+                <div>${this.mFormatter(+props[this.options.attributeName])}</div>
+            </div>
+        </div>`
     }
 
     updatePropSymbols() {
         var attributeName = this.options.attributeName
-        this.layer.eachLayer((function(layer) {
+        this.layer.eachLayer((layer) => {
             var radius = this.calcPropRadius(layer.feature.properties[attributeName])
             layer.setRadius(radius);
-            //layer.bindPopup(this.getPopupContent(layer), { maxWidth: 700, offset: new L.Point(0, -radius) })
-        }).bind(this));
+            layer.bindPopup(this.getPopupContent.bind(this), { pane: 'popup', offset: new L.Point(0, -radius) })
+        })
     }
 
     calcPropRadius(attributeValue) {

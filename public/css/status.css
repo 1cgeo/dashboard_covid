@@ -1,10 +1,15 @@
 #cases-values,
 #deaths-values {
-    font-size: 30px;
+    font-size: 25px;
+}
+
+.tag-cases,
+.tag-deaths {
+    font-size: 10px;
 }
 
 #tag-location {
-    font-size: 40px;
+    font-size: 30px;
     text-align: center;
     text-anchor: middle;
 }
@@ -42,6 +47,7 @@
 .grid-container-status {
     display: grid;
     grid-template-areas: 'location location location location' 'tag-cases tag-cases tag-deaths tag-deaths' 'ncases ncases ndeaths ndeaths';
-    /*     max-height: 100px;
- */
+    margin-bottom: 10px;
+    padding-bottom: 15px;
+    border-radius: 10px;
 }

@@ -204,6 +204,8 @@ module.exports.getChoroplethThemeData = (location, startTimestamp, endTimestamp,
             date: info.date,
             totalCases: info.totalCases,
             newCases: info.newCases,
+            deaths: info.deaths,
+            newDeaths: info.newDeaths
         }
         if (location === 'city') {
             data.CD_GEOCMU = info.ibgeID

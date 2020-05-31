@@ -10,18 +10,19 @@ class HeatLayer extends Layer {
     remove() {
         if (this.currentLegend) {
             this.options.map.getMap().removeControl(this.currentLegend)
+            this.currentLegend = null
         }
-        //this.options.map.getFeatureGroup().removeLayer(this.layer)
         for (var i = this.layers.length; i--;) {
             this.options.map.getFeatureGroup().removeLayer(this.layers[i])
         }
         this.layers = []
-        this.options.map.getCurrentMapLayer().getLayers().forEach(((mapLayer) => {
-            this.options.map.getFeatureGroup().addLayer(mapLayer)
-        }).bind(this))
     }
 
     reload() {
+        for (var i = this.layers.length; i--;) {
+            this.options.map.getFeatureGroup().removeLayer(this.layers[i])
+        }
+        this.layers = []
         this.remove()
         this.create()
     }
@@ -41,14 +42,13 @@ class HeatLayer extends Layer {
                 }
                 var locations = []
                 for (var i = jsonData.length; i--;) {
-                    if (jsonData[i].latlong.length < 2) {
+                    if (!jsonData[i].latlong[0] || !jsonData[i].latlong[1]) {
                         continue
                     }
                     locations.push(jsonData[i].latlong.concat(jsonData[i][this.options.attributeName]))
                 }
                 if (processKey !== this.currentProcessKey) return
                 var layer = L.heatLayer(locations, {
-                    pane: 'heatpane',
                     interactive: true,
                     radius: 25,
                     blur: 15,
@@ -58,7 +58,7 @@ class HeatLayer extends Layer {
                 this.loadVectorTile()
                 this.options.map.getFeatureGroup().addLayer(layer, true)
                 this.layers.push(layer)
-                this.createLegend()
+                if (!this.currentLegend) this.createLegend()
             }
         )
     }
@@ -74,10 +74,7 @@ class HeatLayer extends Layer {
     }
 
     loadVectorTile() {
-        this.options.map.getCurrentMapLayer().getLayers().forEach((mapLayer) => {
-            this.options.map.getFeatureGroup().removeLayer(mapLayer)
-        })
-        var mapLayers = this.options.map.getCurrentMapLayer().getOptions().mapLayers
+        var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
         if (mapLayers.length < 1) { return }
         for (var i = mapLayers.length; i--;) {
             this.idField = mapLayers[i].idField
@@ -129,16 +126,14 @@ class HeatLayer extends Layer {
     createLegend() {
         var legend = L.control({ position: 'bottomright' });
         legend.onAdd = (function(map) {
-            var div = L.DomUtil.create('div', 'info legend'),
-                labels = []
-            var gradient = this.getGradientStyle()
-            var gradientKeys = Object.keys(gradient).map(v => +v).sort().reverse()
-            for (var key of gradientKeys) {
-                labels.push(
-                    `<i style="background: ${gradient[key]}"></i> &lt; ${100*+key}%`
-                )
-            }
-            div.innerHTML = labels.join('<br>');
+            var div = L.DomUtil.create('div')
+            div.innerHTML = `
+            <div class="container-gradient">
+            <div class="gradient-value"></div>
+            <div class="gradient-text1"><b>Alta</b></div>
+            <div class="gradient-text2"><b>Média</b></div>
+            <div class="gradient-text3"><b>Baixa</b></div>
+        </div>`
             return div;
         }).bind(this);
         legend.addTo(this.options.map.getMap());

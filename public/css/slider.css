@@ -16,10 +16,12 @@
 
 .footer-start {
     grid-area: footer-start;
+    text-align: left;
 }
 
 .footer-end {
     grid-area: footer-end;
+    text-align: right;
 }
 
 .footer-end,
@@ -37,6 +39,25 @@
     max-width: 500px;
 }
 
+@media only screen and (max-width: 600px) {
+    .slider-time {
+        max-width: 250px;
+        margin-left: 15px;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-areas: 'button slider slider null' 'button footer-start  footer-start null' 'button footer-end footer-end null';
+        grid-gap: 10px;
+    }
+    .footer-end {
+        text-align: left;
+    }
+}
+
 .noUi-connect {
     background: #b3d4fc;
+}
+
+#start-date.active {
+    color: red;
 }

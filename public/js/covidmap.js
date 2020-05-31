@@ -13,10 +13,12 @@ class CovidMap {
         this.dataSource = dataSource
         this.setOptions(newOptions)
         this.map = this.create(this.options)
-        this.connectEvents()
         this.featureGroup = this.createFeatureGroup()
         this.createPanels()
+        this.createControls()
         this.createSiderbar()
+        this.activeEventForwarder()
+        this.connectEvents()
         this.createLayersButtons(
             this.dataSource.getMapLayerNames(),
             this.loadMapData.bind(this)
@@ -36,6 +38,21 @@ class CovidMap {
         for (var key in options) {
             this.options[key] = options[key]
         }
+    }
+
+    createControls() {
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(this.map)
+    }
+
+    connectEvents() {
+        this.map.on('click', () => {
+            if (this.getCurrentPopoverLayer() && !this.getCurrentPopoverLayer().eventWasReceived()) {
+                this.zoomToDefaultBounds()
+                this.map.closePopup()
+            }
+        })
     }
 
     createPanels() {
@@ -69,22 +86,24 @@ class CovidMap {
         this.map.fitBounds(bbox)
     }
 
-
-    handleMapClick(e) {
-        var layerClicked
-        if (this.getCurrentPopoverLayer()) {
-            layerClicked = this.getCurrentPopoverLayer().handleClick(e.layerPoint)
-        }
-        this.triggerChangeLocation(layerClicked)
-        if (!layerClicked) {
-            this.setBounds(this.options.bounds)
-        }
+    activeEventForwarder() {
+        const myEventForwarder = new L.eventForwarder({
+            map: this.map,
+            events: {
+                click: true,
+                mousemove: true
+            },
+            throttleMs: 100,
+            throttleOptions: {
+                leading: true,
+                trailing: false
+            }
+        });
+        myEventForwarder.enable()
     }
 
-    handleMapMouseMove(e) {
-        if (['circles', 'choropleth'].includes(this.getCurrentThemeLayer().getOptions().type)) {
-            this.getCurrentThemeLayer().handleMouseover(e.layerPoint)
-        }
+    zoomToDefaultBounds() {
+        this.setBounds(this.options.bounds)
     }
 
     create(options) {
@@ -95,11 +114,6 @@ class CovidMap {
                 maxBounds: this.options.bounds,
             }
         ).fitBounds(this.options.bounds)
-    }
-
-    connectEvents() {
-        this.map.on('click', this.handleMapClick.bind(this))
-        this.map.on('mousemove', this.handleMapMouseMove.bind(this))
     }
 
     createFeatureGroup() {
@@ -155,7 +169,7 @@ class CovidMap {
         $("input[name='layer']").change(function(e) { cb($(this).val()) })
     }
 
-    createThemesButtons(themes, cb) {
+    createThemesButtons(themes, select, cb) {
         var id = 'panel-styles'
         this.sidebar.removePanel(id);
         var buttonsDiv = $("<div></div>")
@@ -169,7 +183,7 @@ class CovidMap {
                 .attr("class", "mdl-radio__button")
                 .attr("name", "theme")
                 .attr("value", elem.id)
-            idx == 2 ? input.attr("checked", true) : ""
+            idx == select ? input.attr("checked", true) : ""
             var text = $("<span></span>")
                 .attr("class", "mdl-radio__label")
                 .text(elem.name)
@@ -179,7 +193,7 @@ class CovidMap {
         })
         var panelContent = {
             id: id,
-            tab: '<span class="material-icons">palette</span>',
+            tab: '<i class="material-icons">palette</i>',
             pane: buttonsDiv.html(),
             title: 'Temas',
         };
@@ -193,44 +207,49 @@ class CovidMap {
             return
         }
         this.getCurrentThemeLayer().reload()
-        this.getCurrentMapLayer().reload()
 
+    }
+
+    setCurrentLayerOptions(layerOptions) {
+        this.layerOptions = layerOptions
+    }
+
+    getCurrentLayerOptions() {
+        return this.layerOptions
     }
 
     loadMapData(layerId) {
+        var themeId = 2
         var layerOptions = this.dataSource.getMapLayer(+layerId)
+        if (this.getCurrentThemeLayer()) {
+            themeId = this.getCurrentThemeLayer().getOptions().id
+        }
         this.createThemesButtons(
             layerOptions.themeLayers,
+            themeId,
             this.loadThemeLayer.bind(this)
         )
         this.loadPopoverLayer(layerOptions)
-        this.loadVectorTile(layerOptions)
-        this.loadThemeLayer(layerOptions.themeLayers[2].id)
+        this.setCurrentLayerOptions(layerOptions)
+        this.loadThemeLayer(themeId)
     }
 
     loadThemeLayer(themeLayerId) {
-        var themeOptions = this.getCurrentMapLayer().getThemeLayer(themeLayerId)
+        this.map.closePopup()
+        var themeOptions = this.getCurrentLayerOptions().themeLayers.find((theme) => {
+            return theme.id == themeLayerId
+        })
         if (!themeOptions) return
+        themeOptions.layerId = this.getCurrentLayerOptions().id
+        themeOptions.idField = this.getCurrentLayerOptions().idField
         if (this.getCurrentThemeLayer()) this.getCurrentThemeLayer().remove()
         themeOptions.map = this
         var factories = new Factories()
         this.currentThemeLayer = factories.createLayer(themeOptions.type, themeOptions)
     }
 
-    getCurrentMapLayer() {
-        return this.currentMapLayer
-    }
-
     getCurrentThemeLayer() {
         return this.currentThemeLayer
-    }
-
-    loadVectorTile(layerOptions) {
-        if (!layerOptions) return
-        if (this.getCurrentMapLayer()) this.getCurrentMapLayer().remove()
-        layerOptions.map = this
-        var factories = new Factories()
-        this.currentMapLayer = factories.createLayer('vectorTile', layerOptions)
     }
 
     getCurrentPopoverLayer() {

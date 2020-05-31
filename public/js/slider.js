@@ -87,10 +87,12 @@ class SliderDate {
 
     setPlayButtonStyle() {
         $('.play-button i').text('play_arrow')
+        $('#start-date').removeClass('active')
     }
 
     setPauseButtonStyle() {
         $('.play-button i').text('pause')
+        $('#start-date').addClass('active')
     }
 
     sleep(ms) {
@@ -104,20 +106,22 @@ class SliderDate {
         }
         this.desable()
         var playTimeInterval = this.dateSlider.noUiSlider.get()
-        var d1 = new Date(playTimeInterval[0])
-        var d2 = new Date(playTimeInterval[1])
-        while (d1 < d2) {
+        var startDate = new Date(playTimeInterval[0])
+        var currentDate = new Date(playTimeInterval[0])
+        var endDate = new Date(playTimeInterval[1])
+        while (currentDate < endDate) {
             if (!this.playActive) {
                 return
             }
-            d1.setDate(d1.getDate() + 1)
-            this.dateSlider.noUiSlider.set([d1, d2])
-            this.playCallback(this.dateSlider.noUiSlider.get())
+            currentDate.setDate(currentDate.getDate() + 1)
+            this.dateSlider.noUiSlider.set([currentDate, endDate])
+            this.playCallback([startDate, currentDate])
             await this.sleep(4000)
         }
     }
 
     stop() {
+        this.playCallback(this.dateSlider.noUiSlider.get())
         this.enable()
         this.setPlayButtonStyle()
     }

@@ -1,0 +1,36 @@
+.header-popup {
+    grid-area: header;
+    min-height: 50px;
+}
+
+.row1-popup {
+    grid-area: row1;
+}
+
+.row2-popup {
+    grid-area: row2;
+}
+
+.value1-popup {
+    grid-area: value1;
+}
+
+.value2-popup {
+    grid-area: value2;
+}
+
+.header-popup {}
+
+.header-popup,
+.row1-popup,
+.value1-popup {
+    border-bottom: 1px solid;
+}
+
+.grid-container-popup {
+    display: grid;
+    grid-template-areas: 'header header header header' 'header header header header' 'row1 row1 value1 value1' 'row2 row2 value2 value2';
+    margin-bottom: 10px;
+    border-radius: 10px;
+    width: 200px;
+}

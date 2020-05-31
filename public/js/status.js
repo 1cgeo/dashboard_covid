@@ -11,19 +11,17 @@ class Status {
                 this.clean()
                 return
             }
-            this.setTotalCases(data.reduce((acc, obj) => {
-                if (!acc) {
-                    return +obj.newCases
-                }
-                return (+acc + +obj.newCases)
-            }))
-            this.setTotalDeaths(data.reduce((acc, obj) => {
-                if (!acc) {
-                    return +obj.newDeaths
-                }
-                return (+acc + +obj.newDeaths)
-            }))
+            this.setTotalCases(this.reduceValue(data, 'newCases'))
+            this.setTotalDeaths(this.reduceValue(data, 'newDeaths'))
         })
+    }
+
+    reduceValue(data, field) {
+        var total = 0
+        for (var i = data.length; i--;) {
+            total += +data[i][field]
+        }
+        return total
     }
 
     update() {

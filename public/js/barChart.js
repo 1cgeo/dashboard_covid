@@ -88,7 +88,7 @@ class BarChart {
         var data = jsonData.map((elem) => {
             var d = {}
             d[attributeX] = new Date(elem[attributeX].replace(/\-/g, '/')).getTime()
-            d[attributeY] = (+elem[attributeY] / this.maxValue)
+            d[attributeY] = (this.maxValue == 0) ? 0 : (+elem[attributeY] / this.maxValue)
             return d
         })
         return data.sort(function(a, b) {
@@ -278,16 +278,12 @@ class BarChart {
 
 
     draw(newData) {
-        /* if (newData) {
-          this.currentData = newData
-          this.loadData()
-        } */
         this.svg.attr('width', this.parent.offsetWidth - this.getMargin().right)
         var width = this.getCurrentWidth()
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-        this.drawArea(height)
+            //this.drawArea(height)
         this.drawBars(height)
             //this.drawLine()
         this.drawLineYMiddle()

@@ -6,7 +6,8 @@
     <title>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-    <link rel="shortcut icon" href="images/eb.png">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="stylesheet" href="css/popup.css">
     <link rel="stylesheet" href="css/loader.css">
     <link rel="stylesheet" href="lib/leaflet.css">
     <link rel="stylesheet" href="lib/googlefonts.css">
@@ -32,7 +33,7 @@
                     <img src="images/eb.png">
                 </div>
                 <div class="title">
-                    <h3>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</h3>
+                    <b>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</b>
                 </div>
                 <div class="dsg-img">
                     <img src="images/dsg.png">
@@ -42,7 +43,7 @@
         <main class="mdl-layout__content mdl-color--grey-200">
             <div class="mdl-grid">
 
-                <div id="map-container" class="mdl-shadow--2dp mdl-color--white	 mdl-cell mdl-cell--12-col mdl-cell--7-col-desktop mdl-grid">
+                <div id="map-container" class="mdl-shadow--2dp mdl-color--white	 mdl-cell mdl-cell--12-col mdl-cell--8-col-desktop mdl-grid">
 
                     <div id="map" class="mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
                         <!-- sidebar -->
@@ -60,29 +61,29 @@
                                 <div id="slider-date">
                                 </div>
                             </div>
-                            <div class="footer-start" style="text-align: left;" id="start-date"></div>
-                            <div class="footer-end" style="text-align: right;" id="end-date"></div>
+                            <div class="footer-start" id="start-date"></div>
+                            <div class="footer-end" id="end-date"></div>
 
                         </div>
 
                     </div>
                 </div>
-                <div id="statistic-container" class="mdl-grid--no-spacing mdl-cell mdl-cell--5-col-desktop mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--8-tablet mdl-grid">
+                <div id="statistic-container" class="mdl-grid--no-spacing mdl-cell mdl-cell--4-col-desktop mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--8-tablet mdl-grid">
 
                     <!--  status -->
                     <div class="mdl-grid--no-spacing mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <div style="margin-bottom: 10px;" class="mdl-color--white mdl-shadow--2dp grid-container-status">
+                        <div class="mdl-color--white mdl-shadow--2dp grid-container-status">
                             <div class="location">
                                 <h4 id="tag-location"></h4>
                             </div>
                             <div class="tag-cases">
-                                <span>Casos</span>
+                                <b>Casos</b>
                             </div>
                             <div class="ncases">
                                 <span id="cases-values"></span>
                             </div>
                             <div class="tag-deaths">
-                                <span>Óbitos</span>
+                                <b>Óbitos</b>
                             </div>
                             <div class="ndeaths">
                                 <span id="deaths-values"></span>
@@ -91,21 +92,22 @@
                         </div>
 
                     </div>
-                    <div style="margin-bottom: 10px;" class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table mdl-grid--no-spacing">
-                        <div style="text-align: center;">Casos</div>
+                    <div id="chart-container-cases" class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table mdl-grid--no-spacing">
+                        <div style="text-align: center;"><b>Casos</b></div>
                         <div><svg id="graph-cases"></svg></div>
                     </div>
-                    <div class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <div style="text-align: center;">Óbitos</div>
+                    <div class="chart-container-deaths mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
+                        <div style="text-align: center;"><b>Óbitos</b></div>
                         <div><svg id="graph-deaths"></svg></div>
                     </div>
                 </div>
             </div>
-            <footer class="mdl-mini-footer mdl-color--grey-800">
+            <footer class="mdl-mini-footer mdl-color--blue-grey">
                 <div class="mdl-mini-footer__right-section">
-                    <b>Desenvolvido pelo 1º CGEO</b>
-                    <br />
-                    <b>Fonte de dados: github.com/wcota/covid19br</b>
+                    <div>Fonte de dados: github.com/wcota/covid19br</div>
+                </div>
+                <div class="mdl-mini-footer__left-section">
+                    <div>Desenvolvido pelo 1º CGEO</div>
                 </div>
 
             </footer>
@@ -120,12 +122,12 @@
 <script src="lib/material.min.js"></script>
 <script src="lib/leaflet-sidebar.js"></script>
 <script src="lib/leaflet.heat.js"></script>
+<script src="lib/L.eventForwarder.js"></script>
 <script src="js/http.js"></script>
 <script src="js/dataSource.js"></script>
 <script src="js/layer.js"></script>
 <script src="js/popoverLayer.js"></script>
 <script src="js/circleTheme.js"></script>
-<script src="js/vectorTile.js"></script>
 <script src="js/heatTheme.js"></script>
 <script src="js/choroplethTheme.js"></script>
 <script src="js/covidmap.js"></script>

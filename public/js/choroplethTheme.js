@@ -7,9 +7,6 @@ class ChoroplethLayer extends Layer {
     }
 
     reload() {
-        if (this.currentLegend) {
-            this.options.map.getMap().removeControl(this.currentLegend)
-        }
         for (var i = this.vectorTiles.length; i--;) {
             this.options.map.getFeatureGroup().removeLayer(this.vectorTiles[i])
         }
@@ -19,14 +16,34 @@ class ChoroplethLayer extends Layer {
     remove() {
         if (this.currentLegend) {
             this.options.map.getMap().removeControl(this.currentLegend)
+            this.currentLegend = null
         }
         for (var i = this.vectorTiles.length; i--;) {
             this.options.map.getFeatureGroup().removeLayer(this.vectorTiles[i])
         }
         this.layers = []
-        this.options.map.getCurrentMapLayer().getLayers().forEach(((mapLayer) => {
-            this.options.map.getFeatureGroup().addLayer(mapLayer)
-        }).bind(this))
+    }
+
+    getLastData(data, id, dateField) {
+        var listedId = [];
+        var reduced = [];
+        for (var i = data.length; i--;) {
+            var idx = listedId.indexOf(data[i][id])
+            if (idx < 0) {
+                listedId.push(data[i][id])
+                reduced.push(data[i])
+            } else {
+                var currentDate = new Date(reduced[idx][dateField].replace('-', '/'))
+                var date = new Date(data[i][dateField].replace('-', '/'))
+                if (currentDate < date) {
+                    reduced[idx] = data[i]
+                }
+            }
+        }
+        return {
+            data: reduced,
+            ids: listedId
+        }
     }
 
     create() {
@@ -37,11 +54,9 @@ class ChoroplethLayer extends Layer {
             this.options.type,
             (jsonData) => {
                 if (jsonData.length < 1) { return }
-                var lastData = this.getLastData(jsonData, this.options.idField, 'date')
-                this.options.map.getCurrentMapLayer().getLayers().forEach((mapLayer) => {
-                    this.options.map.getFeatureGroup().removeLayer(mapLayer)
-                })
-                var mapLayers = this.options.map.getCurrentMapLayer().getOptions().mapLayers
+                var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
+                var mainLayer = mapLayers.find((l) => l.main)
+                var lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
                 if (mapLayers.length < 1) { return }
                 if (processKey !== this.currentProcessKey) return
                 for (var i = mapLayers.length; i--;) {
@@ -60,7 +75,8 @@ class ChoroplethLayer extends Layer {
                         this.mainVectorTile = layer
                     }
                 }
-                this.createLegend()
+                if (!this.currentLegend) this.createLegend()
+                this.connectEvents()
             }
         )
     }
@@ -74,17 +90,15 @@ class ChoroplethLayer extends Layer {
                 vectorTileLayerStyles: {
                     "data": (feat) => {
                         if (loadDefaultStyle) return mapLayer.style
-                        for (var i = lastData.length; i--;) {
-                            if (lastData[i][mapLayer.idField] === feat[mapLayer.idField]) {
-                                feat.rate = lastData[i][attrLabel1]
-                                feat.cases = lastData[i][attrLabel2]
-                                return this.getStyle(
-                                    lastData[i][attrLabel1],
-                                    lastData[i][attrLabel2]
-                                )
-                            }
+                        var idx = lastData.ids.indexOf(feat[mapLayer.idField])
+                        if (idx >= 0) {
+                            feat.rate = +lastData.data[idx][attrLabel1]
+                            feat[attrLabel2] = +lastData.data[idx][attrLabel2]
+                            return this.getStyle(feat.rate, feat[attrLabel2])
                         }
-                        return this.getStyle(0, 0)
+                        feat.rate = 0
+                        feat[attrLabel2] = 0
+                        return this.getStyle(feat.rate, feat[attrLabel2])
                     }
                 },
                 interactive: true,
@@ -94,6 +108,47 @@ class ChoroplethLayer extends Layer {
             }
         )
         return layer
+    }
+
+    connectEvents() {
+        this.mainVectorTile
+            .on('click', (e) => {
+                this.showPopup(e)
+            })
+    }
+
+    showPopup(e) {
+        L.popup({
+                pane: 'popup',
+                closeButton: false
+            })
+            .setLatLng(
+                this.options.map.getMap().layerPointToLatLng(e.layerPoint)
+            )
+            .setContent(this.getPopupContent(e))
+            .openOn(this.options.map.getMap());
+    }
+
+    getPopupContent(e) {
+        var props = e.layer.properties
+        return `
+        <div class="grid-container-popup">
+            <div class="header-popup">
+                <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
+            </div>
+            <div class="row1-popup">
+                <div><b>Taxa de crescimento:</b></div>
+            </div>
+            <div class="value1-popup">
+                <div>${props.rate}</div>
+            </div>
+            <div class="row2-popup">
+                <div><b>Número de ${(this.options.attributeName === 'deaths')? 'óbitos' : 'casos'}:</b></div>
+            </div>
+            <div class="value2-popup">
+                <div>${this.mFormatter((this.options.attributeName === 'deaths')? +props.deaths: +props.totalCases)}</div>
+            </div>
+        </div>`
     }
 
     getStyle(attrLabel1, attrLabel2) {
@@ -109,10 +164,9 @@ class ChoroplethLayer extends Layer {
     }
 
     getColor(attrLabel1, attrLabel2) {
-        if (+attrLabel1 == 0) {
-            if (+attrLabel2 < 100) {
-                return '#f2f2f2'
-            }
+        if (+attrLabel2 === 0) {
+            return '#f2f2f2'
+        } else if (+attrLabel2 < 100) {
             return '#e6e6e6'
         } else {
             return attrLabel1 < 7 ? '#ce0a05' :
@@ -177,36 +231,4 @@ class ChoroplethLayer extends Layer {
         legend.addTo(this.options.map.getMap());
         this.currentLegend = legend
     }
-
-
-    handleMouseover(clickPoint) {
-        return
-        /*  if (this.popup) this.popup._close()
-         if (!this.mainVectorTile) return
-         var layer = this.getClickedFeature(clickPoint)
-         if (!layer) return
-         this.popup = L.popup({
-                 pane: 'popup',
-                 closeOnClick: true,
-                 autoClose: true
-             })
-             .setLatLng(this.options.map.getMap().layerPointToLatLng(clickPoint))
-             .setContent(this.getPopupContent(layer))
-             .openOn(this.options.map.getMap()) */
-    }
-
-    getPopupContent(layer) {}
-
-    getClickedFeature(clickPoint) {
-        for (var tkey in this.mainVectorTile._vectorTiles) {
-            var tile = this.mainVectorTile._vectorTiles[tkey]
-            if (!tile._layers) continue
-            for (var fkey in tile._layers) {
-                var feat = tile._layers[fkey]
-                if (!feat._containsPoint(clickPoint.subtract(tile.getOffset()))) continue
-                return feat
-            }
-        }
-    }
-
 }

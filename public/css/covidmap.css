@@ -4,10 +4,6 @@
         background-color: rgb(255, 254, 254);
     }
     
-    img.leaflet-tile {
-        pointer-events: none;
-    }
-    
     .mdl-button-group button {
         background-color: rgb(197, 196, 196);
         color: white;
@@ -151,8 +147,9 @@
     }
     
     .grid-choropleth-legend {
-        width: 50px;
-        font-size: 12px;
+        transform: scale(0.7, 0.9);
+        width: 40px;
+        font-size: 15px;
         display: grid;
         grid-template-areas: 'y y y y y y' 'a b c d e f' 'g h i j l m';
         margin-bottom: 10px;
@@ -166,4 +163,41 @@
         border-radius: 5px;
         width: 200px;
         height: 50px;
+    }
+    
+    #map-container {
+        border-radius: 10px;
+    }
+    
+    .gradient-value {
+        height: 100px;
+        width: 20px;
+        background-image: linear-gradient(red, lime, yellow, purple, gray);
+    }
+    
+    .gradient-value {
+        grid-area: value;
+        text-align: center;
+    }
+    
+    .gradient-text1 {
+        margin-top: 10px;
+        grid-area: text1;
+        text-align: center;
+    }
+    
+    .gradient-text2 {
+        grid-area: text2;
+        text-align: center;
+    }
+    
+    .gradient-text3 {
+        grid-area: text3;
+        text-align: center;
+    }
+    
+    .container-gradient {
+        width: 80px;
+        display: grid;
+        grid-template-areas: 'value text1' 'value text2' 'value text3';
     }
