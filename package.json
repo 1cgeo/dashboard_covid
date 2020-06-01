@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "download": "node ./server/data/covid19br/download.js"
+    "download": "node ./server/data/covid19br/download.js",
+    "preparar": "node ./server/data/covid19br/preparar.js"
   },
   "engines": {
     "node": ">=11.0.0",
