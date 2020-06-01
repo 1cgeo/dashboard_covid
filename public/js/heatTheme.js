@@ -4,6 +4,10 @@ class HeatLayer extends Layer {
         super(newOptions)
         this.currentProcessKey = ""
         this.layers = []
+        this.heatData = {
+            ids: [],
+            data: []
+        }
         this.create()
     }
 
@@ -24,22 +28,65 @@ class HeatLayer extends Layer {
             this.options.map.getFeatureGroup().removeLayer(this.layers[i])
         }
         this.layers = []
-        this.remove()
         this.create()
     }
 
     getPopupContent(e) {
         var props = e.layer.properties
+        var featId = (props.CD_GEOCUF) ? props.CD_GEOCUF : props.CD_GEOCMU
+        var idx = this.heatData.ids.indexOf(featId)
+        if (idx < 0) return
+        var featData = this.heatData.data[idx]
         return `<div class="grid-container-popup">
             <div class="header-popup">
                 <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
             </div>
+            <div class="row2-popup">
+                    <div><b>Número de ${(this.options.attributeName === 'deaths')? 'óbitos': 'casos'}:</b></div>
+                </div>
+                <div class="value2-popup">
+                    <div>${this.mFormatter(+featData[this.options.attributeName])}</div>
+                </div>
         </div>`
+    }
+
+    getLastData(data, id, dateField) {
+        var listedId = [];
+        var reduced = [];
+        for (var i = data.length; i--;) {
+            var idx = listedId.indexOf(data[i][id])
+            if (idx < 0) {
+                listedId.push(data[i][id])
+                reduced.push(data[i])
+            } else {
+                var currentDate = new Date(reduced[idx][dateField].replace('-', '/'))
+                var date = new Date(data[i][dateField].replace('-', '/'))
+                if (currentDate < date) {
+                    reduced[idx] = data[i]
+                }
+            }
+        }
+        return {
+            data: reduced,
+            ids: listedId
+        }
     }
 
     create() {
         var processKey = this.createUUID()
         this.currentProcessKey = processKey
+        this.heatData.ids = []
+        this.heatData.data = []
+        if (this.options.layerId === 0) {
+            this.options.map.getDataSource().getThemeData(
+                0,
+                'choropleth',
+                (jsonData) => {
+                    this.heatData = this.getLastData(jsonData, 'CD_GEOCUF', 'date')
+                }
+
+            )
+        }
         this.options.map.getDataSource().getThemeData(
             this.options.layerId,
             this.options.type,
@@ -54,6 +101,10 @@ class HeatLayer extends Layer {
                 for (var i = jsonData.length; i--;) {
                     if (!jsonData[i].latlong[0] || !jsonData[i].latlong[1]) {
                         continue
+                    }
+                    if (this.options.layerId === 1) {
+                        this.heatData.ids.push(jsonData[i].ibgeID)
+                        this.heatData.data.push(jsonData[i])
                     }
                     locations.push(jsonData[i].latlong.concat(jsonData[i][this.options.attributeName]))
                 }

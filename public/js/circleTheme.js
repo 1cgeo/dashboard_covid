@@ -109,9 +109,9 @@ class CirclesLayer extends Layer {
             var layer = this.createVectorGrid(
                 mapLayers[i],
                 (!isMain) ? mapLayers[i].style : {
-                    weight: 2,
+                    weight: 1,
                     opacity: 1,
-                    color: 'white',
+                    color: '#cfcfcf',
                     fill: true,
                     fillOpacity: 0.2,
                     fillColor: "#cfcfcf"

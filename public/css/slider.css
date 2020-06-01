@@ -24,14 +24,20 @@
     text-align: right;
 }
 
+.footer-current {
+    grid-area: footer-current;
+    text-align: center;
+}
+
 .footer-end,
+.footer-current,
 .footer-start {
     white-space: pre;
 }
 
 .grid-container {
     display: grid;
-    grid-template-areas: 'button slider slider slider' 'button footer-start null footer-end';
+    grid-template-areas: 'button slider slider slider' 'button footer-start footer-current footer-end';
     grid-gap: 10px;
     padding-right: 100px;
 }
@@ -59,6 +65,6 @@
     background: #b3d4fc;
 }
 
-#start-date.active {
+#current-date.active {
     color: red;
 }

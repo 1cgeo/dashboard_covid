@@ -178,7 +178,7 @@ class ChoroplethLayer extends Layer {
             color: 'white',
             dashArray: '2',
             fill: true,
-            fillOpacity: 0.7,
+            fillOpacity: 1,
             fillColor: this.getColor(attrLabel1, attrLabel2)
         };
     }

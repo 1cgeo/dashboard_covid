@@ -89,12 +89,12 @@ class SliderDate {
 
     setPlayButtonStyle() {
         $('.play-button i').text('play_arrow')
-        $('#start-date').removeClass('active')
+        $('#current-date').removeClass('active')
     }
 
     setPauseButtonStyle() {
         $('.play-button i').text('stop')
-        $('#start-date').addClass('active')
+        $('#current-date').addClass('active')
     }
 
     sleep(ms) {
@@ -113,14 +113,12 @@ class SliderDate {
         var endDate = new Date(playTimeInterval[1])
         while (currentDate < endDate) {
             if (!this.playActive) {
-                $(`#${this.elementIds[0]}`).text(
-                    `Data inicial:    ${startDate.getDate()}/${this.months[startDate.getMonth()]}/${startDate.getFullYear()}`
-                )
+                $('#current-date').text('')
                 return
             }
             currentDate.setDate(currentDate.getDate() + 1)
-            $(`#${this.elementIds[0]}`).text(
-                    `Data inicial:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
+            $('#current-date').text(
+                    `Data atual:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
                 )
                 //this.dateSlider.noUiSlider.set([currentDate, endDate])
             this.playCallback([startDate, currentDate])
