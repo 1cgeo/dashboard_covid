@@ -41,22 +41,22 @@ class CirclesLayer extends Layer {
     }
 
     processGeoJSON(layerId, attributeName, jsonData) {
-        if (layerId === 0 && attributeName == 'totalCases') {
-            jsonData.features = this.getUniqueGeojsonFeatures(jsonData.features, "state")
-        } else if (layerId === 0 && attributeName == 'deaths') {
-            jsonData.features = this.getReduceGeojsonFeatures(jsonData.features, "state", "deaths")
-        } else if (layerId === 1 && attributeName == 'totalCases') {
-            jsonData.features = this.getUniqueGeojsonFeatures(jsonData.features, "city")
-        } else if (layerId === 1 && attributeName == 'deaths') {
-            jsonData.features = this.getReduceGeojsonFeatures(jsonData.features, "city", "deaths")
-        }
-        return jsonData
+        /* if (layerId === 0 && attributeName == 'cases') {
+            jsonData.features = this.getUniqueGeojsonFeatures(jsonData.features, "ibgeID")
+        } else if (layerId === 0 && attributeName == 'newDeaths') {
+            jsonData.features = this.getReduceGeojsonFeatures(jsonData.features, "ibgeID", "newDeaths")
+        } else if (layerId === 1 && attributeName == 'cases') {
+            jsonData.features = this.getUniqueGeojsonFeatures(jsonData.features, "ibgeID")
+        } else if (layerId === 1 && attributeName == 'newDeaths') {
+            jsonData.features = this.getReduceGeojsonFeatures(jsonData.features, "ibgeID", "newDeaths")
+        } */
+        return this.getReduceGeojsonFeatures(jsonData.features, "ibgeID", attributeName)
     }
 
     getCircleStyle() {
         return {
-            fillColor: (this.options.attributeName == 'deaths') ? '#555555' : '#CF1111',
-            color: (this.options.attributeName == 'deaths') ? '#555555' : "#cf1111",
+            fillColor: (this.options.attributeName == 'newDeaths') ? '#555555' : '#CF1111',
+            color: (this.options.attributeName == 'newDeaths') ? '#555555' : "#cf1111",
             weight: 1,
             fillOpacity: 0.3,
             opacity: 0.3

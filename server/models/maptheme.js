@@ -152,6 +152,8 @@ module.exports.getCircleThemeData = (location, startTimestamp, endTimestamp, cb)
         feat.geometry.coordinates = (location === 'city') ? [info.lon, info.lat] : [info.CENTROID_X, info.CENTROID_Y];
         feat.properties.totalCases = info.totalCases;
         feat.properties.deaths = info.deaths;
+        feat.properties.newCases = info.newCases;
+        feat.properties.newDeaths = info.newDeaths;
         feat.properties.state = info.state;
         feat.properties.city = info.city;
         feat.properties.date = info.date;

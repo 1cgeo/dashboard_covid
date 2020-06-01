@@ -85,7 +85,7 @@ class Layer {
                 listedId.push(features[i].properties[id])
                 reduced.push(features[i])
             } else {
-                reduced[idx][comp] = +reduced[idx][comp] + +features[i].properties[comp]
+                reduced[idx].properties[comp] = +reduced[idx].properties[comp] + +features[i].properties[comp]
             }
         }
         return reduced

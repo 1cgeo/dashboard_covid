@@ -209,7 +209,7 @@ class DataSource {
                     },
                     {
                         name: "Número de casos",
-                        attributeName: "totalCases",
+                        attributeName: "newCases",
                         type: "circles",
                         id: 4,
                         attributeLabel: "NM_ESTADO",
@@ -219,7 +219,7 @@ class DataSource {
                     },
                     {
                         name: "Número de óbitos",
-                        attributeName: "deaths",
+                        attributeName: "newDeaths",
                         attributeLabel: "NM_ESTADO",
                         type: "circles",
                         id: 5,
@@ -288,7 +288,7 @@ class DataSource {
                     },
                     {
                         name: "Número de casos",
-                        attributeName: "totalCases",
+                        attributeName: "newCases",
                         type: "circles",
                         id: 4,
                         attributeLabel: "city",
@@ -297,7 +297,7 @@ class DataSource {
                     },
                     {
                         name: "Número de óbitos",
-                        attributeName: "deaths",
+                        attributeName: "newDeaths",
                         type: "circles",
                         attributeLabel: "city",
                         id: 5,
