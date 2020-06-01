@@ -8,6 +8,7 @@ class HeatLayer extends Layer {
     }
 
     remove() {
+        this.currentProcessKey = ""
         if (this.currentLegend) {
             this.options.map.getMap().removeControl(this.currentLegend)
             this.currentLegend = null
@@ -25,6 +26,15 @@ class HeatLayer extends Layer {
         this.layers = []
         this.remove()
         this.create()
+    }
+
+    getPopupContent(e) {
+        var props = e.layer.properties
+        return `<div class="grid-container-popup">
+            <div class="header-popup">
+                <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
+            </div>
+        </div>`
     }
 
     create() {

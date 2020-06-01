@@ -14,6 +14,7 @@ class ChoroplethLayer extends Layer {
     }
 
     remove() {
+        this.currentProcessKey = ""
         if (this.currentLegend) {
             this.options.map.getMap().removeControl(this.currentLegend)
             this.currentLegend = null
@@ -159,7 +160,7 @@ class ChoroplethLayer extends Layer {
                 <div><b>Taxa de crescimento:</b></div>
             </div>
             <div class="value1-popup">
-                <div>${data[this.options.attributeName]}</div>
+                <div>${data[this.options.attributeName]} dias</div>
             </div>
             <div class="row2-popup">
                 <div><b>Número de ${(this.getAttributeName() === 'deaths')? 'óbitos' : 'casos'}:</b></div>
@@ -185,9 +186,9 @@ class ChoroplethLayer extends Layer {
     getColor(attrLabel1, attrLabel2) {
         var colors = this.getHexColors()
         if (+attrLabel2 === 0) {
-            return '#238b45'
+            return '#f2f2f2'
         } else if (+attrLabel2 < this.getLimiteValue()) {
-            return '#bae4b3'
+            return '#e6e6e6'
         } else {
             return attrLabel1 < 7 ? colors[3] :
                 attrLabel1 < 14 ? colors[2] :
@@ -205,7 +206,7 @@ class ChoroplethLayer extends Layer {
     }
 
     getHexColors() {
-        return (this.getAttributeName() === 'deaths') ? ['#f7f7f7', '#cccccc', '#969696', '#525252'] : ['#fee5d9', '#fcae91', '#fb6a4a', '#cb181d']
+        return (this.getAttributeName() === 'deaths') ? ['#fee5d9', '#fcae91', '#fb6a4a', '#cb181d'] : ['#ffffcc', '#a1dab4', '#41b6c4', '#225ea8']
     }
 
     getLegendContent() {
@@ -232,11 +233,11 @@ class ChoroplethLayer extends Layer {
                     </div>
                 </div>
                 <div class="e" style="width:70px; height:15px; background-color: none;">
-                    <div style="width:40px; height:10px; background-color: #bae4b3;">
+                    <div style="width:40px; height:10px; background-color: #e6e6e6;">
                     </div>
                 </div>
                 <div class="f" style="width:30px; height:15px; background-color: none;">
-                    <div style="width:40px; height:10px; background-color: #238b45;">
+                    <div style="width:40px; height:10px; background-color: #f2f2f2;">
                     </div>
                 </div>
                 <div class="h" style="width:50px;">

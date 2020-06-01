@@ -11,6 +11,7 @@ class CirclesLayer extends Layer {
     }
 
     remove() {
+        this.currentProcessKey = ""
         if (this.currentLegend) {
             this.options.map.getMap().removeControl(this.currentLegend)
             this.currentLegend = null
@@ -108,8 +109,8 @@ class CirclesLayer extends Layer {
             var layer = this.createVectorGrid(
                 mapLayers[i],
                 (!isMain) ? mapLayers[i].style : {
-                    weight: 1,
-                    opacity: 0.4,
+                    weight: 2,
+                    opacity: 1,
                     color: 'white',
                     fill: true,
                     fillOpacity: 0.2,

@@ -2,8 +2,8 @@ class CovidMap {
     constructor(dataSource, newOptions) {
         this.options = {
             bounds: [
-                [28.14950321154457, 13.359375000000002],
-                [-44.46515101351963, -116.89453125000001]
+                [6.577303118123887, 2.3735230318848815],
+                [-34.957995310867915, -104.94093009311513]
             ]
         }
         this.events = new Signal()
@@ -208,7 +208,7 @@ class CovidMap {
     }
 
     loadMapData(layerId) {
-        var themeId = 2
+        var themeId = 0
         var layerOptions = this.dataSource.getMapLayer(+layerId)
         if (this.getCurrentThemeLayer()) {
             themeId = this.getCurrentThemeLayer().getOptions().id
