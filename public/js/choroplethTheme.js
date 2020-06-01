@@ -3,14 +3,50 @@ class ChoroplethLayer extends Layer {
         super(newOptions)
         this.currentProcessKey = ""
         this.vectorTiles = []
+        this.limits = []
+        this.scenes = []
         this.create()
     }
 
     reload() {
-        for (var i = this.vectorTiles.length; i--;) {
-            this.options.map.getFeatureGroup().removeLayer(this.vectorTiles[i])
-        }
-        this.create()
+        var processKey = this.createUUID()
+        this.currentProcessKey = processKey
+        this.options.map.getDataSource().getThemeData(
+            this.options.layerId,
+            this.options.type,
+            (jsonData) => {
+                if (jsonData.length < 1) { return }
+                var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
+                if (mapLayers.length < 1) { return }
+                var mainLayer = mapLayers.find((l) => l.main)
+                this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
+
+                if (processKey !== this.currentProcessKey) return
+
+                this.currentPane = (this.currentPane === 'fill1') ? 'fill2' : 'fill1'
+                if (this.currentPane == 'fill1') {
+                    this.options.map.getMap().getPane('fill2').style.zIndex = 2045
+                    this.options.map.getMap().getPane('fill1').style.zIndex = 2030
+                }
+                var layer = this.createVectorGrid(
+                    mainLayer,
+                    this.options.attributeName,
+                    this.options.attributeNameSecondary,
+                    false,
+                )
+                this.options.map.getFeatureGroup().addLayer(layer)
+                this.mainVectorTile = layer
+                this.scenes.push(layer)
+                setTimeout(() => {
+                        if (this.scenes.length > 1) {
+                            var l = this.scenes.shift()
+                            this.options.map.getFeatureGroup().removeLayer(l)
+                        }
+                    }, 1500)
+                    /* this.options.map.getFeatureGroup().removeLayer(this.mainVectorTile)
+                    this.mainVectorTile = layer */
+            }
+        )
     }
 
     remove() {
@@ -23,6 +59,14 @@ class ChoroplethLayer extends Layer {
             this.options.map.getFeatureGroup().removeLayer(this.vectorTiles[i])
         }
         this.layers = []
+        for (var i = this.limits.length; i--;) {
+            this.options.map.getFeatureGroup().removeLayer(this.limits[i])
+        }
+        this.limits = []
+        for (var i = this.scenes.length; i--;) {
+            this.options.map.getFeatureGroup().removeLayer(this.scenes[i])
+        }
+        this.scenes = []
     }
 
     getLastData(data, id, dateField) {
@@ -47,6 +91,21 @@ class ChoroplethLayer extends Layer {
         }
     }
 
+    loadPanels() {
+        if (!this.options.map.getMap().getPane('limitpane')) {
+            this.options.map.getMap().createPane('limitpane')
+            this.options.map.getMap().getPane('limitpane').style.zIndex = 2050
+        }
+        if (!this.options.map.getMap().getPane('fill1')) {
+            this.options.map.getMap().createPane('fill1')
+            this.options.map.getMap().getPane('fill1').style.zIndex = 2045
+        }
+        if (!this.options.map.getMap().getPane('fill2')) {
+            this.options.map.getMap().createPane('fill2')
+            this.options.map.getMap().getPane('fill2').style.zIndex = 2030
+        }
+    }
+
     create() {
         var processKey = this.createUUID()
         this.currentProcessKey = processKey
@@ -60,19 +119,23 @@ class ChoroplethLayer extends Layer {
                 this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
                 if (mapLayers.length < 1) { return }
                 if (processKey !== this.currentProcessKey) return
+                this.loadPanels()
+                this.loadLimits(mapLayers)
                 for (var i = mapLayers.length; i--;) {
                     this.idField = mapLayers[i].idField
                     var loadOtherStyle = (mapLayers[i].main) ? false : true
+                    this.currentPane = 'fill1'
                     var layer = this.createVectorGrid(
                         mapLayers[i],
                         this.options.attributeName,
                         this.options.attributeNameSecondary,
-                        loadOtherStyle
+                        loadOtherStyle,
                     )
                     this.options.map.getFeatureGroup().addLayer(layer)
                     this.vectorTiles.push(layer)
                     if (mapLayers[i].main) {
                         this.mainVectorTile = layer
+                        this.scenes.push(layer)
                     }
                 }
                 if (!this.currentLegend) this.createLegend()
@@ -80,10 +143,36 @@ class ChoroplethLayer extends Layer {
         )
     }
 
+    loadLimits(mapLayers) {
+        for (var i = mapLayers.length; i--;) {
+            var idField = mapLayers[i].idField
+            var layer = L.vectorGrid.protobuf(
+                mapLayers[i].url, {
+                    pane: 'limitpane',
+                    rendererFactory: L.canvas.tile,
+                    vectorTileLayerStyles: {
+                        "data": {
+                            weight: (this.options.layerId == 0) ? 0.5 : (mapLayers[i].main) ? 0.1 : 0.5,
+                            opacity: 1,
+                            color: 'black'
+                        }
+                    },
+                    interactive: true,
+                    getFeatureId: (feature) => {
+                        return feature.properties[idField]
+                    }
+                }
+            )
+            this.options.map.getFeatureGroup().addLayer(layer)
+            this.limits.push(layer)
+        }
+    }
+
     createVectorGrid(mapLayer, attrLabel1, attrLabel2, loadDefaultStyle) {
         var layer = L.vectorGrid.protobuf(
             mapLayer.url, {
                 rendererFactory: L.canvas.tile,
+                pane: this.currentPane,
                 vectorTileLayerStyles: {
                     "data": (feat) => {
                         if (loadDefaultStyle) return mapLayer.style
@@ -173,8 +262,8 @@ class ChoroplethLayer extends Layer {
 
     getStyle(attrLabel1, attrLabel2) {
         return {
-            weight: 1,
-            opacity: 1,
+            weight: 0,
+            opacity: 0,
             color: 'white',
             dashArray: '2',
             fill: true,
@@ -186,9 +275,9 @@ class ChoroplethLayer extends Layer {
     getColor(attrLabel1, attrLabel2) {
         var colors = this.getHexColors()
         if (+attrLabel2 === 0) {
-            return '#f2f2f2'
+            return '#eeeeee'
         } else if (+attrLabel2 < this.getLimiteValue()) {
-            return '#e6e6e6'
+            return '#bdbdbd'
         } else {
             return attrLabel1 < 7 ? colors[3] :
                 attrLabel1 < 14 ? colors[2] :
@@ -233,11 +322,11 @@ class ChoroplethLayer extends Layer {
                     </div>
                 </div>
                 <div class="e" style="width:70px; height:15px; background-color: none;">
-                    <div style="width:40px; height:10px; background-color: #e6e6e6;">
+                    <div style="width:40px; height:10px; background-color: #bdbdbd;">
                     </div>
                 </div>
                 <div class="f" style="width:30px; height:15px; background-color: none;">
-                    <div style="width:40px; height:10px; background-color: #f2f2f2;">
+                    <div style="width:40px; height:10px; background-color: #eeeeee;">
                     </div>
                 </div>
                 <div class="h" style="width:50px;">

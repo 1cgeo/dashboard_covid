@@ -80,6 +80,7 @@ class Layer {
         var listedId = [];
         var reduced = [];
         for (var i = features.length; i--;) {
+            if (+features[i].properties[comp] === 0) continue
             var idx = listedId.indexOf(features[i].properties[id])
             if (idx < 0) {
                 listedId.push(features[i].properties[id])

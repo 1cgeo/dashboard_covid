@@ -28,16 +28,41 @@ class CirclesLayer extends Layer {
     }
 
     reload() {
-        for (var i = this.layers.length; i--;) {
-            this.options.map.getFeatureGroup().removeLayer(this.layers[i])
-        }
-        this.layers = []
-        if (this.layer) {
-            this.options.map.getFeatureGroup().removeLayer(this.layer)
-        }
         this.circlesData.ids = []
         this.circlesData.features = []
-        this.create()
+        var processKey = this.createUUID()
+        this.currentProcessKey = processKey
+        this.options.map.getDataSource().getThemeData(
+            this.options.layerId,
+            this.options.type,
+            (jsonData, options) => {
+                jsonData = this.processGeoJSON(
+                    this.options.layerId,
+                    this.options.attributeName,
+                    jsonData
+                )
+                if (processKey !== this.currentProcessKey) return
+                if (this.layer) {
+                    this.options.map.getFeatureGroup().removeLayer(this.layer)
+                }
+                this.layer = L.geoJson(
+                    jsonData, {
+                        pointToLayer: (feature, latlng) => {
+                            if (!latlng.lat || !latlng.lng) return
+                            var circle = L.circleMarker(
+                                latlng,
+                                this.getCircleStyle()
+                            )
+                            circle.getCircleStyle = this.getCircleStyle.bind(this)
+                            this.circlesData.ids.push(feature.properties.ibgeID)
+                            this.circlesData.features.push(circle)
+                            return circle
+                        }
+                    }
+                ).addTo(this.options.map.getFeatureGroup())
+                this.updatePropSymbols()
+            }
+        )
     }
 
     processGeoJSON(layerId, attributeName, jsonData) {

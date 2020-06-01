@@ -89,12 +89,10 @@ class SliderDate {
 
     setPlayButtonStyle() {
         $('.play-button i').text('play_arrow')
-        $('#current-date').removeClass('active')
     }
 
     setPauseButtonStyle() {
         $('.play-button i').text('stop')
-        $('#current-date').addClass('active')
     }
 
     sleep(ms) {
@@ -111,9 +109,11 @@ class SliderDate {
         var startDate = new Date(playTimeInterval[0])
         var currentDate = new Date(playTimeInterval[0])
         var endDate = new Date(playTimeInterval[1])
+        $('#current-date').addClass('active')
         while (currentDate < endDate) {
             if (!this.playActive) {
                 $('#current-date').text('')
+                $('#current-date').removeClass('active')
                 return
             }
             currentDate.setDate(currentDate.getDate() + 1)

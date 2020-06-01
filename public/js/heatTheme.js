@@ -21,14 +21,58 @@ class HeatLayer extends Layer {
             this.options.map.getFeatureGroup().removeLayer(this.layers[i])
         }
         this.layers = []
+        this.options.map.getFeatureGroup().removeLayer(this.layer)
     }
 
     reload() {
-        for (var i = this.layers.length; i--;) {
-            this.options.map.getFeatureGroup().removeLayer(this.layers[i])
+        var processKey = this.createUUID()
+        this.currentProcessKey = processKey
+        this.heatData.ids = []
+        this.heatData.data = []
+        if (this.options.layerId === 0) {
+            this.options.map.getDataSource().getThemeData(
+                0,
+                'choropleth',
+                (jsonData) => {
+                    this.heatData = this.getLastData(jsonData, 'CD_GEOCUF', 'date')
+                }
+
+            )
         }
-        this.layers = []
-        this.create()
+        this.options.map.getDataSource().getThemeData(
+            this.options.layerId,
+            this.options.type,
+            (jsonData) => {
+                if (jsonData.length < 1) { return }
+                if (this.options.attributeName == "totalCases") {
+                    jsonData = this.getUnique(jsonData, "ibgeID")
+                } else {
+                    jsonData = this.getReduce(jsonData, "ibgeID", "deaths")
+                }
+
+                var locations = []
+                for (var i = jsonData.length; i--;) {
+                    if (!jsonData[i].latlong[0] || !jsonData[i].latlong[1] || +jsonData[i][this.options.attributeName] === 0) {
+                        continue
+                    }
+                    if (this.options.layerId === 1) {
+                        this.heatData.ids.push(jsonData[i].ibgeID)
+                        this.heatData.data.push(jsonData[i])
+                    }
+                    locations.push(jsonData[i].latlong.concat(jsonData[i][this.options.attributeName]))
+                }
+                if (processKey !== this.currentProcessKey) return
+                this.options.map.getFeatureGroup().removeLayer(this.layer)
+                this.layer = L.heatLayer(locations, {
+                    interactive: true,
+                    radius: 25,
+                    blur: 15,
+                    gradient: this.getGradientStyle(),
+                    minOpacity: 0.5
+                })
+                this.options.map.getFeatureGroup().addLayer(this.layer, true)
+            }
+        )
     }
 
     getPopupContent(e) {
@@ -109,7 +153,7 @@ class HeatLayer extends Layer {
                     locations.push(jsonData[i].latlong.concat(jsonData[i][this.options.attributeName]))
                 }
                 if (processKey !== this.currentProcessKey) return
-                var layer = L.heatLayer(locations, {
+                this.layer = L.heatLayer(locations, {
                     interactive: true,
                     radius: 25,
                     blur: 15,
@@ -117,8 +161,7 @@ class HeatLayer extends Layer {
                     minOpacity: 0.5
                 })
                 this.loadVectorTile()
-                this.options.map.getFeatureGroup().addLayer(layer, true)
-                this.layers.push(layer)
+                this.options.map.getFeatureGroup().addLayer(this.layer, true)
                 if (!this.currentLegend) this.createLegend()
             }
         )
