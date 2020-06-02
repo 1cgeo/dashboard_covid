@@ -33,7 +33,7 @@ class BarChart {
         return d3.select(`#${this.options.elementId}`)
             //.append('svg')
             .attr('width', this.parent.offsetWidth - 200)
-            .attr('height', 200)
+            .attr('height', 150)
             //.attr('height', 600)
     }
 

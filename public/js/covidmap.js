@@ -199,6 +199,12 @@ class CovidMap {
 
     }
 
+
+    reloadMapAnimation(timeInterval, fullTimeInterval) {
+        this.getCurrentThemeLayer().updateAnimation(timeInterval, fullTimeInterval)
+
+    }
+
     setCurrentLayerOptions(layerOptions) {
         this.layerOptions = layerOptions
     }

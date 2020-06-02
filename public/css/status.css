@@ -47,7 +47,4 @@
 .grid-container-status {
     display: grid;
     grid-template-areas: 'location location location location' 'tag-cases tag-cases tag-deaths tag-deaths' 'ncases ncases ndeaths ndeaths';
-    margin-bottom: 10px;
-    padding-bottom: 15px;
-    border-radius: 10px;
 }

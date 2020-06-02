@@ -56,12 +56,12 @@ dateSlider.connectEndChange((timeInterval) => {
     covidmap.reloadMapData()
 })
 
-dateSlider.connectPlay((timeInterval) => {
+dateSlider.connectPlay((timeInterval, fullTimeInterval) => {
     dataSource.setDataTimeInterval(timeInterval)
     locationStatus.update()
     barChartCases.loadData()
     barChartDeaths.loadData()
-    covidmap.reloadMapData()
+    covidmap.reloadMapAnimation(timeInterval, fullTimeInterval)
 })
 
 covidmap.on('changeLocation', (layerClicked) => {

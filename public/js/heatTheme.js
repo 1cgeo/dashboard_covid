@@ -4,6 +4,7 @@ class HeatLayer extends Layer {
         super(newOptions)
         this.currentProcessKey = ""
         this.layers = []
+        this.rangeData = null
         this.heatData = {
             ids: [],
             data: []
@@ -22,6 +23,7 @@ class HeatLayer extends Layer {
         }
         this.layers = []
         this.options.map.getFeatureGroup().removeLayer(this.layer)
+        this.rangeData = null
     }
 
     reload() {
@@ -71,6 +73,81 @@ class HeatLayer extends Layer {
                     minOpacity: 0.5
                 })
                 this.options.map.getFeatureGroup().addLayer(this.layer, true)
+            }
+        )
+    }
+
+    reloadFromData(jsonData) {
+        var processKey = this.createUUID()
+        this.currentProcessKey = processKey
+        this.heatData.ids = []
+        this.heatData.data = []
+        if (jsonData.length < 1) { return }
+        if (this.options.attributeName == "totalCases") {
+            jsonData = this.getUnique(jsonData, "ibgeID")
+        } else {
+            jsonData = this.getReduce(jsonData, "ibgeID", "deaths")
+        }
+        var locations = []
+        for (var i = jsonData.length; i--;) {
+            if (!jsonData[i].latlong[0] || !jsonData[i].latlong[1] || +jsonData[i][this.options.attributeName] === 0) {
+                continue
+            }
+            if (this.options.layerId === 1) {
+                this.heatData.ids.push(jsonData[i].ibgeID)
+                this.heatData.data.push(jsonData[i])
+            }
+            locations.push(jsonData[i].latlong.concat(jsonData[i][this.options.attributeName]))
+        }
+        if (processKey !== this.currentProcessKey) return
+        this.options.map.getFeatureGroup().removeLayer(this.layer)
+        this.layer = L.heatLayer(locations, {
+            interactive: true,
+            radius: 25,
+            blur: 15,
+            gradient: this.getGradientStyle(),
+            minOpacity: 0.5
+        })
+        this.options.map.getFeatureGroup().addLayer(this.layer, true)
+    }
+
+    filterDataTimeInterval(timeInterval) {
+        return this.rangeData.filter((data) => {
+            let elementDate = new Date(data.date.replace(/\-/g, '/'))
+            let startDate = new Date(+timeInterval[0])
+            let endDate = new Date(+timeInterval[1])
+            return (startDate <= elementDate && elementDate <= endDate)
+        })
+    }
+
+    updateAnimation(timeInterval, fullTimeInterval) {
+        if (this.rangeData) {
+            this.reloadFromData(
+                this.filterDataTimeInterval(timeInterval)
+            )
+            return
+        }
+        var dataSource = new DataSource({
+            dataTimeInterval: [new Date(fullTimeInterval[0]).getTime(), new Date(fullTimeInterval[1]).getTime()]
+        })
+        if (this.options.layerId === 0) {
+            dataSource.getThemeData(
+                0,
+                'choropleth',
+                (jsonData) => {
+                    this.heatData = this.getLastData(jsonData, 'CD_GEOCUF', 'date')
+                }
+
+            )
+        }
+        dataSource.getThemeData(
+            this.options.layerId,
+            this.options.type,
+            (jsonData) => {
+                this.rangeData = jsonData
+                this.reloadFromData(
+                    this.filterDataTimeInterval(timeInterval)
+                )
             }
         )
     }

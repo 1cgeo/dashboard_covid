@@ -121,9 +121,14 @@ class SliderDate {
                     `Data atual:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
                 )
                 //this.dateSlider.noUiSlider.set([currentDate, endDate])
-            this.playCallback([startDate, currentDate])
-            await this.sleep(2000)
+            this.playCallback([startDate, currentDate], [startDate, endDate])
+            await this.sleep(1000)
         }
+        $('#current-date').text('')
+        $('#current-date').removeClass('active')
+        this.playActive = false
+        this.setPlayButtonStyle()
+        this.stop()
     }
 
     stop() {

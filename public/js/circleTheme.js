@@ -3,6 +3,7 @@ class CirclesLayer extends Layer {
         super(newOptions)
         this.currentProcessKey = ""
         this.layers = []
+        this.rangeData = null
         this.circlesData = {
             ids: [],
             features: []
@@ -25,6 +26,7 @@ class CirclesLayer extends Layer {
         this.layers = []
         this.circlesData.ids = []
         this.circlesData.features = []
+        this.rangeData = null
     }
 
     reload() {
@@ -61,6 +63,71 @@ class CirclesLayer extends Layer {
                     }
                 ).addTo(this.options.map.getFeatureGroup())
                 this.updatePropSymbols()
+            }
+        )
+    }
+
+    reloadFromData(jsonData) {
+        var processKey = this.createUUID()
+        this.currentProcessKey = processKey
+        this.circlesData.ids = []
+        this.circlesData.features = []
+        jsonData = this.processGeoJSON(
+            this.options.layerId,
+            this.options.attributeName,
+            jsonData
+        )
+        if (processKey !== this.currentProcessKey) return
+        if (this.layer) {
+            this.options.map.getFeatureGroup().removeLayer(this.layer)
+        }
+        this.layer = L.geoJson(
+            jsonData, {
+                pointToLayer: (feature, latlng) => {
+                    if (!latlng.lat || !latlng.lng) return
+                    var circle = L.circleMarker(
+                        latlng,
+                        this.getCircleStyle()
+                    )
+                    circle.getCircleStyle = this.getCircleStyle.bind(this)
+                    this.circlesData.ids.push(feature.properties.ibgeID)
+                    this.circlesData.features.push(circle)
+                    return circle
+                }
+            }
+        ).addTo(this.options.map.getFeatureGroup())
+        this.updatePropSymbols()
+    }
+
+    filterDataTimeInterval(timeInterval) {
+        var copyRangeData = JSON.parse(JSON.stringify(this.rangeData))
+        copyRangeData.features = copyRangeData.features.filter((data) => {
+            let elementDate = new Date(data.properties.date.replace(/\-/g, '/'))
+            let startDate = new Date(+timeInterval[0])
+            let endDate = new Date(+timeInterval[1])
+            return (startDate <= elementDate && elementDate <= endDate)
+        })
+        return copyRangeData
+    }
+
+    updateAnimation(timeInterval, fullTimeInterval) {
+        if (this.rangeData) {
+            this.reloadFromData(
+                this.filterDataTimeInterval(timeInterval)
+            )
+            return
+        }
+        var dataSource = new DataSource({
+            dataTimeInterval: [new Date(fullTimeInterval[0]).getTime(), new Date(fullTimeInterval[1]).getTime()]
+        })
+        dataSource.getThemeData(
+            this.options.layerId,
+            this.options.type,
+            (jsonData) => {
+                this.rangeData = jsonData
+                this.reloadFromData(
+                    this.filterDataTimeInterval(timeInterval)
+                )
             }
         )
     }
@@ -193,7 +260,6 @@ class CirclesLayer extends Layer {
         this.layer.eachLayer((layer) => {
             var radius = this.calcPropRadius(layer.feature.properties[attributeName])
             layer.setRadius(radius);
-            layer.bindPopup(this.getPopupContent.bind(this), { pane: 'popup', offset: new L.Point(0, -radius) })
         })
     }
 

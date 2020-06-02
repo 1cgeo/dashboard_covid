@@ -5,6 +5,7 @@ class ChoroplethLayer extends Layer {
         this.vectorTiles = []
         this.limits = []
         this.scenes = []
+        this.rangeData = null
         this.create()
     }
 
@@ -49,6 +50,72 @@ class ChoroplethLayer extends Layer {
         )
     }
 
+    reloadFromData(jsonData) {
+        var processKey = this.createUUID()
+        this.currentProcessKey = processKey
+        if (jsonData.length < 1) { return }
+        var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
+        if (mapLayers.length < 1) { return }
+        var mainLayer = mapLayers.find((l) => l.main)
+        this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
+
+        if (processKey !== this.currentProcessKey) return
+
+        this.currentPane = (this.currentPane === 'fill1') ? 'fill2' : 'fill1'
+        if (this.currentPane == 'fill1') {
+            this.options.map.getMap().getPane('fill2').style.zIndex = 2045
+            this.options.map.getMap().getPane('fill1').style.zIndex = 2030
+        }
+        var layer = this.createVectorGrid(
+            mainLayer,
+            this.options.attributeName,
+            this.options.attributeNameSecondary,
+            false,
+        )
+        this.options.map.getFeatureGroup().addLayer(layer)
+        this.mainVectorTile = layer
+        this.scenes.push(layer)
+        setTimeout(() => {
+                if (this.scenes.length > 1) {
+                    var l = this.scenes.shift()
+                    this.options.map.getFeatureGroup().removeLayer(l)
+                }
+            }, 1500)
+            /* this.options.map.getFeatureGroup().removeLayer(this.mainVectorTile)
+            this.mainVectorTile = layer */
+    }
+
+    filterDataTimeInterval(timeInterval) {
+        return this.rangeData.filter((data) => {
+            let elementDate = new Date(data.date.replace(/\-/g, '/'))
+            let startDate = new Date(+timeInterval[0])
+            let endDate = new Date(+timeInterval[1])
+            return (startDate <= elementDate && elementDate <= endDate)
+        })
+    }
+
+    updateAnimation(timeInterval, fullTimeInterval) {
+        if (this.rangeData) {
+            this.reloadFromData(
+                this.filterDataTimeInterval(timeInterval)
+            )
+            return
+        }
+        var dataSource = new DataSource({
+            dataTimeInterval: [new Date(fullTimeInterval[0]).getTime(), new Date(fullTimeInterval[1]).getTime()]
+        })
+        dataSource.getThemeData(
+            this.options.layerId,
+            this.options.type,
+            (jsonData) => {
+                this.rangeData = jsonData
+                this.reloadFromData(
+                    this.filterDataTimeInterval(timeInterval)
+                )
+            }
+        )
+    }
+
     remove() {
         this.currentProcessKey = ""
         if (this.currentLegend) {
@@ -67,6 +134,7 @@ class ChoroplethLayer extends Layer {
             this.options.map.getFeatureGroup().removeLayer(this.scenes[i])
         }
         this.scenes = []
+        this.rangeData = null
     }
 
     getLastData(data, id, dateField) {
