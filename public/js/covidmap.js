@@ -98,7 +98,7 @@ class CovidMap {
     create(options) {
         return L.map(
             options.elementId, {
-                minZoom: 3,
+                minZoom: 4,
                 zoomControl: false,
                 maxBounds: this.options.bounds,
             }
