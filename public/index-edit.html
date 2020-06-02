@@ -33,10 +33,9 @@
 
 <body>
 
-    <div style="background-color: #eeeeee; display: flex;flex-direction: column; min-height: 100vh" class="container-for-admin">
-        <!--Main Navigation-->
-        <header>
-            <nav class="d-flex justify-content-between navbar navbar-expand-lg navbar-expand navbar-light white">
+    <div class="wrapper">
+        <header class="page-header">
+            <div class="side-nav sn-bg-4 grid-container-title">
                 <div class="eb-img">
                     <img src="images/eb.png">
                 </div>
@@ -46,108 +45,70 @@
                 <div class="dsg-img">
                     <img src="images/dsg.png">
                 </div>
-
-            </nav>
+            </div>
         </header>
-        <!--Main Navigation-->
-
-        <!--Main layout-->
-        <main class="col-md-12" style="flex-grow: 1;">
-            <div class="container-fluid mt-1">
-
-
-
-                <div class="row">
-
-                    <div class="col-md-12 col-lg-8 mb-1">
-
+        <main class="page-main col-md-12">
+            <div class="flex-container">
+                <div style="flex-grow: 1">
+                    <div class="col-md-12 col-lg-9">
                         <div class="card">
                             <div class="card-body">
-                                <div id="map-container" class="map-container" style="height: 50vh">
+                                <div id="map-container" class="map-container" style="height: 300px;">
                                     <div id="sidebar" class="leaflet-sidebar collapsed leaflet-control leaflet-sidebar-left">
                                     </div>
                                 </div>
                                 <br>
-                                <div class="d-flex flex-column">
-                                    <div class="d-flex flex-row justify-content-center">
-                                        <div>
-                                            <button style="background-color: #607d8b;" type="button" class="play-button btn px-4"><i class="material-icons">play_arrow</i></button>
-                                        </div>
-                                        <div class="flex-fill slider-time">
-                                            <div id="slider-date">
-                                            </div>
+                                <div class="grid-container">
+                                    <div class="play-button">
+                                        <button style="background-color: #607d8b;" class="btn"><i class="material-icons"> play_arrow</i></button>
+
+                                    </div>
+                                    <div class="slider-time">
+                                        <div id="slider-date">
                                         </div>
                                     </div>
-                                    <div class="d-flex flex-lg-row flex-sm-column justify-content-between">
-                                        <div class="footer-start" id="start-date"></div>
-                                        <div class="footer-current" id="current-date"></div>
-                                        <div class="footer-end" id="end-date"></div>
-                                    </div>
+                                    <div class="footer-start" id="start-date"></div>
+                                    <div class="footer-current" id="current-date"></div>
+                                    <div class="footer-end" id="end-date"></div>
 
                                 </div>
                             </div>
 
                         </div>
                     </div>
-                    <div id="statistics" class="col-lg-4">
-
-                        <div class="card mb-1" style="height: 135px;">
-
-                            <div class="card-body">
-
-                                <div class="grid-container-status">
-                                    <div class="location">
-                                        <h4 id="tag-location"></h4>
-                                    </div>
-                                    <div class="tag-cases">
-                                        <b>Casos</b>
-                                    </div>
-                                    <div class="ncases">
-                                        <span id="cases-values"></span>
-                                    </div>
-                                    <div class="tag-deaths">
-                                        <b>Óbitos</b>
-                                    </div>
-                                    <div class="ndeaths">
-                                        <span id="deaths-values"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--/.Card-->
-                        <!--Card-->
-                        <div class="card mb-1" style="height: 200px;">
-                            <div id="cases-chart" class="card-body">
-                                <div class="text-center"><b>Casos</b></div>
-                                <div><svg id="graph-cases"></svg></div>
-
-                            </div>
-
-                        </div>
-                        <!--/.Card-->
-                        <div class="card mb-1" style="height: 200px;">
-                            <div id="deaths-chart" class="card-body">
-                                <div class="text-center"><b>Óbitos</b></div>
-                                <svg id="graph-deaths"></svg>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                    <!--Grid column-->
-
                 </div>
-                <!--Grid row-->
+                <div class="flex-container2">
+                    <div style="flex-grow: 8">
+                        <div class="card mb-4">
+                            <div class="card-header text-center">
+                                <b>Situação</b>
+                            </div>
+                            <div class="card-body grid-container-status">
 
-
-
+                                <div class="location">
+                                    <h4 id="tag-location"></h4>
+                                </div>
+                                <div class="tag-cases">
+                                    <b>Casos</b>
+                                </div>
+                                <div class="ncases">
+                                    <span id="cases-values"></span>
+                                </div>
+                                <div class="tag-deaths">
+                                    <b>Óbitos</b>
+                                </div>
+                                <div class="ndeaths">
+                                    <span id="deaths-values"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="flex-grow: 1">2</div>
+                    <div style="flex-grow: 1">3</div>
+                </div>
             </div>
         </main>
-        <!--Main layout-->
-
-        <!--Footer-->
-        <footer style="background-color: #607d8b;" class="page-footer text-left font-small darken-2 pb-2">
+        <footer class="page-footer">
             <div class="row">
                 <div class="container col-md-6 text-center pl-5 text-md-left">
                     Desenvolvido pelo Diretoria de Serviço Geográfico (DSG)
@@ -157,7 +118,6 @@
                 </div>
             </div>
         </footer>
-        <!--/.Footer-->
     </div>
 
 
@@ -175,7 +135,7 @@
     <script type="text/javascript" src="lib/mdb.min.js"></script>
     <script src="lib/d3.v4.min.js"></script>
     <script src="lib/nouislider.js"></script>
-    <script src="lib/leaflet.js"></script>
+    <script src="lib/leaflet.js "></script>
     <script src="lib/Leaflet.VectorGrid.js"></script>
     <script src="lib/leaflet-sidebar.js"></script>
     <script src="lib/leaflet.heat.js"></script>

@@ -116,7 +116,7 @@ class SliderDate {
                 $('#current-date').removeClass('active')
                 return
             }
-            currentDate.setDate(currentDate.getDate() + 1)
+            currentDate.setDate(currentDate.getDate() + 2)
             $('#current-date').text(
                     `Data atual:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
                 )

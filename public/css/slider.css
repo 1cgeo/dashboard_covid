@@ -6,61 +6,8 @@
     display: block;
 }
 
-.play-button {
-    grid-area: button;
-}
-
 .slider-time {
-    grid-area: slider;
-}
-
-.footer-start {
-    grid-area: footer-start;
-    text-align: left;
-}
-
-.footer-end {
-    grid-area: footer-end;
-    text-align: right;
-}
-
-.footer-current {
-    grid-area: footer-current;
-    text-align: center;
-}
-
-.footer-end,
-.footer-current,
-.footer-start {
-    white-space: pre;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-areas: 'button slider slider slider' 'button footer-start footer-current footer-end';
-    grid-gap: 10px;
-    padding-right: 100px;
-}
-
-.slider-time {
-    padding-top: 30px;
-    padding-right: 30px;
-    padding-left: 30px;
-}
-
-@media only screen and (max-width: 600px) {
-    .slider-time {
-        max-width: 250px;
-        padding-left: 20px;
-    }
-    .grid-container {
-        display: grid;
-        grid-template-areas: 'button slider slider null' 'button footer-start  footer-start null' 'button footer-end footer-end null';
-        grid-gap: 10px;
-    }
-    .footer-end {
-        text-align: left;
-    }
+    padding: 30px 30px 0px 30px;
 }
 
 .noUi-connect {
