@@ -341,7 +341,7 @@ class ChoroplethLayer extends Layer {
                 <div class="l" style="width:90px; height:15px; background-color: none;">
                     <div> &lt; ${this.getLimiteValue()} ${tag.toLowerCase()}</div>
                 </div>
-                <div class="m" style="width:70px; height:15px; background-color: none;">
+                <div class="m" style="width:80px; height:15px; background-color: none;">
                     <div>Não reportados</div>
                 </div>
             </div>`

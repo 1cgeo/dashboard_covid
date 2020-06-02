@@ -1,145 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset=utf-8 />
-    <title>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Material Design for Bootstrap</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <!-- Material Design Bootstrap -->
+    <link rel="stylesheet" href="lib/mdb.min.css">
+    <link rel="stylesheet" href="lib/style.css">
     <link rel="shortcut icon" href="images/favicon.ico">
     <link rel="stylesheet" href="css/popup.css">
     <link rel="stylesheet" href="css/loader.css">
     <link rel="stylesheet" href="lib/leaflet.css">
     <link rel="stylesheet" href="lib/googlefonts.css">
     <link rel="stylesheet" href="lib/material.icon.css">
-    <link rel="stylesheet" href="lib/material.blue_grey-indigo.min.css" />
     <link rel="stylesheet" href="lib/nouislider.css">
     <link rel="stylesheet" href="lib/leaflet-sidebar.css">
     <link rel="stylesheet" href="css/covidmap.css">
+
     <link rel="stylesheet" href="css/barCharts.css">
     <link rel="stylesheet" href="css/status.css">
     <link rel="stylesheet" href="css/slider.css">
     <link rel="stylesheet" href="css/main.css">
+
 </head>
+<div id="loader" class="loading"></div>
 
 <body>
-    <div id="loader" class="loading"></div>
 
-    <div class="layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <div style="background-color: #eeeeee;" class="container-for-admin">
+        <!--Main Navigation-->
+        <header>
 
-        <header id="header-container" class="mdl-shadow--2dp header mdl-layout__header">
-            <div class="grid-container-title">
-                <div class="eb-img">
-                    <img src="images/eb.png">
-                </div>
-                <div class="title">
-                    <b>Dashboard de acompanhamento do avanço da COVID-19 no Brasil</b>
-                </div>
-                <div class="dsg-img">
-                    <img src="images/dsg.png">
-                </div>
-            </div>
-        </header>
-        <main id="main-container" class="mdl-layout__content mdl-color--grey-200">
-            <div class="mdl-grid">
-
-                <div id="map-container" class="mdl-shadow--2dp mdl-color--white	 mdl-cell mdl-cell--12-col mdl-cell--8-col-desktop mdl-grid">
-
-                    <div id="map" class="mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <!-- sidebar -->
-                        <div id="sidebar" class="leaflet-sidebar collapsed leaflet-control leaflet-sidebar-left">
-                        </div>
+            <!-- Navbar -->
+            <nav class="navbar-text navbar fixed-top navbar-expand-lg navbar-light white">
+                <div class="side-nav sn-bg-4 fixed grid-container-title">
+                    <div class="eb-img">
+                        <img src="images/eb.png">
                     </div>
-                    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <div class="grid-container">
-                            <div class="play-button">
-                                <button class="mdl-color--blue-grey mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-                                    <i class="material-icons">play_arrow</i>
-                                </button>
-                            </div>
-                            <div class="slider-time">
-                                <div id="slider-date">
+                    <div class="title">
+                        <b>Painel de Acompanhamento do Avanço da COVID-19 no Brasil</b>
+                    </div>
+                    <div class="dsg-img">
+                        <img src="images/dsg.png">
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar -->
+
+
+
+        </header>
+        <!--Main Navigation-->
+
+        <!--Main layout-->
+        <main class="col-md-12 pt-5">
+            <div class="container-fluid mt-5">
+
+
+
+                <!--Grid row-->
+                <div class="row wow fadeIn">
+
+                    <!--Grid column-->
+                    <div class="col-md-12 col-lg-9 mb-5">
+
+                        <!--Card-->
+                        <div class="card">
+
+                            <!-- Card header -->
+                            <!--                             <div class="card-header">Mapa</div>
+ -->
+                            <!--Card content-->
+                            <div class="card-body">
+
+                                <!--map-->
+                                <div id="map-container" class="map-container" style="height: 700px">
+                                    <div id="sidebar" class="leaflet-sidebar collapsed leaflet-control leaflet-sidebar-left">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="grid-container">
+                                    <div class="play-button">
+                                        <button style="background-color: #607d8b;" class="btn"><i class="material-icons"> play_arrow</i></button>
+
+                                    </div>
+                                    <div class="slider-time">
+                                        <div id="slider-date">
+                                        </div>
+                                    </div>
+                                    <div class="footer-start" id="start-date"></div>
+                                    <div class="footer-current" id="current-date"></div>
+                                    <div class="footer-end" id="end-date"></div>
+
                                 </div>
                             </div>
-                            <div class="footer-start" id="start-date"></div>
-                            <div class="footer-current" id="current-date"></div>
-                            <div class="footer-end" id="end-date"></div>
 
                         </div>
+                        <!--/.Card-->
 
                     </div>
-                </div>
-                <div id="statistic-container" class="mdl-grid--no-spacing mdl-cell mdl-cell--4-col-desktop mdl-cell--12-col mdl-cell--4-col-phone mdl-cell--8-tablet mdl-grid">
+                    <!--Grid column-->
 
-                    <!--  status -->
-                    <div class="mdl-grid--no-spacing mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <div class="mdl-color--white mdl-shadow--2dp grid-container-status">
-                            <div class="location">
-                                <h4 id="tag-location"></h4>
+                    <!--Grid column-->
+                    <div id="statistics" class="col-lg-3 mb-4">
+
+                        <!--Card-->
+                        <div class="card mb-4">
+
+                            <!-- Card header -->
+                            <div class="card-header text-center">
+                                <b>Situação</b>
                             </div>
-                            <div class="tag-cases">
+
+                            <!--Card content-->
+                            <div class="card-body grid-container-status">
+
+                                <div class="location">
+                                    <h4 id="tag-location"></h4>
+                                </div>
+                                <div class="tag-cases">
+                                    <b>Casos</b>
+                                </div>
+                                <div class="ncases">
+                                    <span id="cases-values"></span>
+                                </div>
+                                <div class="tag-deaths">
+                                    <b>Óbitos</b>
+                                </div>
+                                <div class="ndeaths">
+                                    <span id="deaths-values"></span>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <!--/.Card-->
+                        <!--Card-->
+                        <div class="card mb-4">
+
+                            <!-- Card header -->
+                            <div class="card-header text-center">
                                 <b>Casos</b>
                             </div>
-                            <div class="ncases">
-                                <span id="cases-values"></span>
-                            </div>
-                            <div class="tag-deaths">
-                                <b>Óbitos</b>
-                            </div>
-                            <div class="ndeaths">
-                                <span id="deaths-values"></span>
+
+                            <!--Card content-->
+                            <div id="cases-chart" class="card-body">
+
+                                <div><svg id="graph-cases"></svg></div>
+
                             </div>
 
                         </div>
+                        <!--/.Card-->
+                        <!--Card-->
+                        <div class="card mb-4">
+
+                            <!-- Card header -->
+                            <div class="card-header text-center">
+                                <b>Óbitos</b>
+                            </div>
+
+                            <!--Card content-->
+                            <div id="deaths-chart" class="card-body">
+
+                                <svg id="graph-deaths"></svg>
+
+                            </div>
+
+                        </div>
+                        <!--/.Card-->
+
 
                     </div>
-                    <div id="chart-container-cases" class="mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table mdl-grid--no-spacing">
-                        <div style="text-align: center;"><b>Casos</b></div>
-                        <div><svg id="graph-cases"></svg></div>
-                    </div>
-                    <div class="chart-container-deaths mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-cell--12-col-desktop mdl-cell--4-col-phone mdl-cell--8-col-table">
-                        <div style="text-align: center;"><b>Óbitos</b></div>
-                        <div><svg id="graph-deaths"></svg></div>
-                    </div>
+                    <!--Grid column-->
+
+                </div>
+                <!--Grid row-->
+
+
+
+            </div>
+        </main>
+        <!--Main layout-->
+
+        <!--Footer-->
+        <footer style="background-color: #607d8b;" class="page-footer text-left font-small darken-2 mt-4">
+
+
+            <div class="row">
+                <!--Copyright-->
+                <div class="container col-md-6 text-center pl-5 text-md-left">
+                    Desenvolvido pelo 1º CGEO
+                </div>
+                <!--/.Copyright-->
+                <div class="container col-md-6 text-center pr-5 text-md-right">
+                    <b>Fonte de dados: github.com/wcota/covid19br</b>
                 </div>
             </div>
-            <footer class="mdl-mini-footer mdl-color--blue-grey">
-                <div class="mdl-mini-footer__right-section">
-                    <div>Fonte de dados: github.com/wcota/covid19br</div>
-                </div>
-                <div class="mdl-mini-footer__left-section">
-                    <div>Desenvolvido pelo 1º CGEO</div>
-                </div>
 
-            </footer>
-        </main>
+        </footer>
+        <!--/.Footer-->
     </div>
+
+
+    <!-- Start your project here-->
+
+    <!-- End your project here-->
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="lib/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="lib/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="lib/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="lib/mdb.min.js"></script>
+    <script src="lib/d3.v4.min.js"></script>
+    <script src="lib/nouislider.js"></script>
+    <script src="lib/leaflet.js"></script>
+    <script src="lib/Leaflet.VectorGrid.js"></script>
+    <script src="lib/leaflet-sidebar.js"></script>
+    <script src="lib/leaflet.heat.js"></script>
+    <script src="js/http.js"></script>
+    <script src="js/dataSource.js"></script>
+    <script src="js/layer.js"></script>
+    <script src="js/popoverLayer.js"></script>
+    <script src="js/circleTheme.js"></script>
+    <script src="js/heatTheme.js"></script>
+    <script src="js/choroplethTheme.js"></script>
+    <script src="js/covidmap.js"></script>
+    <script src="js/factories.js"></script>
+    <script src="js/slider.js"></script>
+    <script src="js/status.js"></script>
+    <script src="js/barChart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        $(window).on("load", function() {
+            $('#loader').hide();
+        });
+    </script>
+
 </body>
-<script src="lib/d3.v4.min.js"></script>
-<script src="lib/nouislider.js"></script>
-<script src="lib/jquery-3.5.1.slim.min.js"></script>
-<script src="lib/leaflet.js"></script>
-<script src="lib/Leaflet.VectorGrid.js"></script>
-<script src="lib/material.min.js"></script>
-<script src="lib/leaflet-sidebar.js"></script>
-<script src="lib/leaflet.heat.js"></script>
-<script src="js/http.js"></script>
-<script src="js/dataSource.js"></script>
-<script src="js/layer.js"></script>
-<script src="js/popoverLayer.js"></script>
-<script src="js/circleTheme.js"></script>
-<script src="js/heatTheme.js"></script>
-<script src="js/choroplethTheme.js"></script>
-<script src="js/covidmap.js"></script>
-<script src="js/factories.js"></script>
-<script src="js/slider.js"></script>
-<script src="js/status.js"></script>
-<script src="js/barChart.js"></script>
-<script src="js/main.js"></script>
-<script>
-    $(window).on("load", function() {
-        $('#loader').hide();
-    });
-</script>
+
 
 </html>

@@ -16,8 +16,11 @@ var dateSlider = new SliderDate({
     ]
 })
 
+
+
+
 var barChartCases = new BarChart({
-    parentId: "statistic-container",
+    parentId: "cases-chart",
     elementId: "graph-cases",
     dataSource: dataSource,
     dataLocation: 'country',
@@ -28,7 +31,7 @@ var barChartCases = new BarChart({
 
 
 var barChartDeaths = new BarChart({
-    parentId: "statistic-container",
+    parentId: "deaths-chart",
     elementId: "graph-deaths",
     dataSource: dataSource,
     attributeX: "date",
@@ -40,7 +43,7 @@ var factories = new Factories()
 var covidmap = factories.createMap(
     'covidMap',
     dataSource, {
-        elementId: "map"
+        elementId: "map-container"
     }
 )
 

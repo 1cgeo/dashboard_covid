@@ -129,7 +129,7 @@ class BarChart {
     }
 
     getMargin() {
-        return { top: 30, right: 10, bottom: 30, left: 80 }
+        return { top: 30, right: 20, bottom: 30, left: 40 }
     }
 
     createTooltip() {

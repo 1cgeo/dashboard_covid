@@ -132,22 +132,22 @@ class CovidMap {
         this.sidebar.removePanel(id);
         var buttonsDiv = $("<div></div>")
         buttons.forEach(function(elem, idx) {
-            var label = $("<label></label>")
-                .attr("for", elem.id)
-                .attr("class", "mdl-radio mdl-js-radio")
+            var div = $("<div></div>")
+                .attr("class", "custom-control custom-radio")
             var input = $("<input></input>")
                 .attr("id", elem.id)
                 .attr("type", "radio")
-                .attr("class", "mdl-radio__button")
+                .attr("class", "custom-control-input")
                 .attr("name", "layer")
                 .attr("value", elem.id)
             idx == 0 ? input.attr("checked", true) : ""
-            var text = $("<span></span>")
-                .attr("class", "mdl-radio__label")
+            var label = $("<label></label>")
+                .attr("for", elem.id)
+                .attr("class", "custom-control-label")
                 .text(elem.name)
-            $(label).append($(input))
-            $(label).append($(text))
-            $(buttonsDiv).append(label)
+            $(div).append($(input))
+            $(div).append($(label))
+            $(buttonsDiv).append(div)
         })
         this.getSidebar().addPanel({
             id: id,
@@ -163,22 +163,22 @@ class CovidMap {
         this.sidebar.removePanel(id);
         var buttonsDiv = $("<div></div>")
         themes.forEach(function(elem, idx) {
-            var label = $("<label></label>")
-                .attr("for", elem.type.concat(idx))
-                .attr("class", "mdl-radio mdl-js-radio")
+            var div = $("<div></div>")
+                .attr("class", "custom-control custom-radio")
             var input = $("<input></input>")
                 .attr("id", elem.type.concat(idx))
                 .attr("type", "radio")
-                .attr("class", "mdl-radio__button")
+                .attr("class", "custom-control-input")
                 .attr("name", "theme")
                 .attr("value", elem.id)
-            idx == select ? input.attr("checked", true) : ""
-            var text = $("<span></span>")
-                .attr("class", "mdl-radio__label")
+            idx == 0 ? input.attr("checked", true) : ""
+            var label = $("<label></label>")
+                .attr("for", elem.type.concat(idx))
+                .attr("class", "custom-control-label")
                 .text(elem.name)
-            $(label).append($(input))
-            $(label).append($(text))
-            $(buttonsDiv).append(label)
+            $(div).append($(input))
+            $(div).append($(label))
+            $(buttonsDiv).append(div)
         })
         var panelContent = {
             id: id,

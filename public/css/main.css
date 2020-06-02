@@ -2,9 +2,25 @@ body * {
     font-family: 'Public Sans', sans-serif !important;
 }
 
-#main-container {
-    min-height: 100%;
-    height: 100%;
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.navbar {
+    z-index: 3500;
+    background-color: #607d8b !important;
+    color: white;
+}
+
+.map-container {
+    background-color: white;
+    overflow: hidden;
+    padding-bottom: 56.25%;
+    position: relative;
+    height: 0;
 }
 
 .leaflet-sidebar-tabs {
