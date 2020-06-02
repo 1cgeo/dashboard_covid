@@ -35,7 +35,7 @@ class Status {
 
     setLocationName(locationName) {
         $("#tag-location").text(
-            (locationName.charAt(0).toUpperCase() + locationName.slice(1).toLowerCase())
+            locationName
         )
     }
 
