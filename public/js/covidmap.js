@@ -171,7 +171,7 @@ class CovidMap {
                 .attr("class", "custom-control-input")
                 .attr("name", "theme")
                 .attr("value", elem.id)
-            idx == 0 ? input.attr("checked", true) : ""
+            idx == select ? input.attr("checked", true) : ""
             var label = $("<label></label>")
                 .attr("for", elem.type.concat(idx))
                 .attr("class", "custom-control-label")
