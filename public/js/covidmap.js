@@ -100,7 +100,7 @@ class CovidMap {
             options.elementId, {
                 minZoom: 4,
                 zoomControl: false,
-                maxBounds: this.options.bounds,
+                //maxBounds: this.options.bounds,
             }
         ).fitBounds(this.options.bounds)
     }
