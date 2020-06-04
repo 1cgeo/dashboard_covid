@@ -52,22 +52,22 @@
         <!--Main Navigation-->
 
         <!--Main layout-->
-        <main class="col-md-12 flex-grow-1">
-            <div class="container-fluid mt-1">
+        <main class="col-md-12 d-flex flex-column flex-grow-1 mb-1 p-0">
+            <!-- <div class="container-fluid mt-1">
 
 
+            </div> -->
+            <div class="d-flex flex-lg-row flex-md-column flex-column flex-sm-column mt-1">
 
-                <div class="d-flex flex-lg-row flex-md-row flex-column flex-sm-column">
+                <div class="d-flex flex-column col-12 col-xl-8 col-md-12 col-lg-8 col-sm-12">
 
-                    <div class="d-flex flex-column col-12 col-xl-8 col-md-12 col-lg-8 col-sm-12 mb-1">
-
-                        <div class="card">
-                            <div class="card-body">
-                                <div id="map-container" class="map-container" style="height: 45vh">
+                    <div class="card mb-1">
+                        <div class="card-body">
+                            <div class="d-flex flex-column">
+                                <div id="map-container" class="map-container flex-grow-1" style="height: 50vh;">
                                     <div id="sidebar" class="leaflet-sidebar collapsed leaflet-control leaflet-sidebar-left">
                                     </div>
                                 </div>
-                                <br>
                                 <div class="d-flex flex-column">
                                     <div class="d-flex flex-row justify-content-center">
                                         <div>
@@ -83,65 +83,76 @@
                                         <div class="footer-current" id="current-date"></div>
                                         <div class="footer-end" id="end-date"></div>
                                     </div>
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div id="statistics" class="d-flex flex-column col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
-
-                        <div class="card mb-1" style="height: 135px;">
-
-                            <div class="card-body">
-
-                                <div class="grid-container-status">
-                                    <div class="location">
-                                        <h4 id="tag-location"></h4>
-                                    </div>
-                                    <div class="tag-cases">
-                                        <b>Casos</b>
-                                    </div>
-                                    <div class="ncases">
-                                        <span id="cases-values"></span>
-                                    </div>
-                                    <div class="tag-deaths">
-                                        <b>Óbitos</b>
-                                    </div>
-                                    <div class="ndeaths">
-                                        <span id="deaths-values"></span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!--/.Card-->
-                        <!--Card-->
-                        <div class="card mb-1" style="height: 200px;">
-                            <div id="cases-chart" class="card-body">
-                                <div class="text-center"><b>Casos</b></div>
-                                <div><svg id="graph-cases"></svg></div>
-
-                            </div>
-
-                        </div>
-                        <!--/.Card-->
-                        <div class="card mb-1" style="height: 200px;">
-                            <div id="deaths-chart" class="card-body">
-                                <div class="text-center"><b>Óbitos</b></div>
-                                <svg id="graph-deaths"></svg>
-
-                            </div>
-
-                        </div>
 
                     </div>
-                    <!--Grid column-->
-
                 </div>
-                <!--Grid row-->
+                <div id="statistics" class="d-flex flex-column col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
 
+                    <div class="card mb-1">
 
+                        <div class="card-body">
+                            <div class="d-flex flex-column">
+                                <div class="location">
+                                    <h4 id="tag-location"></h4>
+                                </div>
+                                <div class="d-flex flex-row flex-grow-1 justify-content-between">
+                                    <div class="d-flex flex-column">
+                                        <div class="tag-cases">
+                                            <b>Casos</b>
+                                        </div>
+                                        <div class="ncases">
+                                            <span id="cases-values"></span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <div class="tag-deaths">
+                                            <b>Óbitos</b>
+                                        </div>
+                                        <div class="ndeaths flex-fill">
+                                            <span id="deaths-values"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="grid-container-status">
+                                <div class="location">
+                                    <h4 id="tag-location"></h4>
+                                </div>
+                                <div class="tag-cases">
+                                    <b>Casos</b>
+                                </div>
+                                <div class="ncases">
+                                    <span id="cases-values"></span>
+                                </div>
+                                <div class="tag-deaths">
+                                    <b>Óbitos</b>
+                                </div>
+                                <div class="ndeaths">
+                                    <span id="deaths-values"></span>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
 
+                    <div class="card mb-1" style="height: 200px;">
+                        <div id="cases-chart" class="card-body">
+                            <div class="text-center"><b>Casos</b></div>
+                            <div><svg id="graph-cases"></svg></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card mb-1" style="height: 200px;">
+                        <div id="deaths-chart" class="card-body">
+                            <div class="text-center"><b>Óbitos</b></div>
+                            <svg id="graph-deaths"></svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
         <!--Main layout-->
