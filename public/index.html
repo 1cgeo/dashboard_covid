@@ -33,7 +33,7 @@
 
 <body>
 
-    <div style="background-color: #eeeeee; display: flex;flex-direction: column; min-height: 100vh" class="container-for-admin">
+    <div style="background-color: #eeeeee; min-height: 100vh" class="d-flex flex-column container-for-admin">
         <!--Main Navigation-->
         <header>
             <nav class="d-flex justify-content-between navbar navbar-expand-lg navbar-expand navbar-light white">
@@ -52,18 +52,18 @@
         <!--Main Navigation-->
 
         <!--Main layout-->
-        <main class="col-md-12" style="flex-grow: 1;">
+        <main class="col-md-12 flex-grow-1">
             <div class="container-fluid mt-1">
 
 
 
-                <div class="row">
+                <div class="d-flex flex-lg-row flex-md-row flex-column flex-sm-column">
 
-                    <div class="col-md-12 col-lg-8 mb-1">
+                    <div class="d-flex flex-column col-12 col-xl-8 col-md-12 col-lg-8 col-sm-12 mb-1">
 
                         <div class="card">
                             <div class="card-body">
-                                <div id="map-container" class="map-container" style="height: 50vh">
+                                <div id="map-container" class="map-container" style="height: 45vh">
                                     <div id="sidebar" class="leaflet-sidebar collapsed leaflet-control leaflet-sidebar-left">
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@
 
                         </div>
                     </div>
-                    <div id="statistics" class="col-lg-4">
+                    <div id="statistics" class="d-flex flex-column col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
 
                         <div class="card mb-1" style="height: 135px;">
 

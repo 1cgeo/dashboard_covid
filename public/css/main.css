@@ -6,14 +6,14 @@ html,
 body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 @media only screen and (max-width: 992px) {
-    html,
+    /*  html,
     body {
         overflow: auto;
-    }
+    } */
 }
 
 .navbar {
