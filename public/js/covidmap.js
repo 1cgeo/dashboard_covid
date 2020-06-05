@@ -50,6 +50,7 @@ class CovidMap {
             if (this.getCurrentPopoverLayer() && !this.getCurrentPopoverLayer().eventWasReceived()) {
                 this.zoomToDefaultBounds()
                 this.map.closePopup()
+                this.map.setZoom(4)
                 this.triggerChangeLocation()
             }
         })
@@ -98,11 +99,11 @@ class CovidMap {
     create(options) {
         return L.map(
             options.elementId, {
-                minZoom: 4,
+                minZoom: 1,
                 zoomControl: false,
                 //maxBounds: this.options.bounds,
             }
-        ).fitBounds(this.options.bounds)
+        ).fitBounds(this.options.bounds).setZoom(4)
     }
 
     createFeatureGroup() {
@@ -190,19 +191,18 @@ class CovidMap {
         $("input[name='theme']").change(function(e) { cb($(this).val()) })
     }
 
-    reloadMapData() {
-        if (this.getCurrentThemeLayer().getOptions().type == 'choropleth') {
-            this.getCurrentThemeLayer().reload()
-            return
-        }
-        this.getCurrentThemeLayer().reload()
+
+    startAnimation() {
+        this.getCurrentThemeLayer().startAnimation()
+    }
+
+    updateAnimation() {
+        this.getCurrentThemeLayer().updateAnimation()
 
     }
 
-
-    reloadMapAnimation(timeInterval, fullTimeInterval) {
-        this.getCurrentThemeLayer().updateAnimation(timeInterval, fullTimeInterval)
-
+    stopAnimation() {
+        this.getCurrentThemeLayer().stopAnimation()
     }
 
     setCurrentLayerOptions(layerOptions) {
@@ -224,7 +224,9 @@ class CovidMap {
             themeId,
             this.loadThemeLayer.bind(this)
         )
-        this.loadPopoverLayer(layerOptions)
+        setTimeout(() => {
+            this.loadPopoverLayer(layerOptions)
+        }, 1)
         this.setCurrentLayerOptions(layerOptions)
         this.loadThemeLayer(themeId)
     }

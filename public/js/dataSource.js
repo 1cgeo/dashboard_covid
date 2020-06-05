@@ -3,14 +3,8 @@ class DataSource {
         this.options = {
             dataLocationId: null
         }
+        this.heatData = null
         this.setOptions(newOptions)
-        this.setLocationName('Brasil')
-    }
-
-    setOptions(options) {
-        for (var key in options) {
-            this.options[key] = options[key]
-        }
     }
 
     setDataTimeInterval(timeInterval) {
@@ -20,69 +14,192 @@ class DataSource {
         ]
     }
 
-    setCurrentLayer(layer) {
-        if (!layer) {
-            this.setLocationName('Brasil')
-            this.setLocationLevel(null)
-            this.setLocationId(null)
-            return
-        }
-        if (layer.properties["CD_GEOCMU"]) {
-            this.setLocationName(layer.properties.NM_MUNICIP)
-            this.setLocationLevel('city')
-            this.setLocationId(layer.properties["CD_GEOCMU"])
-        } else {
-            this.setLocationName(layer.properties.NM_ESTADO)
-            this.setLocationLevel('state')
-            this.setLocationId(layer.properties["CD_GEOCUF"])
-        }
+    getDataTimeInterval() {
+        return [
+            new Date(this.options.dataTimeInterval[0]).getTime(),
+            new Date(this.options.dataTimeInterval[1]).getTime()
+        ]
     }
 
-    setLocationLevel(level) {
-        this.options.locationLevel = level
-    }
+    loadAllData(cb) {
+        this.getStateThemeData('circles', (data) => {
+            this.setStateCircleData(data)
+        })
+        this.getStateThemeData('choropleth', (data) => {
+            this.setStateChoroplethData(data)
+        })
+        this.getCitiesThemeData('circles', (data) => {
+            this.setCityCircleData(data)
+        })
+        this.getCitiesThemeData('choropleth', (data) => {
+            this.setCityChoroplethData(data)
+        })
+        this.getCitiesThemeData('heat', (data) => {
+            this.setHeatData(data)
 
-    setLocationName(name) {
-        this.options.locationName = name
-    }
-
-    getLocationName() {
-        return this.options.locationName
-    }
-
-    setLocationId(id) {
-        this.options.locationId = id
-    }
-
-    isCountry() {
-        return !(this.options.locationId && this.options.locationLevel)
-    }
-
-    getQueryLocationId() {
-        return `location=${this.options.locationLevel}&id=${this.options.locationId}`
-    }
-
-    getQueryTime() {
-        return `startDate=${this.options.dataTimeInterval[0]}&endDate=${this.options.dataTimeInterval[1]}`
-    }
-
-    getUrl() {
-        if (this.isCountry()) {
-            return `${window.location.origin}/api/information/country?${this.getQueryTime()}`
-        } else {
-            return `${window.location.origin}/api/information?${this.getQueryLocationId()}&${this.getQueryTime()}`
-        }
-    }
-
-    getStatusData(cb) {
-        httpGetAsync(this.getUrl(), (data) => {
-            cb(JSON.parse(data), this.getLocationName())
+            this.getCountryDataset((data) => {
+                this.setCountryData(data)
+                this.setDataTimeInterval(
+                    [
+                        new Date('2020/02/24').getTime(),
+                        this.getMax(
+                            data.map(el => new Date(el.date.replace(/\-/g, '/')).getTime())
+                        )
+                    ]
+                )
+                cb()
+            })
         })
     }
 
-    getBarChartData(cb) {
-        httpGetAsync(this.getUrl(), (data) => {
-            cb(JSON.parse(data))
+    getMax(items) {
+        return items.reduce((acc, val) => {
+            acc = (acc === undefined || val > acc) ? val : acc
+            return acc;
+        })
+    }
+
+    setOptions(options) {
+        for (var key in options) {
+            this.options[key] = options[key]
+        }
+    }
+
+    setCountryData(data) {
+        this.countryData = data
+    }
+
+    getCountryData() {
+        var timeInterval = this.getDataTimeInterval()
+        var startDate = new Date(+timeInterval[0])
+        var endDate = new Date(+timeInterval[1])
+        return this.countryData.slice().filter((data) => {
+            var elementDate = new Date(data.date.replace(/\-/g, '/'))
+            return (elementDate >= startDate && elementDate <= endDate)
+        })
+    }
+
+    setHeatData(data) {
+        this.heatData = data
+    }
+
+    getHeatData(data) {
+        var timeInterval = this.getDataTimeInterval()
+        var startDate = new Date(+timeInterval[0])
+        var endDate = new Date(+timeInterval[1])
+        return this.heatData.slice().filter((data) => {
+            var elementDate = new Date(data.date.replace(/\-/g, '/'))
+            return (elementDate >= startDate && elementDate <= endDate)
+        })
+    }
+
+    setStateCircleData(data) {
+        this.stateCircleData = data
+    }
+
+    getStateCircleData() {
+        var timeInterval = this.getDataTimeInterval()
+        var startDate = new Date(+timeInterval[0])
+        var endDate = new Date(+timeInterval[1])
+        var geojson = JSON.parse(JSON.stringify(this.stateCircleData))
+        geojson.features = geojson.features.filter((data) => {
+            var elementDate = new Date(data.properties.date.replace(/\-/g, '/'))
+            return (elementDate >= startDate && elementDate <= endDate)
+        })
+        return geojson
+    }
+
+    setCityCircleData(data) {
+        this.cityCircleData = data
+    }
+
+    getCityCircleData() {
+        var timeInterval = this.getDataTimeInterval()
+        var startDate = new Date(+timeInterval[0])
+        var endDate = new Date(+timeInterval[1])
+        var geojson = JSON.parse(JSON.stringify(this.cityCircleData))
+        geojson.features = geojson.features.filter((data) => {
+            var elementDate = new Date(data.properties.date.replace(/\-/g, '/'))
+            return (elementDate >= startDate && elementDate <= endDate)
+        })
+        return geojson
+
+    }
+
+    setStateChoroplethData(data) {
+        this.stateChoroplethData = data
+    }
+
+    getStateChoroplethData() {
+        var timeInterval = this.getDataTimeInterval()
+        var startDate = new Date(+timeInterval[0])
+        var endDate = new Date(+timeInterval[1])
+        return this.stateChoroplethData.slice().filter((data) => {
+            var elementDate = new Date(data.date.replace(/\-/g, '/'))
+            return (elementDate >= startDate && elementDate <= endDate)
+        })
+    }
+
+    setCityChoroplethData(data) {
+        this.cityChoroplethData = data
+    }
+
+    getCityChoroplethData() {
+        var timeInterval = this.getDataTimeInterval()
+        var startDate = new Date(+timeInterval[0])
+        var endDate = new Date(+timeInterval[1])
+        return this.cityChoroplethData.slice().filter((data) => {
+            var elementDate = new Date(data.date.replace(/\-/g, '/'))
+            return (elementDate >= startDate && elementDate <= endDate)
+        })
+    }
+
+    setCurrentLayer(layer) {
+        if (!layer) {
+            this.setLayerProperties(null)
+            return
+        }
+        this.setLayerProperties(layer.properties)
+    }
+
+    setLayerProperties(properties) {
+        this.options.layerProperties = properties
+    }
+
+    getLayerProperties() {
+        return this.options.layerProperties
+    }
+
+    getLocationName() {
+        var layerProperties = this.getLayerProperties()
+        if (!layerProperties) {
+            return 'Brasil'
+        } else if (layerProperties['CD_GEOCMU']) {
+            return layerProperties.NM_MUNICIP
+        }
+        return layerProperties.NM_ESTADO
+    }
+
+    getFeatureId() {
+        var layerProperties = this.getLayerProperties()
+        return (layerProperties['CD_GEOCMU']) ? layerProperties['CD_GEOCMU'] : layerProperties['CD_GEOCUF']
+    }
+
+    getStatisticsData() {
+        var jsonData = []
+        var layerProperties = this.getLayerProperties()
+        if (!layerProperties) {
+            return this.getCountryData()
+        } else if (layerProperties.CD_GEOCMU) {
+            jsonData = this.getCityChoroplethData()
+
+        } else {
+            jsonData = this.getStateChoroplethData()
+        }
+        var featureId = featureId = this.getFeatureId()
+        return jsonData.filter((data) => {
+            var id = (data.CD_GEOCMU) ? data.CD_GEOCMU : data.CD_GEOCUF
+            return (featureId === id)
         })
     }
 
@@ -90,14 +207,20 @@ class DataSource {
         var url
         var options = {}
         if (themeType == 'heat') {
-            url = `${window.location.origin}/api/maptheme/heat?location=city&${this.getQueryTime()}`
+            url = `${window.location.origin}/api/maptheme/heat?location=city`
         } else if (themeType == 'choropleth') {
-            url = `${window.location.origin}/api/maptheme/choropleth?location=state&${this.getQueryTime()}`
+            url = `${window.location.origin}/api/maptheme/choropleth?location=state`
         } else if (themeType == 'circles') {
-            url = `${window.location.origin}/api/maptheme/circle?location=state&${this.getQueryTime()}`
+            url = `${window.location.origin}/api/maptheme/circle?location=state`
         }
         if (!url) return
         httpGetAsync(url, function(data) {
+            cb(JSON.parse(data))
+        })
+    }
+
+    getCountryDataset(cb) {
+        httpGetAsync(`${window.location.origin}/api/information/country`, function(data) {
             cb(JSON.parse(data))
         })
     }
@@ -106,11 +229,11 @@ class DataSource {
         var url
         var options = {}
         if (themeType == 'heat') {
-            url = `${window.location.origin}/api/maptheme/heat?location=city&${this.getQueryTime()}`
+            url = `${window.location.origin}/api/maptheme/heat?location=city`
         } else if (themeType == 'choropleth') {
-            url = `${window.location.origin}/api/maptheme/choropleth?location=city&${this.getQueryTime()}`
+            url = `${window.location.origin}/api/maptheme/choropleth?location=city`
         } else if (themeType == 'circles') {
-            url = `${window.location.origin}/api/maptheme/circle?location=city&${this.getQueryTime()}`
+            url = `${window.location.origin}/api/maptheme/circle?location=city`
         }
         if (!url) return
         httpGetAsync(url, function(data) {

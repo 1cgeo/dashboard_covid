@@ -1,9 +1,11 @@
 const createError = require('http-errors');
+var compression = require('compression')
 const express = require('express');
 const path = require('path');
 const apiRouter = require('./server/routes/index');
 const app = express();
 
+app.use(compression())
 app.use(express.json({ limit: '150mb' }));
 app.use(express.urlencoded({ limit: '150mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));

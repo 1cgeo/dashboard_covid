@@ -9,50 +9,18 @@ class ChoroplethLayer extends Layer {
         this.create()
     }
 
-    reload() {
-        var processKey = this.createUUID()
-        this.currentProcessKey = processKey
-        this.options.map.getDataSource().getThemeData(
-            this.options.layerId,
-            this.options.type,
-            (jsonData) => {
-                if (jsonData.length < 1) { return }
-                var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
-                if (mapLayers.length < 1) { return }
-                var mainLayer = mapLayers.find((l) => l.main)
-                this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
-
-                if (processKey !== this.currentProcessKey) return
-
-                this.currentPane = (this.currentPane === 'fill1') ? 'fill2' : 'fill1'
-                if (this.currentPane == 'fill1') {
-                    this.options.map.getMap().getPane('fill2').style.zIndex = 2045
-                    this.options.map.getMap().getPane('fill1').style.zIndex = 2030
-                }
-                var layer = this.createVectorGrid(
-                    mainLayer,
-                    this.options.attributeName,
-                    this.options.attributeNameSecondary,
-                    false,
-                )
-                this.options.map.getFeatureGroup().addLayer(layer)
-                this.mainVectorTile = layer
-                this.scenes.push(layer)
-                setTimeout(() => {
-                        if (this.scenes.length > 1) {
-                            var l = this.scenes.shift()
-                            this.options.map.getFeatureGroup().removeLayer(l)
-                        }
-                    }, 1500)
-                    /* this.options.map.getFeatureGroup().removeLayer(this.mainVectorTile)
-                    this.mainVectorTile = layer */
-            }
-        )
+    startAnimation() {
+        this.updateAnimation()
     }
 
-    reloadFromData(jsonData) {
+    stopAnimation() {
+        this.updateAnimation()
+    }
+
+    updateAnimation() {
         var processKey = this.createUUID()
         this.currentProcessKey = processKey
+        var jsonData = this.getJsonData()
         if (jsonData.length < 1) { return }
         var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
         if (mapLayers.length < 1) { return }
@@ -83,37 +51,6 @@ class ChoroplethLayer extends Layer {
             }, 1500)
             /* this.options.map.getFeatureGroup().removeLayer(this.mainVectorTile)
             this.mainVectorTile = layer */
-    }
-
-    filterDataTimeInterval(timeInterval) {
-        return this.rangeData.filter((data) => {
-            let elementDate = new Date(data.date.replace(/\-/g, '/'))
-            let startDate = new Date(+timeInterval[0])
-            let endDate = new Date(+timeInterval[1])
-            return (startDate <= elementDate && elementDate <= endDate)
-        })
-    }
-
-    updateAnimation(timeInterval, fullTimeInterval) {
-        if (this.rangeData) {
-            this.reloadFromData(
-                this.filterDataTimeInterval(timeInterval)
-            )
-            return
-        }
-        var dataSource = new DataSource({
-            dataTimeInterval: [new Date(fullTimeInterval[0]).getTime(), new Date(fullTimeInterval[1]).getTime()]
-        })
-        dataSource.getThemeData(
-            this.options.layerId,
-            this.options.type,
-            (jsonData) => {
-                this.rangeData = jsonData
-                this.reloadFromData(
-                    this.filterDataTimeInterval(timeInterval)
-                )
-            }
-        )
     }
 
     remove() {
@@ -174,41 +111,43 @@ class ChoroplethLayer extends Layer {
         }
     }
 
+    getJsonData() {
+        if (this.options.layerId == 0) {
+            return this.options.map.getDataSource().getStateChoroplethData()
+        }
+        return this.options.map.getDataSource().getCityChoroplethData()
+    }
+
     create() {
         var processKey = this.createUUID()
         this.currentProcessKey = processKey
-        this.options.map.getDataSource().getThemeData(
-            this.options.layerId,
-            this.options.type,
-            (jsonData) => {
-                if (jsonData.length < 1) { return }
-                var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
-                var mainLayer = mapLayers.find((l) => l.main)
-                this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
-                if (mapLayers.length < 1) { return }
-                if (processKey !== this.currentProcessKey) return
-                this.loadPanels()
-                this.loadLimits(mapLayers)
-                for (var i = mapLayers.length; i--;) {
-                    this.idField = mapLayers[i].idField
-                    var loadOtherStyle = (mapLayers[i].main) ? false : true
-                    this.currentPane = 'fill1'
-                    var layer = this.createVectorGrid(
-                        mapLayers[i],
-                        this.options.attributeName,
-                        this.options.attributeNameSecondary,
-                        loadOtherStyle,
-                    )
-                    this.options.map.getFeatureGroup().addLayer(layer)
-                    this.vectorTiles.push(layer)
-                    if (mapLayers[i].main) {
-                        this.mainVectorTile = layer
-                        this.scenes.push(layer)
-                    }
-                }
-                if (!this.currentLegend) this.createLegend()
+        var jsonData = this.getJsonData()
+        if (jsonData.length < 1) { return }
+        var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
+        var mainLayer = mapLayers.find((l) => l.main)
+        this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
+        if (mapLayers.length < 1) { return }
+        if (processKey !== this.currentProcessKey) return
+        this.loadPanels()
+        this.loadLimits(mapLayers)
+        for (var i = mapLayers.length; i--;) {
+            this.idField = mapLayers[i].idField
+            var loadOtherStyle = (mapLayers[i].main) ? false : true
+            this.currentPane = 'fill1'
+            var layer = this.createVectorGrid(
+                mapLayers[i],
+                this.options.attributeName,
+                this.options.attributeNameSecondary,
+                loadOtherStyle,
+            )
+            this.options.map.getFeatureGroup().addLayer(layer)
+            this.vectorTiles.push(layer)
+            if (mapLayers[i].main) {
+                this.mainVectorTile = layer
+                this.scenes.push(layer)
             }
-        )
+        }
+        if (!this.currentLegend) this.createLegend()
     }
 
     loadLimits(mapLayers) {

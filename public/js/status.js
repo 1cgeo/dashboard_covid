@@ -1,19 +1,16 @@
 class Status {
     constructor(dataSource) {
         this.dataSource = dataSource
-        this.init()
     }
 
-    init() {
-        this.dataSource.getStatusData((data, locationName) => {
-            this.setLocationName(locationName)
-            if (data.length < 1) {
-                this.clean()
-                return
-            }
-            this.setTotalCases(this.reduceValue(data, 'newCases'))
-            this.setTotalDeaths(this.reduceValue(data, 'newDeaths'))
-        })
+    loadData(data, locationName) {
+        this.setLocationName(locationName)
+        if (data.length < 1) {
+            this.clean()
+            return
+        }
+        this.setTotalCases(this.reduceValue(data, 'newCases'))
+        this.setTotalDeaths(this.reduceValue(data, 'newDeaths'))
     }
 
     reduceValue(data, field) {
@@ -22,10 +19,6 @@ class Status {
             total += +data[i][field]
         }
         return total
-    }
-
-    update() {
-        this.init()
     }
 
     clean() {

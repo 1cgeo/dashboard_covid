@@ -25,8 +25,6 @@ class BarChart {
         window.addEventListener("resize", () => {
             this.draw()
         })
-        this.loadData()
-
     }
 
     loadSvg() {
@@ -87,6 +85,7 @@ class BarChart {
         this.maxValue = this.getMax(jsonData.map(elem => +elem[attributeY]))
         var dataFormated = []
         for (var i = jsonData.length; i--;) {
+            if (+jsonData[i][attributeY] < 0) continue
             var d = {}
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
             d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
@@ -112,20 +111,18 @@ class BarChart {
         }
     }
 
-    loadData() {
-        this.options.dataSource.getBarChartData((data) => {
-            this.currentData = []
-            if (data.length > 0) {
-                this.currentData = this.formatInputData(data)
-            }
-            this.x.domain(this.currentData.map((function(d) {
-                return d[this.options.attributeX];
-            }).bind(this)));
-            this.y.domain([0, d3.max(this.currentData, (function(d) {
-                return d[this.options.attributeY];
-            }).bind(this))])
-            this.draw()
-        })
+    loadData(data) {
+        this.currentData = []
+        if (data.length > 0) {
+            this.currentData = this.formatInputData(data)
+        }
+        this.x.domain(this.currentData.map((function(d) {
+            return d[this.options.attributeX];
+        }).bind(this)));
+        this.y.domain([0, d3.max(this.currentData, (function(d) {
+            return d[this.options.attributeY];
+        }).bind(this))])
+        this.draw()
     }
 
     getMargin() {

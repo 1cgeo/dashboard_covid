@@ -1,72 +1,100 @@
-this.startDate = new Date('2020/02/24').getTime()
-this.endDate = new Date().getTime()
+var dataSource = new DataSource({})
 
-var dataSource = new DataSource({
-    dataTimeInterval: [startDate, endDate]
-})
+dataSource.loadAllData(() => {
 
-var locationStatus = new Status(dataSource)
+    var locationStatus = new Status(dataSource)
 
+    var dateSlider = new SliderDate({
+        dataTimeInterval: dataSource.getDataTimeInterval(),
+        dateValues: [
+            document.getElementById('start-date'),
+            document.getElementById('end-date')
+        ]
+    })
 
-var dateSlider = new SliderDate({
-    dataTimeInterval: [startDate, endDate],
-    dateValues: [
-        document.getElementById('start-date'),
-        document.getElementById('end-date')
-    ]
-})
-
-
-
-
-var barChartCases = new BarChart({
-    parentId: "cases-chart",
-    elementId: "graph-cases",
-    dataSource: dataSource,
-    dataLocation: 'country',
-    attributeX: "date",
-    attributeY: "newCases",
-    title: "Casos"
-})
+    var barChartCases = new BarChart({
+        parentId: "cases-chart",
+        elementId: "graph-cases",
+        dataSource: dataSource,
+        dataLocation: 'country',
+        attributeX: "date",
+        attributeY: "newCases",
+        title: "Casos"
+    })
 
 
-var barChartDeaths = new BarChart({
-    parentId: "deaths-chart",
-    elementId: "graph-deaths",
-    dataSource: dataSource,
-    attributeX: "date",
-    attributeY: "newDeaths",
-    title: "Óbitos"
-})
+    var barChartDeaths = new BarChart({
+        parentId: "deaths-chart",
+        elementId: "graph-deaths",
+        dataSource: dataSource,
+        attributeX: "date",
+        attributeY: "newDeaths",
+        title: "Óbitos"
+    })
 
-var factories = new Factories()
-var covidmap = factories.createMap(
-    'covidMap',
-    dataSource, {
-        elementId: "map-container"
-    }
-)
+    var factories = new Factories()
+    var covidmap = factories.createMap(
+        'covidMap',
+        dataSource, {
+            elementId: "map-container"
+        }
+    )
 
+    dateSlider.connectEndChange((timeInterval) => {
+        dataSource.setDataTimeInterval(timeInterval)
+        var statisticsData = dataSource.getStatisticsData()
+        locationStatus.loadData(
+            statisticsData,
+            dataSource.getLocationName()
+        )
+        barChartCases.loadData(statisticsData)
+        barChartDeaths.loadData(statisticsData)
+        covidmap.updateAnimation(timeInterval)
+    })
 
-dateSlider.connectEndChange((timeInterval) => {
-    dataSource.setDataTimeInterval(timeInterval)
-    locationStatus.update()
-    barChartCases.loadData()
-    barChartDeaths.loadData()
-    covidmap.reloadMapData()
-})
+    dateSlider.connectStartAnimation(() => {
+        covidmap.startAnimation()
 
-dateSlider.connectPlay((timeInterval, fullTimeInterval) => {
-    dataSource.setDataTimeInterval(timeInterval)
-    locationStatus.update()
-    barChartCases.loadData()
-    barChartDeaths.loadData()
-    covidmap.reloadMapAnimation(timeInterval, fullTimeInterval)
-})
+    }).connectUpdateAnimation((timeInterval) => {
+        dataSource.setDataTimeInterval(timeInterval)
+        covidmap.updateAnimation(timeInterval)
+        var statisticsData = dataSource.getStatisticsData()
+        locationStatus.loadData(
+            statisticsData,
+            dataSource.getLocationName()
+        )
+        barChartCases.loadData(statisticsData)
+        barChartDeaths.loadData(statisticsData)
 
-covidmap.on('changeLocation', (layerClicked) => {
-    dataSource.setCurrentLayer(layerClicked)
-    locationStatus.update()
-    barChartCases.loadData()
-    barChartDeaths.loadData()
+    }).connectStopAnimation((timeInterval) => {
+        dataSource.setDataTimeInterval(timeInterval)
+        covidmap.stopAnimation(timeInterval)
+        var statisticsData = dataSource.getStatisticsData()
+        locationStatus.loadData(
+            statisticsData,
+            dataSource.getLocationName()
+        )
+        barChartCases.loadData(statisticsData)
+        barChartDeaths.loadData(statisticsData)
+    })
+
+    covidmap.on('changeLocation', (layerClicked) => {
+        dataSource.setCurrentLayer(layerClicked)
+        var statisticsData = dataSource.getStatisticsData()
+        locationStatus.loadData(
+            statisticsData,
+            dataSource.getLocationName()
+        )
+        barChartCases.loadData(statisticsData)
+        barChartDeaths.loadData(statisticsData)
+    })
+    var statisticsData = dataSource.getStatisticsData()
+    locationStatus.loadData(
+        statisticsData,
+        dataSource.getLocationName()
+    )
+    barChartCases.loadData(statisticsData)
+    barChartDeaths.loadData(statisticsData)
+
+    $('#loader').hide()
 })

@@ -100,10 +100,7 @@ class SliderDate {
     }
 
     async play() {
-        if (!this.playCallback) {
-            this.setPlayButtonStyle()
-            return
-        }
+        this.startAnimationCb()
         this.desable()
         var playTimeInterval = this.dateSlider.noUiSlider.get()
         var startDate = new Date(playTimeInterval[0])
@@ -121,7 +118,7 @@ class SliderDate {
                     `Data atual:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
                 )
                 //this.dateSlider.noUiSlider.set([currentDate, endDate])
-            this.playCallback([startDate, currentDate], [startDate, endDate])
+            this.updateAnimationCb([startDate, currentDate])
             await this.sleep(1000)
         }
         $('#current-date').text('')
@@ -132,12 +129,23 @@ class SliderDate {
     }
 
     stop() {
-        this.playCallback(this.dateSlider.noUiSlider.get())
+        this.stopAnimationCb(this.dateSlider.noUiSlider.get())
         this.enable()
         this.setPlayButtonStyle()
     }
 
-    connectPlay(cb) {
-        this.playCallback = cb
+    connectUpdateAnimation(cb) {
+        this.updateAnimationCb = cb
+        return this
+    }
+
+    connectStartAnimation(cb) {
+        this.startAnimationCb = cb
+        return this
+    }
+
+    connectStopAnimation(cb) {
+        this.stopAnimationCb = cb
+        return this
     }
 }

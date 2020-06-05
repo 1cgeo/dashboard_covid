@@ -135,18 +135,9 @@ module.exports.totalDiarioBrasil = (cb) => {
 };
 
 
-module.exports.getCircleThemeData = (location, startTimestamp, endTimestamp, cb) => {
+module.exports.getCircleThemeData = (location, cb) => {
     let sourceData = (location === 'city') ? dadosCidades.slice() : dadosEstados.slice();
-    let geojson = getGeoJsonCollectionTemplate();
-    if (startTimestamp && endTimestamp) {
-        let dataFiltered = sourceData.filter((info) => {
-            let elementDate = new Date(info.date.replace(/\-/g, '/'))
-            let startDate = new Date(+startTimestamp)
-            let endDate = new Date(+endTimestamp)
-            return (startDate <= elementDate && elementDate <= endDate)
-        })
-        sourceData = dataFiltered
-    }
+    let geojson = getGeoJsonCollectionTemplate()
     geojson.features = sourceData.map((info) => {
         let feat = getFeaturePointTemplate();
         feat.geometry.coordinates = (location === 'city') ? [info.lon, info.lat] : [info.CENTROID_X, info.CENTROID_Y];
@@ -164,17 +155,8 @@ module.exports.getCircleThemeData = (location, startTimestamp, endTimestamp, cb)
 };
 
 
-module.exports.getHeatThemeData = (startTimestamp, endTimestamp, cb) => {
+module.exports.getHeatThemeData = (cb) => {
     var sourceData = dadosCidades.slice()
-    if (startTimestamp && endTimestamp) {
-        let dataFiltered = sourceData.filter((info) => {
-            let elementDate = new Date(info.date.replace(/\-/g, '/'))
-            let startDate = new Date(+startTimestamp)
-            let endDate = new Date(+endTimestamp)
-            return (startDate <= elementDate && elementDate <= endDate)
-        })
-        sourceData = dataFiltered
-    }
     var heatCitiesData = sourceData.map((info) => {
         return {
             latlong: [info.lat, info.lon],
@@ -189,17 +171,8 @@ module.exports.getHeatThemeData = (startTimestamp, endTimestamp, cb) => {
 
 
 
-module.exports.getChoroplethThemeData = (location, startTimestamp, endTimestamp, cb) => {
+module.exports.getChoroplethThemeData = (location, cb) => {
     let sourceData = (location === 'city') ? dadosCidades.slice() : dadosEstados.slice();
-    if (startTimestamp && endTimestamp) {
-        let dataFiltered = sourceData.filter((info) => {
-            let elementDate = new Date(info.date.replace(/\-/g, '/'))
-            let startDate = new Date(+startTimestamp)
-            let endDate = new Date(+endTimestamp)
-            return (startDate <= elementDate && elementDate <= endDate)
-        })
-        sourceData = dataFiltered
-    }
     var choroplethStatesData = sourceData.map((info) => {
         var data = {
             nrDiasDobraCasos: info.nrDiasDobraCasos,
@@ -222,17 +195,8 @@ module.exports.getChoroplethThemeData = (location, startTimestamp, endTimestamp,
 
 
 
-module.exports.getCountryInformation = (startTimestamp, endTimestamp, cb) => {
+module.exports.getCountryInformation = (cb) => {
     var sourceData = dadosBrasil.slice()
-    if (startTimestamp && endTimestamp) {
-        let dataFiltered = sourceData.filter((info) => {
-            let elementDate = new Date(info.date.replace(/\-/g, '/'))
-            let startDate = new Date(+startTimestamp)
-            let endDate = new Date(+endTimestamp)
-            return (startDate <= elementDate && elementDate <= endDate)
-        })
-        sourceData = dataFiltered
-    }
     let data = sourceData.map((info) => {
         return {
             deaths: info.deaths,
@@ -245,25 +209,12 @@ module.exports.getCountryInformation = (startTimestamp, endTimestamp, cb) => {
     cb(data);
 };
 
-
-
-module.exports.getCityInformation = (ibgeID, startTimestamp, endTimestamp, cb) => {
+module.exports.getCityInformation = (ibgeID, cb) => {
     var sourceData = dadosCidades.slice()
     var resultData = []
     for (var i = sourceData.length; i--;) {
-        var passed = false
         var id = +sourceData[i].ibgeID
-        if (startTimestamp && endTimestamp) {
-            let elementDate = new Date(sourceData[i].date.replace(/\-/g, '/'))
-            let startDate = new Date(+startTimestamp)
-            let endDate = new Date(+endTimestamp)
-            if ((startDate <= elementDate && elementDate <= endDate) && id === +ibgeID) {
-                passed = true
-            }
-        } else if (id === +ibgeID) {
-            passed = true
-        }
-        if (!passed) continue
+        if (!(id === +ibgeID)) continue
         resultData.push({
             deaths: sourceData[i].deaths,
             totalCases: sourceData[i].totalCases,
@@ -276,24 +227,12 @@ module.exports.getCityInformation = (ibgeID, startTimestamp, endTimestamp, cb) =
     cb(resultData)
 };
 
-
 module.exports.getStateInformation = (ibgeID, startTimestamp, endTimestamp, cb) => {
     var sourceData = dadosEstados.slice()
     var resultData = []
     for (var i = sourceData.length; i--;) {
-        var passed = false
         var id = +STATES_MAP[sourceData[i].state.toLowerCase()]
-        if (startTimestamp && endTimestamp) {
-            let elementDate = new Date(sourceData[i].date.replace(/\-/g, '/'))
-            let startDate = new Date(+startTimestamp)
-            let endDate = new Date(+endTimestamp)
-            if ((startDate <= elementDate && elementDate <= endDate) && id === +ibgeID) {
-                passed = true
-            }
-        } else if (id === +ibgeID) {
-            passed = true
-        }
-        if (!passed) continue
+        if (!(id === +ibgeID)) continue
         resultData.push({
             deaths: sourceData[i].deaths,
             totalCases: sourceData[i].totalCases,
