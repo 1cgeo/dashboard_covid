@@ -1,160 +1,160 @@
-    .legend2,
-    .temporal-legend {
-        padding: 6px 10px;
-        background: transparent;
-    }
-    
-    #legendTitle {
-        text-align: center;
-        margin-bottom: 15px;
-        font-variant: small-caps;
-    }
-    
-    .symbolsContainer {
-        float: left;
-        margin-left: 50px;
-    }
-    
-    .legendCircle {
-        border-radius: 50%;
-        display: inline-block;
-    }
-    
-    .symbolsContainer .legendValue {
-        position: absolute;
-        left: 10px;
-        font-size: 10px;
-        color: rgba(0, 0, 0, 1) !important;
-    }
-    
-    .themesOptions {
-        padding: 6px 8px;
-        font: 14px/16px Arial, Helvetica, sans-serif;
-        background: white;
-        background: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        border-radius: 5px;
-    }
-    
-    .info h4 {
-        margin: 0 0 5px;
-        color: #777;
-    }
-    
-    .legend {
-        text-align: left;
-        line-height: 18px;
-        color: #555;
-    }
-    
-    .legend i {
-        width: 18px;
-        height: 18px;
-        float: left;
-        margin-right: 8px;
-        opacity: 0.7;
-    }
-    
-    .a {
-        grid-area: a;
-    }
-    
-    .b {
-        grid-area: b;
-    }
-    
-    .c {
-        grid-area: c;
-    }
-    
-    .d {
-        grid-area: d;
-    }
-    
-    .e {
-        grid-area: e;
-    }
-    
-    .f {
-        grid-area: f;
-    }
-    
-    .g {
-        grid-area: g;
-    }
-    
-    .h {
-        grid-area: h;
-    }
-    
-    .i {
-        grid-area: i;
-    }
-    
-    .j {
-        grid-area: j;
-    }
-    
-    .l {
-        grid-area: l;
-    }
-    
-    .m {
-        grid-area: m;
-    }
-    
-    .y {
-        grid-area: y;
-    }
-    
-    .grid-choropleth-legend {
-        transform: scale(0.5, 0.6);
-        margin-right: 200px;
-        width: 40px;
-        font-size: 15px;
-        display: grid;
-        grid-template-areas: 'y y y y y y' 'a b c d e f' 'g h i j l m';
-    }
-    
-    .info-popover {
-        padding: 6px 8px;
-        font: 14px/16px Arial, Helvetica, sans-serif;
-        background: white;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        border-radius: 5px;
-        width: 200px;
-        height: 50px;
-    }
-    
-    .gradient-value {
-        height: 100px;
-        width: 20px;
-        background-image: linear-gradient(red, lime, yellow, purple, gray);
-    }
-    
-    .gradient-value {
-        grid-area: value;
-        text-align: center;
-    }
-    
-    .gradient-text1 {
-        margin-top: 10px;
-        grid-area: text1;
-        text-align: center;
-    }
-    
-    .gradient-text2 {
-        grid-area: text2;
-        text-align: center;
-    }
-    
-    .gradient-text3 {
-        grid-area: text3;
-        text-align: center;
-    }
-    
-    .container-gradient {
-        width: 80px;
-        display: grid;
-        grid-template-areas: 'value text1' 'value text2' 'value text3';
-    }
+.legend2,
+.temporal-legend {
+  padding: 6px 10px;
+  background: transparent;
+}
+
+#legendTitle {
+  text-align: center;
+  margin-bottom: 15px;
+  font-variant: small-caps;
+}
+
+.symbolsContainer {
+  float: left;
+  margin-left: 50px;
+}
+
+.legendCircle {
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.symbolsContainer .legendValue {
+  position: absolute;
+  left: 10px;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 1) !important;
+}
+
+.themesOptions {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.info h4 {
+  margin: 0 0 5px;
+  color: #777;
+}
+
+.legend {
+  text-align: left;
+  line-height: 18px;
+  color: #555;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.a {
+  grid-area: a;
+}
+
+.b {
+  grid-area: b;
+}
+
+.c {
+  grid-area: c;
+}
+
+.d {
+  grid-area: d;
+}
+
+.e {
+  grid-area: e;
+}
+
+.f {
+  grid-area: f;
+}
+
+.g {
+  grid-area: g;
+}
+
+.h {
+  grid-area: h;
+}
+
+.i {
+  grid-area: i;
+}
+
+.j {
+  grid-area: j;
+}
+
+.l {
+  grid-area: l;
+}
+
+.m {
+  grid-area: m;
+}
+
+.y {
+  grid-area: y;
+}
+
+.grid-choropleth-legend {
+  transform: scale(0.7, 0.8);
+  margin-right: 200px;
+  width: 40px;
+  font-size: 15px;
+  display: grid;
+  grid-template-areas: "y y y y y y" "a b c d e f" "g h i j l m";
+}
+
+.info-popover {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  width: 200px;
+  height: 50px;
+}
+
+.gradient-value {
+  height: 100px;
+  width: 20px;
+  background-image: linear-gradient(red, lime, yellow, purple, gray);
+}
+
+.gradient-value {
+  grid-area: value;
+  text-align: center;
+}
+
+.gradient-text1 {
+  margin-top: 10px;
+  grid-area: text1;
+  text-align: center;
+}
+
+.gradient-text2 {
+  grid-area: text2;
+  text-align: center;
+}
+
+.gradient-text3 {
+  grid-area: text3;
+  text-align: center;
+}
+
+.container-gradient {
+  width: 80px;
+  display: grid;
+  grid-template-areas: "value text1" "value text2" "value text3";
+}
