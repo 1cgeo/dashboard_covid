@@ -90,16 +90,43 @@ const csv_brasil = (file, output) => {
     .pipe(csv())
     .on("data", function (data) {
       if (data.state == "TOTAL") {
-        data.totalRecovered = data.recovered > 0 ? data.recovered : 0;
+        data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
         dataArray.push(data);
       }
     })
     .on("end", function () {
-      dataArray[0].recovered = dataArray[0].totalRecovered;
+      dataArray[0].recovered = +dataArray[0].totalRecovered;
       for (var i = dataArray.length - 1; i >= 1; i--) {
         dataArray[i].recovered =
-          dataArray[i].recovered - dataArray[i - 1].recovered;
+          +dataArray[i].recovered - dataArray[i - 1].recovered;
       }
+
+      for (var i = 0; i < dataArray.length; i++) {
+        if (i < 6) {
+          dataArray[i].meanCases = +dataArray[i].newCases;
+          dataArray[i].meanDeaths = +dataArray[i].newDeaths;
+        } else {
+          dataArray[i].meanCases =
+            (+dataArray[i].newCases +
+              +dataArray[i - 1].newCases +
+              +dataArray[i - 2].newCases +
+              +dataArray[i - 3].newCases +
+              +dataArray[i - 4].newCases +
+              +dataArray[i - 5].newCases +
+              +dataArray[i - 6].newCases) /
+            7.0;
+          dataArray[i].meanDeaths =
+            (+dataArray[i].newDeaths +
+              +dataArray[i - 1].newDeaths +
+              +dataArray[i - 2].newDeaths +
+              +dataArray[i - 3].newDeaths +
+              +dataArray[i - 4].newDeaths +
+              +dataArray[i - 5].newDeaths +
+              +dataArray[i - 6].newDeaths) /
+            7.0;
+        }
+      }
+
       const fields = Object.keys(dataArray[0]);
       const opts = { fields };
       const parser = new Parser(opts);
@@ -118,9 +145,9 @@ const modify_csv_estado = (file, output) => {
     .on("data", function (data) {
       if (data.state != "TOTAL") {
         data.CD_GEOCUF = STATES_MAP[data.state.toLowerCase()];
-        data.CENTROID_X = CENTROID[data.CD_GEOCUF][0];
-        data.CENTROID_Y = CENTROID[data.CD_GEOCUF][1];
-        data.totalRecovered = data.recovered > 0 ? data.recovered : 0;
+        data.CENTROID_X = +CENTROID[data.CD_GEOCUF][0];
+        data.CENTROID_Y = +CENTROID[data.CD_GEOCUF][1];
+        data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
         dataArray.push(data);
       }
     })
@@ -140,7 +167,7 @@ const modify_csv_estado = (file, output) => {
             negativoCases[dataArray[i].state] = 0;
           }
           negativoCases[dataArray[i].state] =
-            negativoCases[dataArray[i].state] - dataArray[i].newCases;
+            +negativoCases[dataArray[i].state] - dataArray[i].newCases;
           dataArray[i].newCases = 0;
         }
 
@@ -166,11 +193,46 @@ const modify_csv_estado = (file, output) => {
         let rec = 0;
         for (var j = i - 1; j >= 0; j--) {
           if (dataArray[i].state == dataArray[j].state) {
-            rec = dataArray[i].recovered - dataArray[j].recovered;
+            rec = +dataArray[i].recovered - dataArray[j].recovered;
             break;
           }
         }
-        dataArray[i].recovered = rec > 0 ? rec : 0;
+        dataArray[i].recovered = rec > 0 ? +rec : 0;
+      }
+
+      const last7Cases = {};
+      const last7Deaths = {};
+      const average = (list) =>
+        list.reduce((prev, curr) => +prev + +curr) / list.length;
+
+      for (var i = 0; i < dataArray.length; i++) {
+        if (!(dataArray[i].state in last7Cases)) {
+          last7Cases[dataArray[i].state] = [];
+        }
+        last7Cases[dataArray[i].state].push(dataArray[i].newCases);
+        if (last7Cases[dataArray[i].state].length > 7) {
+          last7Cases[dataArray[i].state].shift();
+        }
+
+        if (last7Cases[dataArray[i].state].length < 7) {
+          dataArray[i].meanCases = +dataArray[i].newCases;
+        } else {
+          dataArray[i].meanCases = average(last7Cases[dataArray[i].state]);
+        }
+
+        if (!(dataArray[i].state in last7Deaths)) {
+          last7Deaths[dataArray[i].state] = [];
+        }
+        last7Deaths[dataArray[i].state].push(dataArray[i].newDeaths);
+        if (last7Deaths[dataArray[i].state].length > 7) {
+          last7Deaths[dataArray[i].state].shift();
+        }
+
+        if (last7Deaths[dataArray[i].state].length < 7) {
+          dataArray[i].meanDeaths = +dataArray[i].newDeaths;
+        } else {
+          dataArray[i].meanDeaths = average(last7Deaths[dataArray[i].state]);
+        }
       }
 
       dataArray[0].nrDiasDobraCasos = 0;
@@ -224,7 +286,10 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (data) {
-      if (!data.city.includes("CASO SEM LOCALIZAÇÃO DEFINIDA")) {
+      if (
+        !data.city.includes("CASO SEM LOCALIZAÇÃO DEFINIDA") &&
+        data.city !== "TOTAL"
+      ) {
         dataArray.push(data);
       }
     })
@@ -298,6 +363,45 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                     +negativoDeaths[dataArray[i].ibgeID] -
                     dataArray[i].newDeaths;
                   dataArray[i].newDeaths = 0;
+                }
+              }
+
+              const last7Cases = {};
+              const last7Deaths = {};
+              const average = (list) =>
+                list.reduce((prev, curr) => +prev + +curr) / list.length;
+
+              for (var i = 0; i < dataArray.length; i++) {
+                if (!(dataArray[i].ibgeID in last7Cases)) {
+                  last7Cases[dataArray[i].ibgeID] = [];
+                }
+                last7Cases[dataArray[i].ibgeID].push(dataArray[i].newCases);
+                if (last7Cases[dataArray[i].ibgeID].length > 7) {
+                  last7Cases[dataArray[i].ibgeID].shift();
+                }
+
+                if (last7Cases[dataArray[i].ibgeID].length < 7) {
+                  dataArray[i].meanCases = +dataArray[i].newCases;
+                } else {
+                  dataArray[i].meanCases = average(
+                    last7Cases[dataArray[i].ibgeID]
+                  );
+                }
+
+                if (!(dataArray[i].ibgeID in last7Deaths)) {
+                  last7Deaths[dataArray[i].ibgeID] = [];
+                }
+                last7Deaths[dataArray[i].ibgeID].push(dataArray[i].newDeaths);
+                if (last7Deaths[dataArray[i].ibgeID].length > 7) {
+                  last7Deaths[dataArray[i].ibgeID].shift();
+                }
+
+                if (last7Deaths[dataArray[i].ibgeID].length < 7) {
+                  dataArray[i].meanDeaths = +dataArray[i].newDeaths;
+                } else {
+                  dataArray[i].meanDeaths = average(
+                    last7Deaths[dataArray[i].ibgeID]
+                  );
                 }
               }
 
