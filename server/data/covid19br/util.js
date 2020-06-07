@@ -90,10 +90,16 @@ const csv_brasil = (file, output) => {
     .pipe(csv())
     .on("data", function (data) {
       if (data.state == "TOTAL") {
+        data.totalRecovered = data.recovered > 0 ? data.recovered : 0;
         dataArray.push(data);
       }
     })
     .on("end", function () {
+      dataArray[0].recovered = dataArray[0].totalRecovered;
+      for (var i = dataArray.length - 1; i >= 1; i--) {
+        dataArray[i].recovered =
+          dataArray[i].recovered - dataArray[i - 1].recovered;
+      }
       const fields = Object.keys(dataArray[0]);
       const opts = { fields };
       const parser = new Parser(opts);
@@ -114,10 +120,23 @@ const modify_csv_estado = (file, output) => {
         data.CD_GEOCUF = STATES_MAP[data.state.toLowerCase()];
         data.CENTROID_X = CENTROID[data.CD_GEOCUF][0];
         data.CENTROID_Y = CENTROID[data.CD_GEOCUF][1];
+        data.totalRecovered = data.recovered > 0 ? data.recovered : 0;
         dataArray.push(data);
       }
     })
     .on("end", function () {
+      dataArray[0].recovered = dataArray[0].totalRecovered;
+      for (var i = dataArray.length - 1; i >= 1; i--) {
+        let rec = 0;
+        for (var j = i - 1; j >= 0; j--) {
+          if (dataArray[i].state == dataArray[j].state) {
+            rec = dataArray[i].recovered - dataArray[j].recovered;
+            break;
+          }
+        }
+        dataArray[i].recovered = rec > 0 ? rec : 0;
+      }
+
       dataArray[0].nrDiasDobraCasos = 0;
       dataArray[0].nrDiasDobraMortes = 0;
       for (var i = dataArray.length - 1; i > 0; i--) {

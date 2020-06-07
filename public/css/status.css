@@ -1,50 +1,62 @@
 #cases-values,
+#recuperados-values,
 #deaths-values {
-    font-size: 25px;
+  font-size: 25px;
 }
 
 .tag-cases,
+.tag-recuperados,
 .tag-deaths {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 #tag-location {
-    font-size: 30px;
-    text-align: center;
-    text-anchor: middle;
+  font-size: 30px;
+  text-align: center;
+  text-anchor: middle;
 }
 
 #status {
-    color: #333;
+  color: #333;
 }
 
 .location {
-    grid-area: location;
-    text-align: center;
-    align-self: center;
+  grid-area: location;
+  text-align: center;
+  align-self: center;
 }
 
 .tag-cases {
-    grid-area: tag-cases;
-    text-align: center;
+  grid-area: tag-cases;
+  text-align: center;
 }
 
 .ncases {
-    grid-area: ncases;
-    text-align: center;
+  grid-area: ncases;
+  text-align: center;
+}
+
+.nrecuperados {
+  grid-area: nrecuperados;
+  text-align: center;
+}
+
+.tag-recuperados {
+  grid-area: tag-recuperados;
+  text-align: center;
 }
 
 .tag-deaths {
-    grid-area: tag-deaths;
-    text-align: center;
+  grid-area: tag-deaths;
+  text-align: center;
 }
 
 .ndeaths {
-    grid-area: ndeaths;
-    text-align: center;
+  grid-area: ndeaths;
+  text-align: center;
 }
 
 .grid-container-status {
-    display: grid;
-    grid-template-areas: 'location location location location' 'tag-cases tag-cases tag-deaths tag-deaths' 'ncases ncases ndeaths ndeaths';
+  display: grid;
+  grid-template-areas: "location location location" "tag-cases tag-recuperados tag-deaths" "ncases nrecuperados ndeaths";
 }
