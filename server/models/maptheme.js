@@ -143,7 +143,7 @@ module.exports.getCircleThemeData = (location, cb) => {
     let feat = getFeaturePointTemplate();
     feat.geometry.coordinates =
       location === "city"
-        ? [info.lon, info.lat]
+        ? [info.centroid_long, info.centroid_lat]
         : [info.CENTROID_X, info.CENTROID_Y];
     feat.properties.totalCases = info.totalCases;
     feat.properties.deaths = info.deaths;

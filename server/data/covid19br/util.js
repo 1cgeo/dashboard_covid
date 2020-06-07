@@ -218,7 +218,7 @@ const modify_csv_estado = (file, output) => {
     });
 };
 
-const modify_csv_cidade = (file, coords, output) => {
+const modify_csv_cidade = (file, coords, centroid, output) => {
   console.log("Preparo do CSV dos Municipios iniciado.");
   const dataArray = [];
   fs.createReadStream(file)
@@ -238,92 +238,118 @@ const modify_csv_cidade = (file, coords, output) => {
           }
         })
         .on("end", function () {
-          dataArray.forEach((d) => {
-            gpsArray.forEach((g) => {
-              if (+d.ibgeID == +g.ibgeID) {
-                d.lat = g.lat;
-                d.lon = g.lon;
+          const centroidArray = [];
+          fs.createReadStream(centroid)
+            .pipe(csv())
+            .on("data", function (data) {
+              centroidArray.push(data);
+            })
+            .on("end", function () {
+              dataArray.forEach((d) => {
+                centroidArray.forEach((c) => {
+                  if (+d.ibgeID == +c.ibgeID) {
+                    d.centroid_lat = c.centroid_lat;
+                    d.centroid_long = c.centroid_long;
+                  }
+                });
+              });
+
+              dataArray.forEach((d) => {
+                gpsArray.forEach((g) => {
+                  if (+d.ibgeID == +g.ibgeID) {
+                    d.lat = g.lat;
+                    d.lon = g.lon;
+                  }
+                });
+              });
+
+              const negativoCases = {};
+              const negativoDeaths = {};
+              for (var i = 0; i < dataArray.length; i++) {
+                if (dataArray[i].ibgeID in negativoCases) {
+                  dataArray[i].newCases =
+                    +dataArray[i].newCases - negativoCases[dataArray[i].ibgeID];
+                  negativoCases[dataArray[i].ibgeID] = 0;
+                  delete negativoCases[dataArray[i].ibgeID];
+                }
+
+                if (dataArray[i].newCases < 0) {
+                  if (!(dataArray[i].ibgeID in negativoCases)) {
+                    negativoCases[dataArray[i].ibgeID] = 0;
+                  }
+                  negativoCases[dataArray[i].ibgeID] =
+                    +negativoCases[dataArray[i].ibgeID] - dataArray[i].newCases;
+                  dataArray[i].newCases = 0;
+                }
+
+                if (dataArray[i].ibgeID in negativoDeaths) {
+                  dataArray[i].newDeaths =
+                    +dataArray[i].newDeaths -
+                    negativoDeaths[dataArray[i].ibgeID];
+                  negativoDeaths[dataArray[i].ibgeID] = 0;
+                  delete negativoDeaths[dataArray[i].ibgeID];
+                }
+
+                if (dataArray[i].newDeaths < 0) {
+                  if (!(dataArray[i].ibgeID in negativoDeaths)) {
+                    negativoDeaths[dataArray[i].ibgeID] = 0;
+                  }
+                  negativoDeaths[dataArray[i].ibgeID] =
+                    +negativoDeaths[dataArray[i].ibgeID] -
+                    dataArray[i].newDeaths;
+                  dataArray[i].newDeaths = 0;
+                }
               }
+
+              dataArray[0].nrDiasDobraCasos = 0;
+              dataArray[0].nrDiasDobraMortes = 0;
+              for (var i = dataArray.length - 1; i > 0; i--) {
+                for (var j = i - 1; j >= 0; j--) {
+                  if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
+                    if (
+                      dataArray[j].totalCases <=
+                      dataArray[i].totalCases / 2
+                    ) {
+                      const date1 = new Date(dataArray[j].date);
+                      const date2 = new Date(dataArray[i].date);
+                      const diffTime = Math.abs(date2 - date1);
+                      const diffDays = Math.ceil(
+                        diffTime / (1000 * 60 * 60 * 24)
+                      );
+                      dataArray[i].nrDiasDobraCasos = diffDays;
+                      break;
+                    }
+                  }
+                }
+                if (!dataArray[i].nrDiasDobraCasos) {
+                  dataArray[i].nrDiasDobraCasos = 0;
+                }
+                for (var j = i - 1; j >= 0; j--) {
+                  if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
+                    if (dataArray[j].deaths <= dataArray[i].deaths / 2) {
+                      const date1 = new Date(dataArray[j].date);
+                      const date2 = new Date(dataArray[i].date);
+                      const diffTime = Math.abs(date2 - date1);
+                      const diffDays = Math.ceil(
+                        diffTime / (1000 * 60 * 60 * 24)
+                      );
+                      dataArray[i].nrDiasDobraMortes = diffDays;
+                      break;
+                    }
+                  }
+                }
+                if (!dataArray[i].nrDiasDobraMortes) {
+                  dataArray[i].nrDiasDobraMortes = 0;
+                }
+              }
+              const fields = Object.keys(dataArray[0]);
+              const opts = { fields };
+              const parser = new Parser(opts);
+              const result = parser.parse(dataArray);
+
+              fs.writeFileSync(output, result);
+              console.log("Preparo do CSV dos Municipios FINALIZADO!");
             });
-          });
-
-          const negativoCases = {};
-          const negativoDeaths = {};
-          for (var i = 0; i < dataArray.length; i++) {
-            if (dataArray[i].ibgeID in negativoCases) {
-              dataArray[i].newCases =
-                +dataArray[i].newCases - negativoCases[dataArray[i].ibgeID];
-              negativoCases[dataArray[i].ibgeID] = 0;
-              delete negativoCases[dataArray[i].ibgeID];
-            }
-
-            if (dataArray[i].newCases < 0) {
-              if (!(dataArray[i].ibgeID in negativoCases)) {
-                negativoCases[dataArray[i].ibgeID] = 0;
-              }
-              negativoCases[dataArray[i].ibgeID] =
-                +negativoCases[dataArray[i].ibgeID] - dataArray[i].newCases;
-              dataArray[i].newCases = 0;
-            }
-
-            if (dataArray[i].ibgeID in negativoDeaths) {
-              dataArray[i].newDeaths =
-                +dataArray[i].newDeaths - negativoDeaths[dataArray[i].ibgeID];
-              negativoDeaths[dataArray[i].ibgeID] = 0;
-              delete negativoDeaths[dataArray[i].ibgeID];
-            }
-
-            if (dataArray[i].newDeaths < 0) {
-              if (!(dataArray[i].ibgeID in negativoDeaths)) {
-                negativoDeaths[dataArray[i].ibgeID] = 0;
-              }
-              negativoDeaths[dataArray[i].ibgeID] =
-                +negativoDeaths[dataArray[i].ibgeID] - dataArray[i].newDeaths;
-              dataArray[i].newDeaths = 0;
-            }
-          }
-
-          dataArray[0].nrDiasDobraCasos = 0;
-          dataArray[0].nrDiasDobraMortes = 0;
-          for (var i = dataArray.length - 1; i > 0; i--) {
-            for (var j = i - 1; j >= 0; j--) {
-              if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
-                if (dataArray[j].totalCases <= dataArray[i].totalCases / 2) {
-                  const date1 = new Date(dataArray[j].date);
-                  const date2 = new Date(dataArray[i].date);
-                  const diffTime = Math.abs(date2 - date1);
-                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                  dataArray[i].nrDiasDobraCasos = diffDays;
-                  break;
-                }
-              }
-            }
-            if (!dataArray[i].nrDiasDobraCasos) {
-              dataArray[i].nrDiasDobraCasos = 0;
-            }
-            for (var j = i - 1; j >= 0; j--) {
-              if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
-                if (dataArray[j].deaths <= dataArray[i].deaths / 2) {
-                  const date1 = new Date(dataArray[j].date);
-                  const date2 = new Date(dataArray[i].date);
-                  const diffTime = Math.abs(date2 - date1);
-                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                  dataArray[i].nrDiasDobraMortes = diffDays;
-                  break;
-                }
-              }
-            }
-            if (!dataArray[i].nrDiasDobraMortes) {
-              dataArray[i].nrDiasDobraMortes = 0;
-            }
-          }
-          const fields = Object.keys(dataArray[0]);
-          const opts = { fields };
-          const parser = new Parser(opts);
-          const result = parser.parse(dataArray);
-
-          fs.writeFileSync(output, result);
-          console.log("Preparo do CSV dos Municipios FINALIZADO!");
         });
     });
 };
