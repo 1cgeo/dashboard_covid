@@ -125,6 +125,42 @@ const modify_csv_estado = (file, output) => {
       }
     })
     .on("end", function () {
+      const negativoCases = {};
+      const negativoDeaths = {};
+      for (var i = 0; i < dataArray.length; i++) {
+        if (dataArray[i].state in negativoCases) {
+          dataArray[i].newCases =
+            +dataArray[i].newCases - negativoCases[dataArray[i].state];
+          negativoCases[dataArray[i].state] = 0;
+          delete negativoCases[dataArray[i].state];
+        }
+
+        if (dataArray[i].newCases < 0) {
+          if (!(dataArray[i].state in negativoCases)) {
+            negativoCases[dataArray[i].state] = 0;
+          }
+          negativoCases[dataArray[i].state] =
+            negativoCases[dataArray[i].state] - dataArray[i].newCases;
+          dataArray[i].newCases = 0;
+        }
+
+        if (dataArray[i].state in negativoDeaths) {
+          dataArray[i].newDeaths =
+            +dataArray[i].newDeaths - negativoDeaths[dataArray[i].state];
+          negativoDeaths[dataArray[i].state] = 0;
+          delete negativoDeaths[dataArray[i].state];
+        }
+
+        if (dataArray[i].newDeaths < 0) {
+          if (!(dataArray[i].state in negativoDeaths)) {
+            negativoDeaths[dataArray[i].state] = 0;
+          }
+          negativoDeaths[dataArray[i].state] =
+            +negativoDeaths[dataArray[i].state] - dataArray[i].newDeaths;
+          dataArray[i].newDeaths = 0;
+        }
+      }
+
       dataArray[0].recovered = dataArray[0].totalRecovered;
       for (var i = dataArray.length - 1; i >= 1; i--) {
         let rec = 0;
@@ -210,6 +246,42 @@ const modify_csv_cidade = (file, coords, output) => {
               }
             });
           });
+
+          const negativoCases = {};
+          const negativoDeaths = {};
+          for (var i = 0; i < dataArray.length; i++) {
+            if (dataArray[i].ibgeID in negativoCases) {
+              dataArray[i].newCases =
+                +dataArray[i].newCases - negativoCases[dataArray[i].ibgeID];
+              negativoCases[dataArray[i].ibgeID] = 0;
+              delete negativoCases[dataArray[i].ibgeID];
+            }
+
+            if (dataArray[i].newCases < 0) {
+              if (!(dataArray[i].ibgeID in negativoCases)) {
+                negativoCases[dataArray[i].ibgeID] = 0;
+              }
+              negativoCases[dataArray[i].ibgeID] =
+                +negativoCases[dataArray[i].ibgeID] - dataArray[i].newCases;
+              dataArray[i].newCases = 0;
+            }
+
+            if (dataArray[i].ibgeID in negativoDeaths) {
+              dataArray[i].newDeaths =
+                +dataArray[i].newDeaths - negativoDeaths[dataArray[i].ibgeID];
+              negativoDeaths[dataArray[i].ibgeID] = 0;
+              delete negativoDeaths[dataArray[i].ibgeID];
+            }
+
+            if (dataArray[i].newDeaths < 0) {
+              if (!(dataArray[i].ibgeID in negativoDeaths)) {
+                negativoDeaths[dataArray[i].ibgeID] = 0;
+              }
+              negativoDeaths[dataArray[i].ibgeID] =
+                +negativoDeaths[dataArray[i].ibgeID] - dataArray[i].newDeaths;
+              dataArray[i].newDeaths = 0;
+            }
+          }
 
           dataArray[0].nrDiasDobraCasos = 0;
           dataArray[0].nrDiasDobraMortes = 0;
