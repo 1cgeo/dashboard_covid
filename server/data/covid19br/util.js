@@ -105,6 +105,7 @@ const csv_brasil = (file, output) => {
         if (i < 6) {
           dataArray[i].meanCases = +dataArray[i].newCases;
           dataArray[i].meanDeaths = +dataArray[i].newDeaths;
+          dataArray[i].meanRecovered = +dataArray[i].recovered;
         } else {
           dataArray[i].meanCases =
             (+dataArray[i].newCases +
@@ -123,6 +124,16 @@ const csv_brasil = (file, output) => {
               +dataArray[i - 4].newDeaths +
               +dataArray[i - 5].newDeaths +
               +dataArray[i - 6].newDeaths) /
+            7.0;
+
+          dataArray[i].meanRecovered =
+            (+dataArray[i].recovered +
+              +dataArray[i - 1].recovered +
+              +dataArray[i - 2].recovered +
+              +dataArray[i - 3].recovered +
+              +dataArray[i - 4].recovered +
+              +dataArray[i - 5].recovered +
+              +dataArray[i - 6].recovered) /
             7.0;
         }
       }
@@ -202,6 +213,7 @@ const modify_csv_estado = (file, output) => {
 
       const last7Cases = {};
       const last7Deaths = {};
+      const last7Recovered = {};
       const average = (list) =>
         list.reduce((prev, curr) => +prev + +curr) / list.length;
 
@@ -232,6 +244,20 @@ const modify_csv_estado = (file, output) => {
           dataArray[i].meanDeaths = +dataArray[i].newDeaths;
         } else {
           dataArray[i].meanDeaths = average(last7Deaths[dataArray[i].state]);
+        }
+
+        if (!(dataArray[i].state in last7Recovered)) {
+          last7Recovered[dataArray[i].state] = [];
+        }
+        last7Recovered[dataArray[i].state].push(dataArray[i].recovered);
+        if (last7Recovered[dataArray[i].state].length > 7) {
+          last7Recovered[dataArray[i].state].shift();
+        }
+
+        if (last7Recovered[dataArray[i].state].length < 7) {
+          dataArray[i].meanRecovered = +dataArray[i].recovered;
+        } else {
+          dataArray[i].meanRecovered = average(last7Recovered[dataArray[i].state]);
         }
       }
 
