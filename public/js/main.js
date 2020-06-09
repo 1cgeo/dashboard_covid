@@ -32,6 +32,15 @@ dataSource.loadAllData(() => {
         title: "Óbitos"
     })
 
+    var barChartRecovered = new BarChart({
+        parentId: "recovered-chart",
+        elementId: "graph-recovered",
+        dataSource: dataSource,
+        attributeX: "date",
+        attributeY: "recovered",
+        title: "Recuperados"
+    })
+
     var factories = new Factories()
     var covidmap = factories.createMap(
         'covidMap',
@@ -49,6 +58,7 @@ dataSource.loadAllData(() => {
         )
         barChartCases.loadData(statisticsData)
         barChartDeaths.loadData(statisticsData)
+        barChartRecovered.loadData(statisticsData)
         covidmap.updateAnimation(timeInterval)
     })
 
@@ -65,6 +75,7 @@ dataSource.loadAllData(() => {
         )
         barChartCases.loadData(statisticsData)
         barChartDeaths.loadData(statisticsData)
+        barChartRecovered.loadData(statisticsData)
 
     }).connectStopAnimation((timeInterval) => {
         dataSource.setDataTimeInterval(timeInterval)
@@ -76,6 +87,7 @@ dataSource.loadAllData(() => {
         )
         barChartCases.loadData(statisticsData)
         barChartDeaths.loadData(statisticsData)
+        barChartRecovered.loadData(statisticsData)
     })
 
     covidmap.on('changeLocation', (layerClicked) => {
@@ -87,7 +99,23 @@ dataSource.loadAllData(() => {
         )
         barChartCases.loadData(statisticsData)
         barChartDeaths.loadData(statisticsData)
+        barChartRecovered.loadData(statisticsData)
     })
+
+    covidmap.on('changeLayer', (layerId) => {
+        if (+layerId === 1) {
+            $(".recovered").each(function() {
+                $(this).addClass('hide')
+            })
+        } else {
+            $(".recovered").each(function() {
+                $(this).removeClass('hide')
+            })
+            var statisticsData = dataSource.getStatisticsData()
+            barChartRecovered.loadData(statisticsData)
+        }
+    })
+
     var statisticsData = dataSource.getStatisticsData()
     locationStatus.loadData(
         statisticsData,
@@ -95,6 +123,7 @@ dataSource.loadAllData(() => {
     )
     barChartCases.loadData(statisticsData)
     barChartDeaths.loadData(statisticsData)
+    barChartRecovered.loadData(statisticsData)
 
     $('#loader').hide()
 })

@@ -30,9 +30,23 @@ class BarChart {
     loadSvg() {
         return d3.select(`#${this.options.elementId}`)
             //.append('svg')
-            .attr('width', this.parent.offsetWidth - 200)
-            .attr('height', 150)
+            /* .attr('width', this.parent.offsetWidth - 200)
+            .attr('height', this.parent.offsetHeight - 20) */
             //.attr('height', 600)
+            .attr('width', this.getWidthSvg())
+            .attr('height', this.getHeightSvg())
+    }
+
+    getWidthSvg() {
+        return this.parent.offsetWidth - this.getMargin().right - this.getMargin().left
+    }
+
+    getHeightSvg() {
+        var w = window.matchMedia("(max-height: 700px)")
+        if (w.matches) {
+            return 90
+        }
+        return 150
     }
 
     loadGroup() {
@@ -89,7 +103,7 @@ class BarChart {
             var d = {}
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
             d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
-            if (d[attributeY] === 0) continue
+                //if (d[attributeY] === 0) continue
             dataFormated.push(d)
         }
         return dataFormated.sort(function(a, b) {
@@ -126,7 +140,7 @@ class BarChart {
     }
 
     getMargin() {
-        return { top: 30, right: 20, bottom: 30, left: 40 }
+        return { top: 30, right: 10, bottom: 30, left: 50 }
     }
 
     createTooltip() {
@@ -277,7 +291,8 @@ class BarChart {
 
 
     draw(newData) {
-        this.svg.attr('width', this.parent.offsetWidth - this.getMargin().right)
+        this.svg.attr('width', this.getWidthSvg())
+            .attr('height', this.getHeightSvg())
         var width = this.getCurrentWidth()
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)

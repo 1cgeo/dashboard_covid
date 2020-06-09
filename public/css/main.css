@@ -1,118 +1,122 @@
 body * {
-  font-family: "Public Sans", sans-serif !important;
+    font-family: "Public Sans", sans-serif !important;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 @media only screen and (max-width: 992px) {
-  /*  html,
+    /*  html,
     body {
         overflow: auto;
     } */
 }
 
 .navbar {
-  z-index: 3500;
-  background-color: #607d8b !important;
-  color: white;
+    z-index: 3500;
+    background-color: #607d8b !important;
+    color: white;
 }
 
 .map-container {
-  background-color: white;
-  overflow: hidden;
-  padding-bottom: 50%;
-  position: relative;
-  height: 0;
+    background-color: white;
+    overflow: hidden;
+    padding-bottom: 50%;
+    position: relative;
+    height: 0;
 }
 
 .leaflet-sidebar-tabs {
-  background-color: #607d8b;
+    background-color: #607d8b;
 }
 
 #sidebar.collapsed {
-  max-width: 350px !important;
-  max-height: 75px !important;
+    max-width: 350px !important;
+    max-height: 75px !important;
 }
 
 #sidebar {
-  border-radius: 10px;
-  max-width: 350px !important;
-  max-height: 250px !important;
+    border-radius: 10px;
+    max-width: 350px !important;
+    max-height: 250px !important;
 }
 
 .leaflet-sidebar-left .leaflet-sidebar-content {
-  min-width: 390px !important;
-  opacity: 0.8;
+    min-width: 390px !important;
+    opacity: 0.8;
 }
 
 .leaflet-sidebar-header,
-.leaflet-sidebar-tabs > li.active,
-.leaflet-sidebar-tabs > ul > li.active {
-  background-color: #607d8b !important;
+.leaflet-sidebar-tabs>li.active,
+.leaflet-sidebar-tabs>ul>li.active {
+    background-color: #607d8b !important;
 }
 
 .material-icons {
-  font-family: "Material Icons" !important;
+    font-family: "Material Icons" !important;
 }
 
 .eb-img {
-  grid-area: eb-img;
-  text-align: center;
-  align-self: center;
+    grid-area: eb-img;
+    text-align: center;
+    align-self: center;
 }
 
 .eb-img img {
-  max-width: 57px;
-  max-height: 60px;
+    max-width: 57px;
+    max-height: 60px;
 }
 
 .dsg-img img {
-  max-width: 50px;
-  max-height: 57px;
+    max-width: 50px;
+    max-height: 57px;
 }
 
 .title {
-  grid-area: title;
-  text-align: center;
-  align-self: center;
-  font-size: 30px;
-  line-height: 30px;
+    grid-area: title;
+    text-align: center;
+    align-self: center;
+    font-size: 30px;
+    line-height: 30px;
 }
 
 .dsg-img {
-  grid-area: dsg-img;
-  text-align: center;
-  align-self: center;
+    grid-area: dsg-img;
+    text-align: center;
+    align-self: center;
 }
 
 .grid-container-title {
-  display: grid;
-  grid-template-areas: "eb-img title dsg-img";
+    display: grid;
+    grid-template-areas: "eb-img title dsg-img";
 }
 
 i {
-  color: white;
+    color: white;
 }
 
 .mdl-mini-footer {
-  color: white;
-  padding: 9px 16px;
-  font-size: 12px;
+    color: white;
+    padding: 9px 16px;
+    font-size: 12px;
 }
 
 @media screen and (max-width: 600px) {
-  .title {
-    font-size: 20px;
-  }
+    .title {
+        font-size: 20px;
+    }
 }
 
 @media screen and (max-width: 800px) {
-  .title {
-    font-size: 25px;
-  }
+    .title {
+        font-size: 25px;
+    }
+}
+
+.hide {
+    display: none !important;
 }

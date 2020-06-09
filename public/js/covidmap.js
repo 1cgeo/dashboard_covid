@@ -8,6 +8,7 @@ class CovidMap {
         }
         this.events = new Signal()
         this.events.createEvent('changeLocation')
+        this.events.createEvent('changeLayer')
         this.currentMapLayers = []
         this.currentThemeLayers = []
         this.dataSource = dataSource
@@ -31,6 +32,10 @@ class CovidMap {
 
     triggerChangeLocation(layerClicked) {
         this.events.trigger('changeLocation', layerClicked)
+    }
+
+    triggerChangeLayer(layerId) {
+        this.events.trigger('changeLayer', layerId)
     }
 
     setOptions(options) {
@@ -214,6 +219,7 @@ class CovidMap {
     }
 
     loadMapData(layerId) {
+        this.triggerChangeLayer(layerId)
         var themeId = 0
         var layerOptions = this.dataSource.getMapLayer(+layerId)
         if (this.getCurrentThemeLayer()) {
