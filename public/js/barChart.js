@@ -274,15 +274,15 @@ class BarChart {
             .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeYLine)(
                 this.currentData
             ))
-        var idx = Math.floor(this.currentData.length - 1)
-        var x1 = this.currentData[idx - 8][this.options.attributeX]
-        var x2 = this.currentData[idx - 6][this.options.attributeX]
-        var yValue = this.currentData[idx - 8][this.options.attributeYLine]
+        var x1 = this.currentData[Math.floor(this.currentData.length / 2)][this.options.attributeX]
+        var x2 = this.currentData[this.currentData.length - 1][this.options.attributeX]
+        var yValue = this.currentData[this.currentData.length - 1][this.options.attributeYLine]
         this.g.select(".label-chart-mean").remove()
         this.g.append("text")
+            .attr("text-anchor", "middle")
             .attr("class", "label-chart-mean")
             .attr("x", this.x(x1))
-            .attr("y", this.y(1.1))
+            .attr("y", this.y(1.2))
             .text("Média de 7 dias");
 
         this.g.select(".arrow").remove()
@@ -293,7 +293,7 @@ class BarChart {
                 .y((d) => { return this.y(d[1]) })
                 .curve(d3.curveMonotoneX)([
                     [x1, 1.08],
-                    [x1, yValue]
+                    [x2, yValue]
                 ]))
             .attr('stroke-linecap', 'round')
             //.attr('marker-end', 'url(#marker)')

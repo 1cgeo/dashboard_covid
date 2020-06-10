@@ -114,6 +114,7 @@ class SliderDate {
                 return
             }
             currentDate.setDate(currentDate.getDate() + 2)
+            currentDate = (currentDate > endDate) ? endDate : currentDate
             $('#current-date').text(
                     `Data atual:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
                 )
