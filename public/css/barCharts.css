@@ -209,8 +209,8 @@
  #graph-cases path.arrow,
  #graph-deaths path.arrow,
  #graph-recovered path.arrow {
-     stroke: rgba(0, 0, 0, 0.603);
-     stroke-width: 0.8px;
+     stroke: rgb(0, 0, 0);
+     stroke-width: 0.5px;
      stroke-dasharray: 3;
  }
  
