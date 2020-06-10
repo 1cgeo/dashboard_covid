@@ -52,9 +52,7 @@ class CovidMap {
 
     connectEvents() {
         this.map.on('click', () => {
-            if (!$('#sidebar').hasClass('collapsed')) {
-                $('#sidebar').addClass('collapsed')
-            }
+            this.closeSidebar()
             if (this.getCurrentPopoverLayer() && !this.getCurrentPopoverLayer().eventWasReceived()) {
                 this.zoomToDefaultBounds()
                 this.map.closePopup()
@@ -67,6 +65,15 @@ class CovidMap {
                 this.map.closePopup()
             }
         })
+        this.map.on('movestart', () => {
+            this.closeSidebar()
+        })
+    }
+
+    closeSidebar() {
+        if (!$('#sidebar').hasClass('collapsed')) {
+            $('#sidebar').addClass('collapsed')
+        }
     }
 
     createPanels() {
@@ -107,7 +114,7 @@ class CovidMap {
     create(options) {
         return L.map(
             options.elementId, {
-                minZoom: 1,
+                minZoom: 3,
                 zoomControl: false,
                 //maxBounds: this.options.bounds,
             }
