@@ -4,6 +4,10 @@ class CovidMap {
             bounds: [
                 [6.577303118123887, 2.3735230318848815],
                 [-34.957995310867915, -104.94093009311513]
+            ],
+            maxBounds: [
+                [36.2442, 33.8949],
+                [-69.4729, -123.1214]
             ]
         }
         this.events = new Signal()
@@ -66,6 +70,7 @@ class CovidMap {
             }
         })
         this.map.on('movestart', () => {
+            console.log(this.map.getBounds())
             this.closeSidebar()
         })
     }
@@ -116,7 +121,7 @@ class CovidMap {
             options.elementId, {
                 minZoom: 3,
                 zoomControl: false,
-                //maxBounds: this.options.bounds,
+                maxBounds: this.options.maxBounds,
             }
         ).fitBounds(this.options.bounds).setZoom(4)
     }
