@@ -18,6 +18,7 @@ class BarChart {
         this.parent = document.getElementById(this.options.parentId)
         this.svg = this.loadSvg()
         this.g = this.loadGroup()
+        this.createMarkers()
             //this.createTitle()
         this.createTooltip()
             //this.createLineChart()
@@ -96,6 +97,7 @@ class BarChart {
     formatInputData(jsonData) {
         var attributeX = this.options.attributeX
         var attributeY = this.options.attributeY
+        var attributeYLine = this.options.attributeYLine
         this.maxValue = this.getMax(jsonData.map(elem => +elem[attributeY]))
         var dataFormated = []
         for (var i = jsonData.length; i--;) {
@@ -103,6 +105,7 @@ class BarChart {
             var d = {}
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
             d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
+            d[attributeYLine] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
                 //if (d[attributeY] === 0) continue
             dataFormated.push(d)
         }
@@ -161,10 +164,10 @@ class BarChart {
     }
 
 
-    createLineChart() {
+    createLineChart(attributeX, attributeY) {
         return d3.line()
-            .x((d) => { return this.x(d[this.options.attributeX]) + this.x.bandwidth() / 2 })
-            .y((d) => { return this.y(d[this.options.attributeY]) })
+            .x((d) => { return this.x(d[attributeX]) + this.x.bandwidth() / 2 })
+            .y((d) => { return this.y(d[attributeY]) })
             .curve(d3.curveMonotoneX)
     }
 
@@ -231,7 +234,7 @@ class BarChart {
         this.g.select(".line-chart-middle").remove()
         this.g.append("path")
             .attr("class", "line-chart-middle")
-            .attr("d", this.createLineChart()(
+            .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeY)(
                 JSON.parse(JSON.stringify(this.currentData)).map((d) => {
                     d[this.options.attributeY] = 0.5
                     return d
@@ -242,18 +245,58 @@ class BarChart {
         this.g.select(".line-chart-top").remove()
         this.g.append("path")
             .attr("class", "line-chart-top")
-            .attr("d", this.createLineChart()(
+            .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeY)(
                 JSON.parse(JSON.stringify(this.currentData)).map((d) => {
                     d[this.options.attributeY] = 1
                     return d
                 })))
     }
 
+    createMarkers() {
+        this.svg.append("defs").append("marker")
+            .attr("id", "marker")
+            .attr("viewBox", "-5 -5 10 10")
+            .attr("refX", 4)
+            .attr("refY", 0)
+            .attr("markerWidth", 5)
+            .attr("markerHeight", 5)
+            .attr("orient", "auto")
+            .attr('markerUnits', 'strokeWidth')
+            .append("path")
+            .attr("d", "M 0,0 m -5,-5 L 5,0 L -5,5 Z")
+            .attr('fill', '#999 !important');
+    }
+
     drawLine() {
-        this.g.select(".line-chart").remove()
+        this.g.select(".line-chart-mean").remove()
         this.g.append("path")
-            .attr("class", "line-chart")
-            .attr("d", this.line(this.currentData))
+            .attr("class", "line-chart-mean")
+            .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeYLine)(
+                this.currentData
+            ))
+        var idx = Math.floor(this.currentData.length - 1)
+        var x1 = this.currentData[idx - 8][this.options.attributeX]
+        var x2 = this.currentData[idx - 6][this.options.attributeX]
+        var yValue = this.currentData[idx - 8][this.options.attributeYLine]
+        this.g.select(".label-chart-mean").remove()
+        this.g.append("text")
+            .attr("class", "label-chart-mean")
+            .attr("x", this.x(x1))
+            .attr("y", this.y(1.1))
+            .text("Média de 7 dias");
+
+        this.g.select(".arrow").remove()
+        this.g.append("path")
+            .attr("class", "arrow")
+            .attr("d", d3.line()
+                .x((d) => { return this.x(d[0]) + this.x.bandwidth() / 2 })
+                .y((d) => { return this.y(d[1]) })
+                .curve(d3.curveMonotoneX)([
+                    [x1, 1.08],
+                    [x1, yValue]
+                ]))
+            .attr('stroke-linecap', 'round')
+            //.attr('marker-end', 'url(#marker)')
     }
 
     drawBars(height) {
@@ -299,7 +342,7 @@ class BarChart {
         this.drawAxisY(height)
             //this.drawArea(height)
         this.drawBars(height)
-            //this.drawLine()
+        this.drawLine()
         this.drawLineYMiddle()
         this.drawLineYTop()
     }

@@ -19,6 +19,7 @@ dataSource.loadAllData(() => {
         dataLocation: 'country',
         attributeX: "date",
         attributeY: "newCases",
+        attributeYLine: "meanCases",
         title: "Casos"
     })
 
@@ -29,6 +30,7 @@ dataSource.loadAllData(() => {
         dataSource: dataSource,
         attributeX: "date",
         attributeY: "newDeaths",
+        attributeYLine: "meanDeaths",
         title: "Óbitos"
     })
 
@@ -38,6 +40,7 @@ dataSource.loadAllData(() => {
         dataSource: dataSource,
         attributeX: "date",
         attributeY: "recovered",
+        attributeYLine: "meanRecovered",
         title: "Recuperados"
     })
 
