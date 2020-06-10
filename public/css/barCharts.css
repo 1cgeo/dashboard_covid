@@ -211,6 +211,7 @@
  #graph-recovered path.arrow {
      stroke: rgba(0, 0, 0, 0.603);
      stroke-width: 0.8px;
+     stroke-dasharray: 3;
  }
  
  #graph-cases .line-chart-mean {
