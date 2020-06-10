@@ -52,6 +52,9 @@ class CovidMap {
 
     connectEvents() {
         this.map.on('click', () => {
+            if (!$('#sidebar').hasClass('collapsed')) {
+                $('#sidebar').addClass('collapsed')
+            }
             if (this.getCurrentPopoverLayer() && !this.getCurrentPopoverLayer().eventWasReceived()) {
                 this.zoomToDefaultBounds()
                 this.map.closePopup()
