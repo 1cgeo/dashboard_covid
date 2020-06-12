@@ -3,15 +3,23 @@ class Status {
     this.dataSource = dataSource;
   }
 
+  numberWithPoint(x) {
+    if(x === 'Sem dados'){
+      return x
+    }
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+
   loadData(data, locationName) {
     this.setLocationName(locationName);
     if (data.length < 1) {
       this.clean();
       return;
     }
-    this.setTotalCases(this.reduceValue(data, "newCases"));
-    this.setRecuperadosCases(this.reduceValue(data, "recovered"));
-    this.setTotalDeaths(this.reduceValue(data, "newDeaths"));
+    this.setTotalCases(this.numberWithPoint(this.reduceValue(data, "newCases")));
+    this.setRecuperadosCases(this.numberWithPoint(this.reduceValue(data, "recovered")));
+    this.setTotalDeaths(this.numberWithPoint(this.reduceValue(data, "newDeaths")));
   }
 
   reduceValue(data, field) {
