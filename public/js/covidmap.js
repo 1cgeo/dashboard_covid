@@ -70,7 +70,6 @@ class CovidMap {
             }
         })
         this.map.on('movestart', () => {
-            console.log(this.map.getBounds())
             this.closeSidebar()
         })
     }

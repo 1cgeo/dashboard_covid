@@ -106,7 +106,7 @@ class BarChart {
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
             d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
             d[attributeYLine] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
-                //if (d[attributeY] === 0) continue
+            if (!d[attributeY] || !d[attributeYLine]) continue
             dataFormated.push(d)
         }
         return dataFormated.sort(function(a, b) {
@@ -130,8 +130,12 @@ class BarChart {
 
     loadData(data) {
         this.currentData = []
-        if (data.length > 0) {
-            this.currentData = this.formatInputData(data)
+        if (data.length < 0) {
+            return
+        }
+        this.currentData = this.formatInputData(data)
+        if (this.currentData.length < 1) {
+            return
         }
         this.x.domain(this.currentData.map((function(d) {
             return d[this.options.attributeX];
