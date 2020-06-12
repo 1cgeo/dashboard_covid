@@ -39,7 +39,8 @@ class BarChart {
     }
 
     getWidthSvg() {
-        return this.parent.offsetWidth - this.getMargin().right - this.getMargin().left
+        var w = this.parent.offsetWidth - this.getMargin().right - this.getMargin().left
+        return (w < 0) ? 0 : w
     }
 
     getHeightSvg() {
@@ -98,7 +99,8 @@ class BarChart {
         var attributeX = this.options.attributeX
         var attributeY = this.options.attributeY
         var attributeYLine = this.options.attributeYLine
-        this.maxValue = this.getMax(jsonData.map(elem => +elem[attributeY]))
+        var yValues = jsonData.map(elem => +elem[attributeY])
+        this.maxValue = (yValues.length < 1) ? 0 : this.getMax(yValues)
         var dataFormated = []
         for (var i = jsonData.length; i--;) {
             if (+jsonData[i][attributeY] < 0) continue
@@ -130,13 +132,8 @@ class BarChart {
 
     loadData(data) {
         this.currentData = []
-        if (data.length < 0) {
-            return
-        }
+        if (data.length < 0) return
         this.currentData = this.formatInputData(data)
-        if (this.currentData.length < 1) {
-            return
-        }
         this.x.domain(this.currentData.map((function(d) {
             return d[this.options.attributeX];
         }).bind(this)));
@@ -273,6 +270,9 @@ class BarChart {
 
     drawLine() {
         this.g.select(".line-chart-mean").remove()
+        this.g.select(".label-chart-mean").remove()
+        this.g.select(".arrow").remove()
+        if (this.currentData.length < 1) return
         this.g.append("path")
             .attr("class", "line-chart-mean")
             .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeYLine)(
@@ -281,15 +281,12 @@ class BarChart {
         var idx = Math.floor(this.currentData.length / 2)
         var xValue = this.currentData[idx][this.options.attributeX]
         var yValue = this.currentData[idx][this.options.attributeYLine]
-        this.g.select(".label-chart-mean").remove()
         this.g.append("text")
             .attr("text-anchor", "middle")
             .attr("class", "label-chart-mean")
             .attr("x", this.x(xValue))
             .attr("y", this.y(1.2))
             .text("Média de 7 dias");
-
-        this.g.select(".arrow").remove()
         this.g.append("path")
             .attr("class", "arrow")
             .attr("d", d3.line()

@@ -56,12 +56,12 @@ dataSource.loadAllData(() => {
         dataSource.setDataTimeInterval(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData,
+            statisticsData.slice(),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData)
-        barChartDeaths.loadData(statisticsData)
-        barChartRecovered.loadData(statisticsData)
+        barChartCases.loadData(statisticsData.slice())
+        barChartDeaths.loadData(statisticsData.slice())
+        barChartRecovered.loadData(statisticsData.slice())
         covidmap.updateAnimation(timeInterval)
     })
 
@@ -73,36 +73,36 @@ dataSource.loadAllData(() => {
         covidmap.updateAnimation(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData,
+            statisticsData.slice(),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData)
-        barChartDeaths.loadData(statisticsData)
-        barChartRecovered.loadData(statisticsData)
+        barChartCases.loadData(statisticsData.slice())
+        barChartDeaths.loadData(statisticsData.slice())
+        barChartRecovered.loadData(statisticsData.slice())
 
     }).connectStopAnimation((timeInterval) => {
         dataSource.setDataTimeInterval(timeInterval)
         covidmap.stopAnimation(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData,
+            statisticsData.slice(),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData)
-        barChartDeaths.loadData(statisticsData)
-        barChartRecovered.loadData(statisticsData)
+        barChartCases.loadData(statisticsData.slice())
+        barChartDeaths.loadData(statisticsData.slice())
+        barChartRecovered.loadData(statisticsData.slice())
     })
 
     covidmap.on('changeLocation', (layerClicked) => {
         dataSource.setCurrentLayer(layerClicked)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData,
+            statisticsData.slice(),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData)
-        barChartDeaths.loadData(statisticsData)
-        barChartRecovered.loadData(statisticsData)
+        barChartCases.loadData(statisticsData.slice())
+        barChartDeaths.loadData(statisticsData.slice())
+        barChartRecovered.loadData(statisticsData.slice())
     })
 
     covidmap.on('changeLayer', (layerId) => {
@@ -115,18 +115,18 @@ dataSource.loadAllData(() => {
                 $(this).removeClass('hide')
             })
             var statisticsData = dataSource.getStatisticsData()
-            barChartRecovered.loadData(statisticsData)
+            barChartRecovered.loadData(statisticsData.slice())
         }
     })
 
     var statisticsData = dataSource.getStatisticsData()
     locationStatus.loadData(
-        statisticsData,
+        statisticsData.slice(),
         dataSource.getLocationName()
     )
-    barChartCases.loadData(statisticsData)
-    barChartDeaths.loadData(statisticsData)
-    barChartRecovered.loadData(statisticsData)
+    barChartCases.loadData(statisticsData.slice())
+    barChartDeaths.loadData(statisticsData.slice())
+    barChartRecovered.loadData(statisticsData.slice())
 
     $('#loader').hide()
 })
