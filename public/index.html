@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>Painel de Acompanhamento do Avanço da COVID-19 no Brasil</title>
     <!-- MDB icon -->
@@ -27,135 +29,164 @@
     <link rel="stylesheet" href="css/status.css" />
     <link rel="stylesheet" href="css/slider.css" />
     <link rel="stylesheet" href="css/main.css" />
-</head>
-<div id="loader" class="loading"></div>
+  </head>
+  <div id="loader" class="loading"></div>
 
-<body>
-    <div style="background-color: #eeeeee; min-height: 100vh;" class="d-flex flex-column container-for-admin">
-        <!--Main Navigation-->
-        <header>
-            <nav class="d-flex justify-content-between navbar navbar-expand-lg navbar-expand navbar-light white">
-                <div class="eb-img">
-                    <img src="images/eb.png" />
-                </div>
-                <div class="title">
-                    <b>Painel de Acompanhamento do Avanço da COVID-19 no Brasil</b>
-                </div>
-                <div class="dsg-img">
-                    <img src="images/dsg.png" />
-                </div>
-            </nav>
-        </header>
-        <!--Main Navigation-->
+  <body>
+    <div
+      style="background-color: #eeeeee; min-height: 100vh;"
+      class="d-flex flex-column container-for-admin"
+    >
+      <!--Main Navigation-->
+      <header>
+        <nav
+          class="d-flex justify-content-between navbar navbar-expand-lg navbar-expand navbar-light white"
+        >
+          <div class="eb-img">
+            <img src="images/eb.png" />
+          </div>
+          <div class="title">
+            <b>Painel de Acompanhamento do Avanço da COVID-19 no Brasil</b>
+          </div>
+          <div class="dsg-img">
+            <img src="images/dsg.png" />
+          </div>
+        </nav>
+      </header>
+      <!--Main Navigation-->
 
-        <!--Main layout-->
-        <main class="col-md-12 d-flex flex-column flex-grow-1 mb-1 p-0">
-            <!-- <div class="container-fluid mt-1">
+      <!--Main layout-->
+      <main class="col-md-12 d-flex flex-column flex-grow-1 mb-1 p-0">
+        <!-- <div class="container-fluid mt-1">
 
 
             </div> -->
-            <div class="d-flex flex-lg-row flex-md-column flex-column flex-sm-column mt-1">
-                <div class="d-flex flex-column col-12 col-xl-8 col-md-12 col-lg-8 col-sm-12">
-                    <div class="card mb-1">
-                        <div class="card-body">
-                            <div class="d-flex flex-column">
-                                <div id="map-container" class="map-container flex-grow-1" style="height: 50vh;">
-                                    <div id="sidebar" class="leaflet-sidebar collapsed leaflet-control leaflet-sidebar-left"></div>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <div class="d-flex flex-row justify-content-center">
-                                        <div>
-                                            <button style="background-color: #607d8b;" type="button" class="play-button btn px-4">
+        <div
+          class="d-flex flex-lg-row flex-md-column flex-column flex-sm-column mt-1"
+        >
+          <div
+            class="d-flex flex-column col-12 col-xl-8 col-md-12 col-lg-8 col-sm-12"
+          >
+            <div class="card mb-1">
+              <div class="card-body">
+                <div class="d-flex flex-column">
+                  <div
+                    id="map-container"
+                    class="map-container flex-grow-1"
+                    style="height: 50vh;"
+                  >
+                    <div
+                      id="sidebar"
+                      class="leaflet-sidebar collapsed leaflet-control leaflet-sidebar-left"
+                    ></div>
+                  </div>
+                  <div class="d-flex flex-column">
+                    <div class="d-flex flex-row justify-content-center">
+                      <div>
+                        <button
+                          style="background-color: #607d8b;"
+                          type="button"
+                          class="play-button btn px-4"
+                        >
                           <i class="material-icons">play_arrow</i>
                         </button>
-                                        </div>
-                                        <div class="flex-fill slider-time">
-                                            <div id="slider-date"></div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex flex-lg-row flex-sm-column justify-content-between">
-                                        <div class="footer-start" id="start-date"></div>
-                                        <div class="footer-current" id="current-date"></div>
-                                        <div class="footer-end" id="end-date"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      </div>
+                      <div class="flex-fill slider-time">
+                        <div id="slider-date"></div>
+                      </div>
                     </div>
+                    <div
+                      class="d-flex flex-lg-row flex-sm-column justify-content-between"
+                    >
+                      <div class="footer-start" id="start-date"></div>
+                      <div class="footer-current" id="current-date"></div>
+                      <div class="footer-end" id="end-date"></div>
+                    </div>
+                  </div>
                 </div>
-                <div id="statistics" class="d-flex flex-column flex-grow-1 col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
-                    <div class="card mb-1" style="height: 150px;">
-                        <div class="card-body">
-                            <div class="d-flex flex-column">
-                                <div class="location">
-                                    <h4 id="tag-location"></h4>
-                                </div>
-                                <div class="d-flex flex-row flex-grow-1 justify-content-between">
-                                    <div class="d-flex flex-column">
-                                        <div class="tag-cases">
-                                            <b>Casos</b>
-                                        </div>
-                                        <div class="ncases">
-                                            <span id="cases-values"></span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex flex-column recovered">
-                                        <div class="tag-recuperados">
-                                            <b>Recuperados</b>
-                                        </div>
-                                        <div class="nrecuperados">
-                                            <span id="recuperados-values"></span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex flex-column">
-                                        <div class="tag-deaths">
-                                            <b>Óbitos</b>
-                                        </div>
-                                        <div class="ndeaths flex-fill">
-                                            <span id="deaths-values"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card mb-1">
-                        <div id="cases-chart" class="card-body">
-                            <div class="text-center"><b>Casos</b></div>
-                            <div><svg id="graph-cases"></svg></div>
-                        </div>
-                    </div>
-                    <div class="card mb-1 recovered">
-                        <div id="recovered-chart" class="card-body">
-                            <div class="text-center"><b>Recuperados</b></div>
-                            <svg id="graph-recovered"></svg>
-                        </div>
-                    </div>
-
-                    <div class="card mb-1">
-                        <div id="deaths-chart" class="card-body">
-                            <div class="text-center"><b>Óbitos</b></div>
-                            <svg id="graph-deaths"></svg>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
-        </main>
-        <!--Main layout-->
-
-        <!--Footer-->
-        <footer style="background-color: #607d8b;" class="page-footer text-left font-small darken-2 pb-2">
-            <div class="row">
-                <div class="container col-md-6 text-center pl-5 text-md-left">
-                    Desenvolvido pelo Diretoria de Serviço Geográfico (DSG). Versão: 0.2
+          </div>
+          <div
+            id="statistics"
+            class="d-flex flex-column flex-grow-1 col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12"
+          >
+            <div class="card mb-1" style="height: 150px;">
+              <div class="card-body">
+                <div class="d-flex flex-column">
+                  <div class="location">
+                    <h4 id="tag-location"></h4>
+                  </div>
+                  <div
+                    class="d-flex flex-row flex-grow-1 justify-content-between"
+                  >
+                    <div class="d-flex flex-column">
+                      <div class="tag-cases">
+                        <b>Casos</b>
+                      </div>
+                      <div class="ncases">
+                        <span id="cases-values"></span>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-column recovered">
+                      <div class="tag-recuperados">
+                        <b>Recuperados</b>
+                      </div>
+                      <div class="nrecuperados">
+                        <span id="recuperados-values"></span>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-column">
+                      <div class="tag-deaths">
+                        <b>Óbitos</b>
+                      </div>
+                      <div class="ndeaths flex-fill">
+                        <span id="deaths-values"></span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="container col-md-6 text-center pr-5 text-md-right">
-                    <b>Fonte de dados: github.com/wcota/covid19br</b>
-                </div>
+              </div>
             </div>
-        </footer>
-        <!--/.Footer-->
+
+            <div class="card mb-1">
+              <div id="cases-chart" class="card-body">
+                <div class="text-center"><b>Casos</b></div>
+                <div><svg id="graph-cases"></svg></div>
+              </div>
+            </div>
+            <div class="card mb-1">
+              <div id="deaths-chart" class="card-body">
+                <div class="text-center"><b>Óbitos</b></div>
+                <svg id="graph-deaths"></svg>
+              </div>
+            </div>
+            <div class="card mb-1 recovered">
+              <div id="recovered-chart" class="card-body">
+                <div class="text-center"><b>Recuperados</b></div>
+                <svg id="graph-recovered"></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <!--Main layout-->
+
+      <!--Footer-->
+      <footer
+        style="background-color: #607d8b;"
+        class="page-footer text-left font-small darken-2 pb-2"
+      >
+        <div class="row">
+          <div class="container col-md-6 text-center pl-5 text-md-left">
+            Desenvolvido pelo Diretoria de Serviço Geográfico (DSG). Versão: 0.3
+          </div>
+          <div class="container col-md-6 text-center pr-5 text-md-right">
+            <b>Fonte de dados: github.com/wcota/covid19br</b>
+          </div>
+        </div>
+      </footer>
+      <!--/.Footer-->
     </div>
 
     <!-- Start your project here-->
@@ -190,6 +221,5 @@
     <script src="js/barChart.js"></script>
     <script src="js/main.js"></script>
     <script></script>
-</body>
-
+  </body>
 </html>
