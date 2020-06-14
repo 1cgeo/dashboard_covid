@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const csv = require("csv-parser");
 const { Parser } = require("json2csv");
+const epi = require("./epidemiological-week");
 
 const STATES_MAP = {
   ac: "12",
@@ -83,6 +84,10 @@ const download = (url, dest, cb) => {
     });
 };
 
+const calcSemana = (date) => {
+  return epi.calculate(date).week;
+};
+
 const csv_brasil = (file, output) => {
   console.log("Preparo do CSV do Brasil iniciado.");
   const dataArray = [];
@@ -145,6 +150,70 @@ const csv_brasil = (file, output) => {
 
       fs.writeFileSync(output, result);
       console.log("Preparo do CSV do Brasil FINALIZADO!");
+      csv_brasil_semana(output, `${output.split(".")[0]}_semana.csv`);
+    });
+};
+
+const csv_brasil_semana = (file, output) => {
+  console.log("Preparo do CSV do Brasil por Semana iniciado.");
+  const data = {};
+  fs.createReadStream(file)
+    .pipe(csv())
+    .on("data", function (d) {
+      let semana = calcSemana(d.date);
+      if (!(semana in data)) {
+        data[semana] = {};
+        data[semana].semana = semana;
+        data[semana].dias_semana = 0;
+        data[semana].country = d.country;
+        data[semana].state = d.state;
+        data[semana].city = d.city;
+        data[semana].newDeaths = 0;
+        data[semana].newCases = 0;
+        data[semana].recovered = 0;
+        data[semana].meanCases = 0;
+        data[semana].meanDeaths = 0;
+        data[semana].meanRecovered = 0;
+      }
+
+      data[semana].dias_semana += 1;
+      data[semana].newDeaths += +d.newDeaths;
+      data[semana].deaths = +d.deaths;
+      data[semana].newCases += +d.newCases;
+      data[semana].totalCases = +d.totalCases;
+      data[semana].deaths_per_100k_inhabitants = +d.deaths_per_100k_inhabitants;
+      data[
+        semana
+      ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
+      data[semana].deaths_by_totalCases = +d.deaths_by_totalCases;
+      data[semana].recovered += +d.recovered;
+      data[semana].totalRecovered = +d.totalRecovered;
+      data[semana].meanCases =
+        (+d.meanCases +
+          (data[semana].dias_semana - 1) * +data[semana].meanCases) /
+        data[semana].dias_semana;
+      data[semana].meanDeaths =
+        (+d.meanDeaths +
+          (data[semana].dias_semana - 1) * +data[semana].meanDeaths) /
+        data[semana].dias_semana;
+      data[semana].meanRecovered =
+        (+d.meanRecovered +
+          (data[semana].dias_semana - 1) * +data[semana].meanRecovered) /
+        data[semana].dias_semana;
+    })
+    .on("end", function () {
+      const dataArray = [];
+      for (var key in data) {
+        dataArray.push(data[key]);
+      }
+
+      const fields = Object.keys(dataArray[0]);
+      const opts = { fields };
+      const parser = new Parser(opts);
+      const result = parser.parse(dataArray);
+
+      fs.writeFileSync(output, result);
+      console.log("Preparo do CSV do Brasil por Semana FINALIZADO!");
     });
 };
 
@@ -257,7 +326,9 @@ const modify_csv_estado = (file, output) => {
         if (last7Recovered[dataArray[i].state].length < 7) {
           dataArray[i].meanRecovered = +dataArray[i].recovered;
         } else {
-          dataArray[i].meanRecovered = average(last7Recovered[dataArray[i].state]);
+          dataArray[i].meanRecovered = average(
+            last7Recovered[dataArray[i].state]
+          );
         }
       }
 
@@ -489,4 +560,5 @@ module.exports = {
   modify_csv_cidade: modify_csv_cidade,
   modify_csv_estado: modify_csv_estado,
   csv_brasil: csv_brasil,
+  csv_brasil_semana: csv_brasil_semana,
 };

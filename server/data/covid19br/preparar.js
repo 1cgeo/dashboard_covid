@@ -9,10 +9,10 @@ csv_brasil(
   path.join(__dirname, "estados_original.csv"),
   path.join(__dirname, "brasil.csv")
 );
-
+/** 
 modify_csv_cidade(
   path.join(__dirname, "cidades_original.csv"),
   path.join(__dirname, "coords_cidade_original.csv"),
   path.join(__dirname, "centroides_municipios.csv"),
   path.join(__dirname, "cidades.csv")
-);
+);*/
