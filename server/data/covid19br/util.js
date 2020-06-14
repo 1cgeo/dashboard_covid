@@ -350,6 +350,9 @@ const modify_csv_estado = (file, output) => {
       const last7Cases = {};
       const last7Deaths = {};
       const last7Recovered = {};
+
+      const last14AvgCases = {};
+
       const average = (list) =>
         list.reduce((prev, curr) => +prev + +curr) / list.length;
 
@@ -366,6 +369,33 @@ const modify_csv_estado = (file, output) => {
           dataArray[i].meanCases = +dataArray[i].newCases;
         } else {
           dataArray[i].meanCases = average(last7Cases[dataArray[i].state]);
+        }
+
+        if (!(dataArray[i].state in last14AvgCases)) {
+          last14AvgCases[dataArray[i].state] = [];
+        }
+        last14AvgCases[dataArray[i].state].push(dataArray[i].meanCases);
+        if (last14AvgCases[dataArray[i].state].length > 14) {
+          last14AvgCases[dataArray[i].state].shift();
+        }
+        if (dataArray[i].totalCases < 100) {
+          dataArray[i].trend = "Sem ou poucos casos";
+        } else if (last14AvgCases[dataArray[i].state].length < 14) {
+          dataArray[i].trend = "Aproximadamente o mesmo";
+        } else {
+          const d1 = last14AvgCases[dataArray[i].state][0];
+          const d2 = last14AvgCases[dataArray[i].state][13];
+          if (d2 > d1 * 1.5) {
+            dataArray[i].trend = "Crescendo 3";
+          } else if (d2 > d1 * 1.25) {
+            dataArray[i].trend = "Crescendo 2";
+          } else if (d2 > d1 * 1.1) {
+            dataArray[i].trend = "Crescendo 3";
+          } else if (d2 > d1 * 0.9) {
+            dataArray[i].trend = "Aproximadamente o mesmo";
+          } else {
+            dataArray[i].trend = "Diminuindo";
+          }
         }
 
         if (!(dataArray[i].state in last7Deaths)) {
@@ -597,6 +627,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
 
               const last7Cases = {};
               const last7Deaths = {};
+              const last14AvgCases = {};
               const average = (list) =>
                 list.reduce((prev, curr) => +prev + +curr) / list.length;
 
@@ -615,6 +646,35 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                   dataArray[i].meanCases = average(
                     last7Cases[dataArray[i].ibgeID]
                   );
+                }
+
+                if (!(dataArray[i].ibgeID in last14AvgCases)) {
+                  last14AvgCases[dataArray[i].ibgeID] = [];
+                }
+                last14AvgCases[dataArray[i].ibgeID].push(
+                  dataArray[i].meanCases
+                );
+                if (last14AvgCases[dataArray[i].ibgeID].length > 14) {
+                  last14AvgCases[dataArray[i].ibgeID].shift();
+                }
+                if (dataArray[i].totalCases < 100) {
+                  dataArray[i].trend = "Sem ou poucos casos";
+                } else if (last14AvgCases[dataArray[i].ibgeID].length < 14) {
+                  dataArray[i].trend = "Aproximadamente o mesmo";
+                } else {
+                  const d1 = last14AvgCases[dataArray[i].ibgeID][0];
+                  const d2 = last14AvgCases[dataArray[i].ibgeID][13];
+                  if (d2 > d1 * 1.5) {
+                    dataArray[i].trend = "Crescendo 3";
+                  } else if (d2 > d1 * 1.25) {
+                    dataArray[i].trend = "Crescendo 2";
+                  } else if (d2 > d1 * 1.1) {
+                    dataArray[i].trend = "Crescendo 3";
+                  } else if (d2 > d1 * 0.9) {
+                    dataArray[i].trend = "Aproximadamente o mesmo";
+                  } else {
+                    dataArray[i].trend = "Diminuindo";
+                  }
                 }
 
                 if (!(dataArray[i].ibgeID in last7Deaths)) {
