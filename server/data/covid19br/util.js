@@ -217,6 +217,73 @@ const csv_brasil_semana = (file, output) => {
     });
 };
 
+const modify_csv_estado_semana = (file, output) => {
+  console.log("Preparo do CSV dos Estados por Semana iniciado.");
+  const data = {};
+  fs.createReadStream(file)
+    .pipe(csv())
+    .on("data", function (d) {
+      let semana = calcSemana(d.date);
+      let id = `${semana}_${d.state}`;
+      if (!(id in data)) {
+        data[id] = {};
+        data[id].semana = semana;
+        data[id].dias_semana = 0;
+        data[id].country = d.country;
+        data[id].state = d.state;
+        data[id].city = d.city;
+        data[id].newDeaths = 0;
+        data[id].newCases = 0;
+        data[id].recovered = 0;
+        data[id].meanCases = 0;
+        data[id].meanDeaths = 0;
+        data[id].meanRecovered = 0;
+      }
+
+      data[id].dias_semana += 1;
+      data[id].newDeaths += +d.newDeaths;
+      data[id].deaths = +d.deaths;
+      data[id].newCases += +d.newCases;
+      data[id].totalCases = +d.totalCases;
+      data[id].deaths_per_100k_inhabitants = +d.deaths_per_100k_inhabitants;
+      data[
+        id
+      ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
+      data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
+      data[id].recovered += +d.recovered;
+      data[id].totalRecovered = +d.totalRecovered;
+      data[id].meanCases =
+        (+d.meanCases + (data[id].dias_semana - 1) * +data[id].meanCases) /
+        data[id].dias_semana;
+      data[id].meanDeaths =
+        (+d.meanDeaths + (data[id].dias_semana - 1) * +data[id].meanDeaths) /
+        data[id].dias_semana;
+      data[id].meanRecovered =
+        (+d.meanRecovered +
+          (data[id].dias_semana - 1) * +data[id].meanRecovered) /
+        data[id].dias_semana;
+      data[id].CD_GEOCUF = d.CD_GEOCUF;
+      data[id].CENTROID_X = d.CENTROID_X;
+      data[id].CENTROID_Y = d.CENTROID_Y;
+      data[id].nrDiasDobraCasos = d.nrDiasDobraCasos;
+      data[id].nrDiasDobraMortes = d.nrDiasDobraMortes;
+    })
+    .on("end", function () {
+      const dataArray = [];
+      for (var key in data) {
+        dataArray.push(data[key]);
+      }
+
+      const fields = Object.keys(dataArray[0]);
+      const opts = { fields };
+      const parser = new Parser(opts);
+      const result = parser.parse(dataArray);
+
+      fs.writeFileSync(output, result);
+      console.log("Preparo do CSV dos Estados por Semana FINALIZADO!");
+    });
+};
+
 const modify_csv_estado = (file, output) => {
   console.log("Preparo do CSV dos Estados iniciado.");
   const dataArray = [];
@@ -374,6 +441,68 @@ const modify_csv_estado = (file, output) => {
 
       fs.writeFileSync(output, result);
       console.log("Preparo do CSV dos Estados FINALIZADO!");
+      modify_csv_estado_semana(output, `${output.split(".")[0]}_semana.csv`);
+    });
+};
+
+const modify_csv_cidade_semana = (file, output) => {
+  console.log("Preparo do CSV dos Municipios por Semana iniciado.");
+  const data = {};
+  fs.createReadStream(file)
+    .pipe(csv())
+    .on("data", function (d) {
+      let semana = calcSemana(d.date);
+      let id = `${semana}_${d.city}`;
+      if (!(id in data)) {
+        data[id] = {};
+        data[id].semana = semana;
+        data[id].dias_semana = 0;
+        data[id].country = d.country;
+        data[id].state = d.state;
+        data[id].city = d.city;
+        data[id].ibgeID = d.ibgeID;
+        data[id].newDeaths = 0;
+        data[id].newCases = 0;
+        data[id].meanCases = 0;
+        data[id].meanDeaths = 0;
+      }
+
+      data[id].dias_semana += 1;
+      data[id].newDeaths += +d.newDeaths;
+      data[id].deaths = +d.deaths;
+      data[id].newCases += +d.newCases;
+      data[id].totalCases = +d.totalCases;
+      data[id].deaths_per_100k_inhabitants = +d.deaths_per_100k_inhabitants;
+      data[
+        id
+      ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
+      data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
+      data[id].meanCases =
+        (+d.meanCases + (data[id].dias_semana - 1) * +data[id].meanCases) /
+        data[id].dias_semana;
+      data[id].meanDeaths =
+        (+d.meanDeaths + (data[id].dias_semana - 1) * +data[id].meanDeaths) /
+        data[id].dias_semana;
+      data[id].centroid_lat = d.centroid_lat;
+      data[id].centroid_long = d.centroid_long;
+      data[id].lat = d.lat;
+      data[id].lon = d.lon;
+      data[id].nrDiasDobraCasos = d.nrDiasDobraCasos;
+      data[id].nrDiasDobraMortes = d.nrDiasDobraMortes;
+    })
+    .on("end", function () {
+      const dataArray = [];
+      for (var key in data) {
+        dataArray.push(data[key]);
+      }
+
+      const fields = Object.keys(dataArray[0]);
+      const opts = { fields };
+      const parser = new Parser(opts);
+      const result = parser.parse(dataArray);
+
+      fs.writeFileSync(output, result);
+      console.log("Preparo do CSV dos Municipios por Semana FINALIZADO!");
     });
 };
 
@@ -415,6 +544,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                   }
                 });
               });
+              console.log("Cidades: centroide adicionado");
 
               dataArray.forEach((d) => {
                 gpsArray.forEach((g) => {
@@ -424,6 +554,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                   }
                 });
               });
+              console.log("Cidades: lat/long cidade principal adicionado");
 
               const negativoCases = {};
               const negativoDeaths = {};
@@ -462,6 +593,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                   dataArray[i].newDeaths = 0;
                 }
               }
+              console.log("Cidades: casos negativos corrigidos");
 
               const last7Cases = {};
               const last7Deaths = {};
@@ -501,6 +633,9 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                   );
                 }
               }
+              console.log(
+                "Cidades: média ultimos 7 dias de obitos/casos adicionado"
+              );
 
               dataArray[0].nrDiasDobraCasos = 0;
               dataArray[0].nrDiasDobraMortes = 0;
@@ -543,6 +678,10 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                   dataArray[i].nrDiasDobraMortes = 0;
                 }
               }
+              console.log(
+                "Cidades: número de dias para dobrar casos/obitos adicionado"
+              );
+
               const fields = Object.keys(dataArray[0]);
               const opts = { fields };
               const parser = new Parser(opts);
@@ -550,6 +689,10 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
 
               fs.writeFileSync(output, result);
               console.log("Preparo do CSV dos Municipios FINALIZADO!");
+              modify_csv_cidade_semana(
+                output,
+                `${output.split(".")[0]}_semana.csv`
+              );
             });
         });
     });
@@ -560,5 +703,4 @@ module.exports = {
   modify_csv_cidade: modify_csv_cidade,
   modify_csv_estado: modify_csv_estado,
   csv_brasil: csv_brasil,
-  csv_brasil_semana: csv_brasil_semana,
 };
