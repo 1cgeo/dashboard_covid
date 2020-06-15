@@ -2,8 +2,8 @@ class CovidMap {
     constructor(dataSource, newOptions) {
         this.options = {
             bounds: [
-                [6.577303118123887, 2.3735230318848815],
-                [-34.957995310867915, -104.94093009311513]
+                [5.878332109674327, -27.685546875000004],
+                [-32.175612478499325, -76.11328125000001]
             ],
             maxBounds: [
                 [36.2442, 33.8949],
@@ -112,7 +112,7 @@ class CovidMap {
     }
 
     zoomToDefaultBounds() {
-        this.setBounds(this.options.bounds)
+        this.map.fitBounds(this.options.bounds).setZoom(4)
     }
 
     create(options) {

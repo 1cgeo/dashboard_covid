@@ -1,0 +1,11 @@
+.mdc-button--colored {
+    background-color: #607d8b !important;
+}
+
+.mdc-button {
+    color: #607d8b !important
+}
+
+.mdc-button.mdc-button--raised.mdc-button--colored {
+    color: white !important
+}

@@ -52,6 +52,16 @@ dataSource.loadAllData(() => {
         }
     )
 
+    var covidTable = new CovidTable({
+        elementId: 'covid-table',
+        dataset: dataSource.getTableStateData(),
+        columns: [
+            { title: "Estado", data: "CD_GEOCUF" },
+            { title: "Nº Casos", data: "totalCases" },
+            { title: "Nº Óbitos", data: "deaths" },
+        ]
+    })
+
     dateSlider.connectEndChange((timeInterval) => {
         dataSource.setDataTimeInterval(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
@@ -106,17 +116,38 @@ dataSource.loadAllData(() => {
     })
 
     covidmap.on('changeLayer', (layerId) => {
+        var statisticsData = dataSource.getStatisticsData()
         if (+layerId === 1) {
             $(".recovered").each(function() {
                 $(this).addClass('hide')
+            })
+            covidTable.setOptions({
+                elementId: 'covid-table',
+                dataset: dataSource.getTableCityData(),
+                columns: [
+                    { title: "Cidade", data: "CD_GEOCMU" },
+                    { title: "Nº Casos", data: "totalCases" },
+                    { title: "Nº Óbitos", data: "deaths" },
+                ]
             })
         } else {
             $(".recovered").each(function() {
                 $(this).removeClass('hide')
             })
-            var statisticsData = dataSource.getStatisticsData()
             barChartRecovered.loadData(statisticsData.slice())
+            covidTable.setOptions({
+                elementId: 'covid-table',
+                dataset: dataSource.getTableStateData(),
+                columns: [
+                    { title: "Estado", data: "CD_GEOCUF" },
+                    { title: "Nº Casos", data: "totalCases" },
+                    { title: "Nº Óbitos", data: "deaths" },
+                ]
+            })
         }
+        covidTable.create()
+        barChartCases.loadData(statisticsData.slice())
+        barChartDeaths.loadData(statisticsData.slice())
     })
 
     var statisticsData = dataSource.getStatisticsData()

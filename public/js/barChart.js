@@ -35,20 +35,20 @@ class BarChart {
             .attr('height', this.parent.offsetHeight - 20) */
             //.attr('height', 600)
             .attr('width', this.getWidthSvg())
-            .attr('height', this.getHeightSvg())
+            //.attr('height', this.getHeightSvg())
     }
 
     getWidthSvg() {
-        var w = this.parent.offsetWidth - this.getMargin().right - this.getMargin().left
+        var w = this.parent.offsetWidth
         return (w < 0) ? 0 : w
     }
 
     getHeightSvg() {
-        var w = window.matchMedia("(max-height: 700px)")
+        /* var w = window.matchMedia("(max-height: 700px)")
         if (w.matches) {
-            return 90
+            return "22vh"
         }
-        return 150
+        return "25vh" */
     }
 
     loadGroup() {
@@ -108,7 +108,7 @@ class BarChart {
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
             d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
             d[attributeYLine] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
-            if (!d[attributeY] || !d[attributeYLine]) continue
+                //if (!d[attributeY] || !d[attributeYLine]) continue
             dataFormated.push(d)
         }
         return dataFormated.sort(function(a, b) {
@@ -285,7 +285,7 @@ class BarChart {
             .attr("text-anchor", "middle")
             .attr("class", "label-chart-mean")
             .attr("x", this.x(xValue))
-            .attr("y", this.y(1.2))
+            .attr("y", this.y(1.01))
             .text("Média de 7 dias");
         this.g.append("path")
             .attr("class", "arrow")
@@ -293,7 +293,7 @@ class BarChart {
                 .x((d) => { return this.x(d[0]) + this.x.bandwidth() / 2 })
                 .y((d) => { return this.y(d[1]) })
                 .curve(d3.curveMonotoneX)([
-                    [xValue, 1.08],
+                    [xValue, 1.009],
                     [xValue, yValue]
                 ]))
             .attr('stroke-linecap', 'round')
@@ -307,7 +307,10 @@ class BarChart {
             .attr("x", (function(d) { return this.x(d[this.options.attributeX]); }).bind(this))
             .attr("y", (function(d) { return this.y(d[this.options.attributeY]); }).bind(this))
             .attr("width", this.x.bandwidth())
-            .attr("height", (function(d) { return height - this.y(d[this.options.attributeY]); }).bind(this))
+            .attr("height", (d) => {
+                var h = height - this.y(d[this.options.attributeY])
+                return (h < 0) ? 0 : h;
+            })
 
         this.g.selectAll(".bar")
             .on("mouseover", this.tootipMouseover)
@@ -317,8 +320,10 @@ class BarChart {
         bars.attr("x", (function(d) { return this.x(d[this.options.attributeX]); }).bind(this))
             .attr("y", (function(d) { return this.y(d[this.options.attributeY]); }).bind(this))
             .attr("width", this.x.bandwidth())
-            .attr("height", (function(d) { return height - this.y(d[this.options.attributeY]); }).bind(this))
-
+            .attr("height", (d) => {
+                var h = height - this.y(d[this.options.attributeY])
+                return (h < 0) ? 0 : h;
+            })
         bars.exit().remove()
     }
 
@@ -335,7 +340,7 @@ class BarChart {
 
     draw(newData) {
         this.svg.attr('width', this.getWidthSvg())
-            .attr('height', this.getHeightSvg())
+            //.attr('height', this.getHeightSvg())
         var width = this.getCurrentWidth()
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
