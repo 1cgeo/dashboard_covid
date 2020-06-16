@@ -364,7 +364,7 @@ const modify_csv_estado = (file, nomes, output) => {
           const last14AvgDeaths = {};
 
           const average = (list) =>
-            list.reduce((prev, curr) => +prev + +curr) / list.length;
+          Math.round(list.reduce((prev, curr) => +prev + +curr) / list.length);
 
           for (var i = 0; i < dataArray.length; i++) {
             if (!(dataArray[i].state in last7Cases)) {
@@ -390,9 +390,12 @@ const modify_csv_estado = (file, nomes, output) => {
             }
             if (dataArray[i].totalCases < 100) {
               dataArray[i].tendencia_casos = "Sem ou poucos casos";
+              dataArray[i].last14AvgCases = ''
             } else if (last14AvgCases[dataArray[i].state].length < 14) {
               dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
+              dataArray[i].last14AvgCases = ''
             } else {
+              dataArray[i].last14AvgCases = last14AvgCases[dataArray[i].state].join('|')
               const d1 = last14AvgCases[dataArray[i].state][0];
               const d2 = last14AvgCases[dataArray[i].state][13];
               if (d2 > d1 * 1.5) {
@@ -675,7 +678,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
               const last14AvgCases = {};
               const last14AvgDeaths = {};
               const average = (list) =>
-                list.reduce((prev, curr) => +prev + +curr) / list.length;
+              Math.round(list.reduce((prev, curr) => +prev + +curr) / list.length);
 
               for (var i = 0; i < dataArray.length; i++) {
                 if (!(dataArray[i].ibgeID in last7Cases)) {
@@ -705,9 +708,12 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                 }
                 if (dataArray[i].totalCases < 100) {
                   dataArray[i].tendencia_casos = "Sem ou poucos casos";
+                  dataArray[i].last14AvgCases = ''
                 } else if (last14AvgCases[dataArray[i].ibgeID].length < 14) {
                   dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
+                  dataArray[i].last14AvgCases = ''
                 } else {
+                  dataArray[i].last14AvgCases = last14AvgCases[dataArray[i].ibgeID].join('|')
                   const d1 = last14AvgCases[dataArray[i].ibgeID][0];
                   const d2 = last14AvgCases[dataArray[i].ibgeID][13];
                   if (d2 > d1 * 1.5) {
