@@ -416,6 +416,14 @@ const modify_csv_estado = (file, nomes, output) => {
               last7Deaths[dataArray[i].state].shift();
             }
 
+            if (last7Deaths[dataArray[i].state].length < 7) {
+              dataArray[i].meanDeaths = +dataArray[i].newDeaths;
+            } else {
+              dataArray[i].meanDeaths = average(
+                last7Deaths[dataArray[i].state]
+              );
+            }
+            
             if (!(dataArray[i].state in last14AvgDeaths)) {
               last14AvgDeaths[dataArray[i].state] = [];
             }
@@ -443,21 +451,6 @@ const modify_csv_estado = (file, nomes, output) => {
               } else {
                 dataArray[i].tendencia_obitos = "Diminuindo";
               }
-            }
-
-            if (!(dataArray[i].state in last7Recovered)) {
-              last7Recovered[dataArray[i].state] = [];
-            }
-            last7Recovered[dataArray[i].state].push(dataArray[i].recovered);
-            if (last7Recovered[dataArray[i].state].length > 7) {
-              last7Recovered[dataArray[i].state].shift();
-            }
-            if (last7Deaths[dataArray[i].state].length < 7) {
-              dataArray[i].meanDeaths = +dataArray[i].newDeaths;
-            } else {
-              dataArray[i].meanDeaths = average(
-                last7Deaths[dataArray[i].state]
-              );
             }
 
             if (!(dataArray[i].state in last7Recovered)) {
