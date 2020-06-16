@@ -3,6 +3,7 @@ const { modify_csv_estado, csv_brasil, modify_csv_cidade } = require("./util");
 
 modify_csv_estado(
   path.join(__dirname, "estados_original.csv"),
+  path.join(__dirname, "nome_estados.csv"),
   path.join(__dirname, "estados.csv")
 );
 csv_brasil(

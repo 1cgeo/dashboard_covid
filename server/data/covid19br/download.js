@@ -13,6 +13,7 @@ download(
     if (err) return console.error(err);
     modify_csv_estado(
       path.join(__dirname, "estados_original.csv"),
+      path.join(__dirname, "nome_estados.csv"),
       path.join(__dirname, "estados.csv")
     );
     csv_brasil(

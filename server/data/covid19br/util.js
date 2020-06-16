@@ -232,6 +232,7 @@ const modify_csv_estado_semana = (file, output) => {
         data[id].country = d.country;
         data[id].state = d.state;
         data[id].city = d.city;
+        data[id].nome = d.nome;
         data[id].newDeaths = 0;
         data[id].newCases = 0;
         data[id].recovered = 0;
@@ -284,224 +285,245 @@ const modify_csv_estado_semana = (file, output) => {
     });
 };
 
-const modify_csv_estado = (file, output) => {
+const modify_csv_estado = (file, nomes, output) => {
   console.log("Preparo do CSV dos Estados iniciado.");
   const dataArray = [];
-  fs.createReadStream(file)
+  const nomeEstados = {};
+  fs.createReadStream(nomes)
     .pipe(csv())
     .on("data", function (data) {
-      if (data.state != "TOTAL") {
-        data.CD_GEOCUF = STATES_MAP[data.state.toLowerCase()];
-        data.CENTROID_X = +CENTROID[data.CD_GEOCUF][0];
-        data.CENTROID_Y = +CENTROID[data.CD_GEOCUF][1];
-        data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
-        dataArray.push(data);
-      }
+      nomeEstados[data["SIGLA"].trim()] = data["NOME"].trim();
     })
     .on("end", function () {
-      const negativoCases = {};
-      const negativoDeaths = {};
-      for (var i = 0; i < dataArray.length; i++) {
-        if (dataArray[i].state in negativoCases) {
-          dataArray[i].newCases =
-            +dataArray[i].newCases - negativoCases[dataArray[i].state];
-          negativoCases[dataArray[i].state] = 0;
-          delete negativoCases[dataArray[i].state];
-        }
-
-        if (dataArray[i].newCases < 0) {
-          if (!(dataArray[i].state in negativoCases)) {
-            negativoCases[dataArray[i].state] = 0;
+      fs.createReadStream(file)
+        .pipe(csv())
+        .on("data", function (data) {
+          if (data.state != "TOTAL") {
+            data.CD_GEOCUF = STATES_MAP[data.state.toLowerCase()];
+            data.nome = nomeEstados[data.state];
+            data.CENTROID_X = +CENTROID[data.CD_GEOCUF][0];
+            data.CENTROID_Y = +CENTROID[data.CD_GEOCUF][1];
+            data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
+            dataArray.push(data);
           }
-          negativoCases[dataArray[i].state] =
-            +negativoCases[dataArray[i].state] - dataArray[i].newCases;
-          dataArray[i].newCases = 0;
-        }
+        })
+        .on("end", function () {
+          const negativoCases = {};
+          const negativoDeaths = {};
+          for (var i = 0; i < dataArray.length; i++) {
+            if (dataArray[i].state in negativoCases) {
+              dataArray[i].newCases =
+                +dataArray[i].newCases - negativoCases[dataArray[i].state];
+              negativoCases[dataArray[i].state] = 0;
+              delete negativoCases[dataArray[i].state];
+            }
 
-        if (dataArray[i].state in negativoDeaths) {
-          dataArray[i].newDeaths =
-            +dataArray[i].newDeaths - negativoDeaths[dataArray[i].state];
-          negativoDeaths[dataArray[i].state] = 0;
-          delete negativoDeaths[dataArray[i].state];
-        }
+            if (dataArray[i].newCases < 0) {
+              if (!(dataArray[i].state in negativoCases)) {
+                negativoCases[dataArray[i].state] = 0;
+              }
+              negativoCases[dataArray[i].state] =
+                +negativoCases[dataArray[i].state] - dataArray[i].newCases;
+              dataArray[i].newCases = 0;
+            }
 
-        if (dataArray[i].newDeaths < 0) {
-          if (!(dataArray[i].state in negativoDeaths)) {
-            negativoDeaths[dataArray[i].state] = 0;
+            if (dataArray[i].state in negativoDeaths) {
+              dataArray[i].newDeaths =
+                +dataArray[i].newDeaths - negativoDeaths[dataArray[i].state];
+              negativoDeaths[dataArray[i].state] = 0;
+              delete negativoDeaths[dataArray[i].state];
+            }
+
+            if (dataArray[i].newDeaths < 0) {
+              if (!(dataArray[i].state in negativoDeaths)) {
+                negativoDeaths[dataArray[i].state] = 0;
+              }
+              negativoDeaths[dataArray[i].state] =
+                +negativoDeaths[dataArray[i].state] - dataArray[i].newDeaths;
+              dataArray[i].newDeaths = 0;
+            }
           }
-          negativoDeaths[dataArray[i].state] =
-            +negativoDeaths[dataArray[i].state] - dataArray[i].newDeaths;
-          dataArray[i].newDeaths = 0;
-        }
-      }
 
-      dataArray[0].recovered = dataArray[0].totalRecovered;
-      for (var i = dataArray.length - 1; i >= 1; i--) {
-        let rec = 0;
-        for (var j = i - 1; j >= 0; j--) {
-          if (dataArray[i].state == dataArray[j].state) {
-            rec = +dataArray[i].recovered - dataArray[j].recovered;
-            break;
+          dataArray[0].recovered = dataArray[0].totalRecovered;
+          for (var i = dataArray.length - 1; i >= 1; i--) {
+            let rec = 0;
+            for (var j = i - 1; j >= 0; j--) {
+              if (dataArray[i].state == dataArray[j].state) {
+                rec = +dataArray[i].recovered - dataArray[j].recovered;
+                break;
+              }
+            }
+            dataArray[i].recovered = rec > 0 ? +rec : 0;
           }
-        }
-        dataArray[i].recovered = rec > 0 ? +rec : 0;
-      }
 
-      const last7Cases = {};
-      const last7Deaths = {};
-      const last7Recovered = {};
+          const last7Cases = {};
+          const last7Deaths = {};
+          const last7Recovered = {};
 
-      const last14AvgCases = {};
-      const last14AvgDeaths = {};
+          const last14AvgCases = {};
+          const last14AvgDeaths = {};
 
-      const average = (list) =>
-        list.reduce((prev, curr) => +prev + +curr) / list.length;
+          const average = (list) =>
+            list.reduce((prev, curr) => +prev + +curr) / list.length;
 
-      for (var i = 0; i < dataArray.length; i++) {
-        if (!(dataArray[i].state in last7Cases)) {
-          last7Cases[dataArray[i].state] = [];
-        }
-        last7Cases[dataArray[i].state].push(dataArray[i].newCases);
-        if (last7Cases[dataArray[i].state].length > 7) {
-          last7Cases[dataArray[i].state].shift();
-        }
+          for (var i = 0; i < dataArray.length; i++) {
+            if (!(dataArray[i].state in last7Cases)) {
+              last7Cases[dataArray[i].state] = [];
+            }
+            last7Cases[dataArray[i].state].push(dataArray[i].newCases);
+            if (last7Cases[dataArray[i].state].length > 7) {
+              last7Cases[dataArray[i].state].shift();
+            }
 
-        if (last7Cases[dataArray[i].state].length < 7) {
-          dataArray[i].meanCases = +dataArray[i].newCases;
-        } else {
-          dataArray[i].meanCases = average(last7Cases[dataArray[i].state]);
-        }
+            if (last7Cases[dataArray[i].state].length < 7) {
+              dataArray[i].meanCases = +dataArray[i].newCases;
+            } else {
+              dataArray[i].meanCases = average(last7Cases[dataArray[i].state]);
+            }
 
-        if (!(dataArray[i].state in last14AvgCases)) {
-          last14AvgCases[dataArray[i].state] = [];
-        }
-        last14AvgCases[dataArray[i].state].push(dataArray[i].meanCases);
-        if (last14AvgCases[dataArray[i].state].length > 14) {
-          last14AvgCases[dataArray[i].state].shift();
-        }
-        if (dataArray[i].totalCases < 100) {
-          dataArray[i].tendencia_casos = "Sem ou poucos casos";
-        } else if (last14AvgCases[dataArray[i].state].length < 14) {
-          dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
-        } else {
-          const d1 = last14AvgCases[dataArray[i].state][0];
-          const d2 = last14AvgCases[dataArray[i].state][13];
-          if (d2 > d1 * 1.5) {
-            dataArray[i].tendencia_casos = "Crescendo 3";
-          } else if (d2 > d1 * 1.25) {
-            dataArray[i].tendencia_casos = "Crescendo 2";
-          } else if (d2 > d1 * 1.1) {
-            dataArray[i].tendencia_casos = "Crescendo 3";
-          } else if (d2 > d1 * 0.9) {
-            dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
-          } else {
-            dataArray[i].tendencia_casos = "Diminuindo";
+            if (!(dataArray[i].state in last14AvgCases)) {
+              last14AvgCases[dataArray[i].state] = [];
+            }
+            last14AvgCases[dataArray[i].state].push(dataArray[i].meanCases);
+            if (last14AvgCases[dataArray[i].state].length > 14) {
+              last14AvgCases[dataArray[i].state].shift();
+            }
+            if (dataArray[i].totalCases < 100) {
+              dataArray[i].tendencia_casos = "Sem ou poucos casos";
+            } else if (last14AvgCases[dataArray[i].state].length < 14) {
+              dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
+            } else {
+              const d1 = last14AvgCases[dataArray[i].state][0];
+              const d2 = last14AvgCases[dataArray[i].state][13];
+              if (d2 > d1 * 1.5) {
+                dataArray[i].tendencia_casos = "Crescendo 3";
+              } else if (d2 > d1 * 1.25) {
+                dataArray[i].tendencia_casos = "Crescendo 2";
+              } else if (d2 > d1 * 1.1) {
+                dataArray[i].tendencia_casos = "Crescendo 3";
+              } else if (d2 > d1 * 0.9) {
+                dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
+              } else {
+                dataArray[i].tendencia_casos = "Diminuindo";
+              }
+            }
+
+            if (!(dataArray[i].state in last7Deaths)) {
+              last7Deaths[dataArray[i].state] = [];
+            }
+            last7Deaths[dataArray[i].state].push(dataArray[i].newDeaths);
+            if (last7Deaths[dataArray[i].state].length > 7) {
+              last7Deaths[dataArray[i].state].shift();
+            }
+
+            if (!(dataArray[i].state in last14AvgDeaths)) {
+              last14AvgDeaths[dataArray[i].state] = [];
+            }
+            last14AvgDeaths[dataArray[i].state].push(
+              dataArray[i].meanDeaths
+            );
+            if (last14AvgDeaths[dataArray[i].state].length > 14) {
+              last14AvgDeaths[dataArray[i].state].shift();
+            }
+            if (dataArray[i].deaths < 100) {
+              dataArray[i].tendencia_obitos = "Sem ou poucos casos";
+            } else if (last14AvgDeaths[dataArray[i].state].length < 14) {
+              dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
+            } else {
+              const d1 = last14AvgDeaths[dataArray[i].state][0];
+              const d2 = last14AvgDeaths[dataArray[i].state][13];
+              if (d2 > d1 * 1.5) {
+                dataArray[i].tendencia_obitos = "Crescendo 3";
+              } else if (d2 > d1 * 1.25) {
+                dataArray[i].tendencia_obitos = "Crescendo 2";
+              } else if (d2 > d1 * 1.1) {
+                dataArray[i].tendencia_obitos = "Crescendo 3";
+              } else if (d2 > d1 * 0.9) {
+                dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
+              } else {
+                dataArray[i].tendencia_obitos = "Diminuindo";
+              }
+            }
+
+            if (!(dataArray[i].state in last7Recovered)) {
+              last7Recovered[dataArray[i].state] = [];
+            }
+            last7Recovered[dataArray[i].state].push(dataArray[i].recovered);
+            if (last7Recovered[dataArray[i].state].length > 7) {
+              last7Recovered[dataArray[i].state].shift();
+            }
+            if (last7Deaths[dataArray[i].state].length < 7) {
+              dataArray[i].meanDeaths = +dataArray[i].newDeaths;
+            } else {
+              dataArray[i].meanDeaths = average(
+                last7Deaths[dataArray[i].state]
+              );
+            }
+
+            if (!(dataArray[i].state in last7Recovered)) {
+              last7Recovered[dataArray[i].state] = [];
+            }
+            last7Recovered[dataArray[i].state].push(dataArray[i].recovered);
+            if (last7Recovered[dataArray[i].state].length > 7) {
+              last7Recovered[dataArray[i].state].shift();
+            }
+
+            if (last7Recovered[dataArray[i].state].length < 7) {
+              dataArray[i].meanRecovered = +dataArray[i].recovered;
+            } else {
+              dataArray[i].meanRecovered = average(
+                last7Recovered[dataArray[i].state]
+              );
+            }
           }
-        }
 
-        if (!(dataArray[i].state in last7Deaths)) {
-          last7Deaths[dataArray[i].state] = [];
-        }
-        last7Deaths[dataArray[i].state].push(dataArray[i].newDeaths);
-        if (last7Deaths[dataArray[i].state].length > 7) {
-          last7Deaths[dataArray[i].state].shift();
-        }
-
-        if (last7Deaths[dataArray[i].state].length < 7) {
-          dataArray[i].meanDeaths = +dataArray[i].newDeaths;
-        } else {
-          dataArray[i].meanDeaths = average(last7Deaths[dataArray[i].state]);
-        }
-
-        if (!(dataArray[i].state in last14AvgDeaths)) {
-          last14AvgDeaths[dataArray[i].state] = [];
-        }
-        last14AvgDeaths[dataArray[i].state].push(
-          dataArray[i].meanDeaths
-        );
-        if (last14AvgDeaths[dataArray[i].state].length > 14) {
-          last14AvgDeaths[dataArray[i].state].shift();
-        }
-        if (dataArray[i].deaths < 100) {
-          dataArray[i].tendencia_obitos = "Sem ou poucos casos";
-        } else if (last14AvgDeaths[dataArray[i].state].length < 14) {
-          dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
-        } else {
-          const d1 = last14AvgDeaths[dataArray[i].state][0];
-          const d2 = last14AvgDeaths[dataArray[i].state][13];
-          if (d2 > d1 * 1.5) {
-            dataArray[i].tendencia_obitos = "Crescendo 3";
-          } else if (d2 > d1 * 1.25) {
-            dataArray[i].tendencia_obitos = "Crescendo 2";
-          } else if (d2 > d1 * 1.1) {
-            dataArray[i].tendencia_obitos = "Crescendo 3";
-          } else if (d2 > d1 * 0.9) {
-            dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
-          } else {
-            dataArray[i].tendencia_obitos = "Diminuindo";
+          dataArray[0].nrDiasDobraCasos = 0;
+          dataArray[0].nrDiasDobraMortes = 0;
+          for (var i = dataArray.length - 1; i > 0; i--) {
+            for (var j = i - 1; j >= 0; j--) {
+              if (dataArray[i].state == dataArray[j].state) {
+                if (dataArray[j].totalCases <= dataArray[i].totalCases / 2) {
+                  const date1 = new Date(dataArray[j].date);
+                  const date2 = new Date(dataArray[i].date);
+                  const diffTime = Math.abs(date2 - date1);
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  dataArray[i].nrDiasDobraCasos = diffDays;
+                  break;
+                }
+              }
+            }
+            if (!dataArray[i].nrDiasDobraCasos) {
+              dataArray[i].nrDiasDobraCasos = 0;
+            }
+            for (var j = i - 1; j >= 0; j--) {
+              if (dataArray[i].state == dataArray[j].state) {
+                if (dataArray[j].deaths <= dataArray[i].deaths / 2) {
+                  const date1 = new Date(dataArray[j].date);
+                  const date2 = new Date(dataArray[i].date);
+                  const diffTime = Math.abs(date2 - date1);
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  dataArray[i].nrDiasDobraMortes = diffDays;
+                  break;
+                }
+              }
+            }
+            if (!dataArray[i].nrDiasDobraMortes) {
+              dataArray[i].nrDiasDobraMortes = 0;
+            }
           }
-        }
 
-        if (!(dataArray[i].state in last7Recovered)) {
-          last7Recovered[dataArray[i].state] = [];
-        }
-        last7Recovered[dataArray[i].state].push(dataArray[i].recovered);
-        if (last7Recovered[dataArray[i].state].length > 7) {
-          last7Recovered[dataArray[i].state].shift();
-        }
+          const fields = Object.keys(dataArray[0]);
+          const opts = { fields };
+          const parser = new Parser(opts);
+          const result = parser.parse(dataArray);
 
-        if (last7Recovered[dataArray[i].state].length < 7) {
-          dataArray[i].meanRecovered = +dataArray[i].recovered;
-        } else {
-          dataArray[i].meanRecovered = average(
-            last7Recovered[dataArray[i].state]
+          fs.writeFileSync(output, result);
+          console.log("Preparo do CSV dos Estados FINALIZADO!");
+          modify_csv_estado_semana(
+            output,
+            `${output.split(".")[0]}_semana.csv`
           );
-        }
-      }
-
-      dataArray[0].nrDiasDobraCasos = 0;
-      dataArray[0].nrDiasDobraMortes = 0;
-      for (var i = dataArray.length - 1; i > 0; i--) {
-        for (var j = i - 1; j >= 0; j--) {
-          if (dataArray[i].state == dataArray[j].state) {
-            if (dataArray[j].totalCases <= dataArray[i].totalCases / 2) {
-              const date1 = new Date(dataArray[j].date);
-              const date2 = new Date(dataArray[i].date);
-              const diffTime = Math.abs(date2 - date1);
-              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              dataArray[i].nrDiasDobraCasos = diffDays;
-              break;
-            }
-          }
-        }
-        if (!dataArray[i].nrDiasDobraCasos) {
-          dataArray[i].nrDiasDobraCasos = 0;
-        }
-        for (var j = i - 1; j >= 0; j--) {
-          if (dataArray[i].state == dataArray[j].state) {
-            if (dataArray[j].deaths <= dataArray[i].deaths / 2) {
-              const date1 = new Date(dataArray[j].date);
-              const date2 = new Date(dataArray[i].date);
-              const diffTime = Math.abs(date2 - date1);
-              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              dataArray[i].nrDiasDobraMortes = diffDays;
-              break;
-            }
-          }
-        }
-        if (!dataArray[i].nrDiasDobraMortes) {
-          dataArray[i].nrDiasDobraMortes = 0;
-        }
-      }
-
-      const fields = Object.keys(dataArray[0]);
-      const opts = { fields };
-      const parser = new Parser(opts);
-      const result = parser.parse(dataArray);
-
-      fs.writeFileSync(output, result);
-      console.log("Preparo do CSV dos Estados FINALIZADO!");
-      modify_csv_estado_semana(output, `${output.split(".")[0]}_semana.csv`);
+        });
     });
 };
 
