@@ -106,7 +106,10 @@ class HeatLayer extends Layer {
         }
         if (this.options.layerId === 0) {
             setTimeout(() => {
-                this.options.map
+                this.heatData = this.options.map
+                .getDataSource()
+                .getStateChoroplethData()
+                /* this.options.map
                     .getDataSource()
                     .getStateChoroplethData()
                     .forEach((data) => {
@@ -122,7 +125,7 @@ class HeatLayer extends Layer {
                             this.heatData.data[idx] =
                                 currentDate > elemDate ? this.heatData.data[idx] : data;
                         }
-                    });
+                    }); */
             }, 2);
         }
         var locations = this.processData(jsonData, "ibgeID");

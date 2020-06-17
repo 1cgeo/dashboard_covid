@@ -130,52 +130,53 @@ class DataSource {
     getTableStateData() {
         var ids = []
         var result = []
-        this.stateChoroplethData.slice().forEach((elem) => {
+        var data = this.stateChoroplethData.slice()
+        data.reverse()
+        data.forEach((elem) => {
             var idx = ids.indexOf(elem.CD_GEOCUF);
             if (idx < 0) {
-                ids.push(elem.CD_GEOCUF);
-                result.push(elem);
-            } else {
-                var currentDate = new Date(
-                    result[idx].date.replace(/\-/g, '/')
-                );
-                var elemDate = new Date(elem.date.replace(/\-/g, '/'));
-                result[idx] =
-                    currentDate > elemDate ? result[idx] : elem;
+                ids.push(elem.CD_GEOCUF)
+                result.push(elem)
             }
         })
         return result
     }
 
     getTableCityData() {
-        return this.cityChoroplethData
         var ids = []
         var result = []
-        this.cityChoroplethData.forEach((elem) => {
+        var data = this.cityChoroplethData.slice()
+        data.reverse()
+        data.forEach((elem) => {
             var idx = ids.indexOf(elem.CD_GEOCMU);
             if (idx < 0) {
-                ids.push(elem.CD_GEOCMU);
-                result.push(elem);
-            } else {
-                var currentDate = new Date(
-                    result[idx].date.replace(/\-/g, '/')
-                );
-                var elemDate = new Date(elem.date.replace(/\-/g, '/'));
-                result[idx] =
-                    currentDate > elemDate ? result[idx] : elem;
+                ids.push(elem.CD_GEOCMU)
+                result.push(elem)
             }
         })
         return result
     }
 
     getStateChoroplethData() {
+        var listedId = [];
+        var reduced = [];
         var timeInterval = this.getDataTimeInterval();
         var startDate = new Date(+timeInterval[0]);
         var endDate = new Date(+timeInterval[1]);
-        return this.stateChoroplethData.slice().filter((data) => {
+        var data = this.stateChoroplethData.slice()
+        data.reverse()
+        data.forEach((data) => {
+            var id = data.CD_GEOCMU ? data.CD_GEOCMU : data.CD_GEOCUF;
             var elementDate = new Date(data.date.replace(/\-/g, "/"));
-            return elementDate >= startDate && elementDate <= endDate;
-        });
+            if (listedId.indexOf(id) < 0 && (elementDate >= startDate && elementDate <= endDate)) {
+                listedId.push(id)
+                reduced.push(data)
+            }
+        })
+        return {
+            data: reduced,
+            ids: listedId
+        }
     }
 
     setCityChoroplethData(data) {
@@ -183,13 +184,25 @@ class DataSource {
     }
 
     getCityChoroplethData() {
+        var listedId = [];
+        var reduced = [];
         var timeInterval = this.getDataTimeInterval();
         var startDate = new Date(+timeInterval[0]);
         var endDate = new Date(+timeInterval[1]);
-        return this.cityChoroplethData.slice().filter((data) => {
+        var data = this.cityChoroplethData.slice()
+        data.reverse()
+        data.forEach((data) => {
+            var id = data.CD_GEOCMU ? data.CD_GEOCMU : data.CD_GEOCUF;
             var elementDate = new Date(data.date.replace(/\-/g, "/"));
-            return elementDate >= startDate && elementDate <= endDate;
-        });
+            if (listedId.indexOf(id) < 0 && (elementDate >= startDate && elementDate <= endDate)) {
+                listedId.push(id)
+                reduced.push(data)
+            }
+        })
+        return {
+            data: reduced,
+            ids: listedId
+        }
     }
 
     setCurrentLayer(layer) {
@@ -226,20 +239,20 @@ class DataSource {
     }
 
     getStatisticsData() {
-        var jsonData = [];
         var layerProperties = this.getLayerProperties();
         if (!layerProperties) {
             return this.getCountryData();
-        } else if (layerProperties.CD_GEOCMU) {
-            jsonData = this.getCityChoroplethData();
-        } else {
-            jsonData = this.getStateChoroplethData();
         }
-        var featureId = (featureId = this.getFeatureId());
-        return jsonData.filter((data) => {
+        var featureId = this.getFeatureId()
+        var timeInterval = this.getDataTimeInterval();
+        var startDate = new Date(+timeInterval[0]);
+        var endDate = new Date(+timeInterval[1]);
+        var data = (layerProperties.CD_GEOCMU) ? this.cityChoroplethData : this.stateChoroplethData
+        return data.slice().filter((data) => {
             var id = data.CD_GEOCMU ? data.CD_GEOCMU : data.CD_GEOCUF;
-            return featureId === id;
-        });
+            var elementDate = new Date(data.date.replace(/\-/g, "/"));
+            return elementDate >= startDate && elementDate <= endDate && featureId === id;
+        })
     }
 
     getStateThemeData(themeType, cb) {
@@ -253,13 +266,13 @@ class DataSource {
             url = `${window.location.origin}/api/maptheme/circle?location=state`;
         }
         if (!url) return;
-        httpGetAsync(url, function(data) {
+        httpGetAsync(url, function (data) {
             cb(JSON.parse(data));
         });
     }
 
     getCountryDataset(cb) {
-        httpGetAsync(`${window.location.origin}/api/information/country`, function(
+        httpGetAsync(`${window.location.origin}/api/information/country`, function (
             data
         ) {
             cb(JSON.parse(data));
@@ -277,7 +290,7 @@ class DataSource {
             url = `${window.location.origin}/api/maptheme/circle?location=city`;
         }
         if (!url) return;
-        httpGetAsync(url, function(data) {
+        httpGetAsync(url, function (data) {
             cb(JSON.parse(data));
         });
     }
@@ -326,141 +339,141 @@ class DataSource {
 
     getAllLayers() {
         return [{
-                name: "Estados",
+            name: "Estados",
+            id: 0,
+            mapLayers: [{
+                url: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
+                style: {
+                    weight: 1,
+                    opacity: 0.7,
+                    color: "white",
+                    fill: true,
+                    fillOpacity: 0.7,
+                    fillColor: "#cfcfcf",
+                },
+                idField: "CD_GEOCUF",
+                main: true,
+            },],
+            themeLayers: [{
+                name: "Mapa de calor de casos",
+                attributeName: "totalCases",
+                type: "heat",
                 id: 0,
-                mapLayers: [{
-                    url: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
-                    style: {
-                        weight: 1,
-                        opacity: 0.7,
-                        color: "white",
-                        fill: true,
-                        fillOpacity: 0.7,
-                        fillColor: "#cfcfcf",
-                    },
-                    idField: "CD_GEOCUF",
-                    main: true,
-                }, ],
-                themeLayers: [{
-                        name: "Mapa de calor de casos",
-                        attributeName: "totalCases",
-                        type: "heat",
-                        id: 0,
-                    },
-                    {
-                        name: "Mapa de calor de óbitos",
-                        attributeName: "deaths",
-                        type: "heat",
-                        id: 1,
-                    },
-                    {
-                        name: "Taxa de crescimento de casos",
-                        attributeName: "nrDiasDobraCasos",
-                        attributeNameSecondary: "totalCases",
-                        type: "choropleth",
-                        id: 2,
-                    },
-                    {
-                        name: "Taxa de crescimento de óbitos",
-                        attributeName: "nrDiasDobraMortes",
-                        attributeNameSecondary: "deaths",
-                        type: "choropleth",
-                        id: 3,
-                    },
-                    {
-                        name: "Número de casos",
-                        attributeName: "newCases",
-                        type: "circles",
-                        id: 4,
-                        attributeLabel: "NM_ESTADO",
-                        scaleFactor: 0.003,
-                        scaleLenged: [10000, 50000, 100000],
-                    },
-                    {
-                        name: "Número de óbitos",
-                        attributeName: "newDeaths",
-                        attributeLabel: "NM_ESTADO",
-                        type: "circles",
-                        id: 5,
-                        attributeLabel: "state",
-                        scaleFactor: 0.03,
-                        scaleLenged: [500, 5000, 10000],
-                    },
-                ],
             },
             {
-                name: "Municípios",
+                name: "Mapa de calor de óbitos",
+                attributeName: "deaths",
+                type: "heat",
                 id: 1,
-                mapLayers: [{
-                        url: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
-                        style: {
-                            weight: 1,
-                            opacity: 0.7,
-                            color: "black",
-                        },
-                        idField: "CD_GEOCUF",
-                    },
-                    {
-                        url: `${window.location.origin}/api/layer/tile/city/{z}/{x}/{y}.pbf`,
-                        style: {
-                            weight: 1,
-                            opacity: 0.7,
-                            color: "white",
-                            fill: true,
-                            fillOpacity: 0.7,
-                            fillColor: "#cfcfcf",
-                        },
-                        idField: "CD_GEOCMU",
-                        main: true,
-                    },
-                ],
-                themeLayers: [{
-                        name: "Mapa de calor de casos",
-                        attributeName: "totalCases",
-                        type: "heat",
-                        id: 0,
-                    },
-                    {
-                        name: "Mapa de calor de óbitos",
-                        attributeName: "deaths",
-
-                        type: "heat",
-                        id: 1,
-                    },
-                    {
-                        name: "Taxa de crescimento de casos",
-                        attributeName: "nrDiasDobraCasos",
-                        attributeNameSecondary: "totalCases",
-                        type: "choropleth",
-                        id: 2,
-                    },
-                    {
-                        name: "Taxa de crescimento de óbitos",
-                        attributeName: "nrDiasDobraMortes",
-                        attributeNameSecondary: "deaths",
-                        type: "choropleth",
-                        id: 3,
-                    },
-                    {
-                        name: "Número de casos",
-                        attributeName: "newCases",
-                        type: "circles",
-                        id: 4,
-                        attributeLabel: "city",
-                        scaleFactor: 0.02,
-                        scaleLenged: [10000, 50000, 100000],
-                    },
-                    {
-                        name: "Número de óbitos",
-                        attributeName: "newDeaths",
-                        type: "circles",
-                        attributeLabel: "city",
-                        id: 5,
-                        scaleFactor: 0.2,
-                        scaleLenged: [500, 5000, 10000],
-                    },
-                ],
             },
+            {
+                name: "Taxa de crescimento de casos",
+                attributeName: "nrDiasDobraCasos",
+                attributeNameSecondary: "totalCases",
+                type: "choropleth",
+                id: 2,
+            },
+            {
+                name: "Taxa de crescimento de óbitos",
+                attributeName: "nrDiasDobraMortes",
+                attributeNameSecondary: "deaths",
+                type: "choropleth",
+                id: 3,
+            },
+            {
+                name: "Número de casos",
+                attributeName: "newCases",
+                type: "circles",
+                id: 4,
+                attributeLabel: "NM_ESTADO",
+                scaleFactor: 0.003,
+                scaleLenged: [10000, 50000, 100000],
+            },
+            {
+                name: "Número de óbitos",
+                attributeName: "newDeaths",
+                attributeLabel: "NM_ESTADO",
+                type: "circles",
+                id: 5,
+                attributeLabel: "state",
+                scaleFactor: 0.03,
+                scaleLenged: [500, 5000, 10000],
+            },
+            ],
+        },
+        {
+            name: "Municípios",
+            id: 1,
+            mapLayers: [{
+                url: `${window.location.origin}/api/layer/tile/state/{z}/{x}/{y}.pbf`,
+                style: {
+                    weight: 1,
+                    opacity: 0.7,
+                    color: "black",
+                },
+                idField: "CD_GEOCUF",
+            },
+            {
+                url: `${window.location.origin}/api/layer/tile/city/{z}/{x}/{y}.pbf`,
+                style: {
+                    weight: 1,
+                    opacity: 0.7,
+                    color: "white",
+                    fill: true,
+                    fillOpacity: 0.7,
+                    fillColor: "#cfcfcf",
+                },
+                idField: "CD_GEOCMU",
+                main: true,
+            },
+            ],
+            themeLayers: [{
+                name: "Mapa de calor de casos",
+                attributeName: "totalCases",
+                type: "heat",
+                id: 0,
+            },
+            {
+                name: "Mapa de calor de óbitos",
+                attributeName: "deaths",
+
+                type: "heat",
+                id: 1,
+            },
+            {
+                name: "Taxa de crescimento de casos",
+                attributeName: "nrDiasDobraCasos",
+                attributeNameSecondary: "totalCases",
+                type: "choropleth",
+                id: 2,
+            },
+            {
+                name: "Taxa de crescimento de óbitos",
+                attributeName: "nrDiasDobraMortes",
+                attributeNameSecondary: "deaths",
+                type: "choropleth",
+                id: 3,
+            },
+            {
+                name: "Número de casos",
+                attributeName: "newCases",
+                type: "circles",
+                id: 4,
+                attributeLabel: "city",
+                scaleFactor: 0.02,
+                scaleLenged: [10000, 50000, 100000],
+            },
+            {
+                name: "Número de óbitos",
+                attributeName: "newDeaths",
+                type: "circles",
+                attributeLabel: "city",
+                id: 5,
+                scaleFactor: 0.2,
+                scaleLenged: [500, 5000, 10000],
+            },
+            ],
+        },
         ];
     }
 }

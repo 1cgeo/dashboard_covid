@@ -25,7 +25,7 @@ class ChoroplethLayer extends Layer {
         var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
         if (mapLayers.length < 1) { return }
         var mainLayer = mapLayers.find((l) => l.main)
-        this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
+        this.lastData = jsonData
 
         if (processKey !== this.currentProcessKey) return
 
@@ -74,28 +74,6 @@ class ChoroplethLayer extends Layer {
         this.rangeData = null
     }
 
-    getLastData(data, id, dateField) {
-        var listedId = [];
-        var reduced = [];
-        for (var i = data.length; i--;) {
-            var idx = listedId.indexOf(data[i][id])
-            if (idx < 0) {
-                listedId.push(data[i][id])
-                reduced.push(data[i])
-            } else {
-                var currentDate = new Date(reduced[idx][dateField].replace(/\-/g, '/'))
-                var date = new Date(data[i][dateField].replace(/\-/g, '/'))
-                if (currentDate < date) {
-                    reduced[idx] = data[i]
-                }
-            }
-        }
-        return {
-            data: reduced,
-            ids: listedId
-        }
-    }
-
     loadPanels() {
         if (!this.options.map.getMap().getPane('limitpane')) {
             this.options.map.getMap().createPane('limitpane')
@@ -125,7 +103,7 @@ class ChoroplethLayer extends Layer {
         if (jsonData.length < 1) { return }
         var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
         var mainLayer = mapLayers.find((l) => l.main)
-        this.lastData = this.getLastData(jsonData, mainLayer.idField, 'date')
+        this.lastData = jsonData
         if (mapLayers.length < 1) { return }
         if (processKey !== this.currentProcessKey) return
         this.loadPanels()

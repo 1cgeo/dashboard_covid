@@ -18,7 +18,7 @@ class CovidTable {
     getPageLength() {
         var w = window.matchMedia("(max-height: 700px)")
         if (w.matches) {
-            return 7
+            return 5
         }
         return 15
     }
@@ -28,7 +28,7 @@ class CovidTable {
             if ($.fn.DataTable.isDataTable(`#${this.getOptions().elementId}`)) {
                 $(`#${this.getOptions().elementId}`).DataTable().destroy();
             }
-            $(`#${this.getOptions().elementId}`).empty();
+            $(`#${this.getOptions().elementId}`).empty()
             $(`#${this.getOptions().elementId}`).DataTable({
                 language: {
                     search: "Pesquisar:",

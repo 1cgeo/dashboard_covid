@@ -48,17 +48,19 @@ dataSource.loadAllData(() => {
     var covidmap = factories.createMap(
         'covidMap',
         dataSource, {
-            elementId: "map-container"
-        }
+        elementId: "map-container"
+    }
     )
 
     var covidTable = new CovidTable({
         elementId: 'covid-table',
         dataset: dataSource.getTableStateData(),
         columns: [
-            { title: "Estado", data: "CD_GEOCUF" },
-            { title: "Nº Casos", data: "totalCases" },
-            { title: "Nº Óbitos", data: "deaths" },
+            { title: "Estado", data: "CD_GEOCUF", "width": "20%" },
+            { title: "Nº Casos confirmados", data: "totalCases", "width": "20%" },
+            { title: "Nº Óbitos", data: "deaths", "width": "20%" },
+            { title: "Nº Óbitos1", data: "deaths", "width": "20%" },
+            { title: "Nº Óbitos2", data: "deaths", "width": "20%" },
         ]
     })
 
@@ -118,33 +120,32 @@ dataSource.loadAllData(() => {
     covidmap.on('changeLayer', (layerId) => {
         var statisticsData = dataSource.getStatisticsData()
         if (+layerId === 1) {
-            $(".recovered").each(function() {
-                    $(this).addClass('hide')
-                })
-                /* covidTable.setOptions({
-                    elementId: 'covid-table',
-                    dataset: dataSource.getTableCityData(),
-                    columns: [
-                        { title: "Cidade", data: "CD_GEOCMU" },
-                        { title: "Nº Casos", data: "totalCases" },
-                        { title: "Nº Óbitos", data: "deaths" },
-                    ]
-                })
-                covidTable.create() */
+            $(".recovered").each(function () {
+                $(this).addClass('hide')
+            })
+            /* covidTable.setOptions({
+                elementId: 'covid-table',
+                dataset: dataSource.getTableCityData(),
+                columns: [
+                    { title: "Cidade", data: "CD_GEOCMU" },
+                    { title: "Nº Casos", data: "totalCases" },
+                    { title: "Nº Óbitos", data: "deaths" },
+                ]
+            }) */
         } else {
-            $(".recovered").each(function() {
+            $(".recovered").each(function () {
                 $(this).removeClass('hide')
             })
             barChartRecovered.loadData(statisticsData.slice())
-                /* covidTable.setOptions({
-                    elementId: 'covid-table',
-                    dataset: dataSource.getTableStateData(),
-                    columns: [
-                        { title: "Estado", data: "CD_GEOCUF" },
-                        { title: "Nº Casos", data: "totalCases" },
-                        { title: "Nº Óbitos", data: "deaths" },
-                    ]
-                }) */
+            /* covidTable.setOptions({
+                elementId: 'covid-table',
+                dataset: dataSource.getTableStateData(),
+                columns: [
+                    { title: "Estado", data: "CD_GEOCUF" },
+                    { title: "Nº Casos", data: "totalCases" },
+                    { title: "Nº Óbitos", data: "deaths" },
+                ]
+            }) */
         }
         //covidTable.create()
         barChartCases.loadData(statisticsData.slice())
