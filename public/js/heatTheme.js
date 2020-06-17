@@ -116,9 +116,9 @@ class HeatLayer extends Layer {
                             this.heatData.data.push(data);
                         } else {
                             var currentDate = new Date(
-                                this.heatData.data[idx].date.replace("-", "/")
+                                this.heatData.data[idx].date.replace(/\-/g, '/')
                             );
-                            var elemDate = new Date(data.date.replace("-", "/"));
+                            var elemDate = new Date(data.date.replace(/\-/g, '/'));
                             this.heatData.data[idx] =
                                 currentDate > elemDate ? this.heatData.data[idx] : data;
                         }

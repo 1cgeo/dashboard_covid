@@ -233,7 +233,6 @@ class CovidMap {
     }
 
     loadMapData(layerId) {
-        this.triggerChangeLayer(layerId)
         var themeId = 0
         var layerOptions = this.dataSource.getMapLayer(+layerId)
         if (this.getCurrentThemeLayer()) {
@@ -249,6 +248,7 @@ class CovidMap {
         }, 1)
         this.setCurrentLayerOptions(layerOptions)
         this.loadThemeLayer(themeId)
+        this.triggerChangeLayer(layerId)
     }
 
     loadThemeLayer(themeLayerId) {

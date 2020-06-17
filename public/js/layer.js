@@ -111,8 +111,8 @@ class Layer {
                 listedId.push(data[i][id])
                 reduced.push(data[i])
             } else {
-                var currentDate = new Date(reduced[idx][dateField].replace('-', '/'))
-                var date = new Date(data[i][dateField].replace('-', '/'))
+                var currentDate = new Date(reduced[idx][dateField].replace(/\-/g, '/'))
+                var date = new Date(data[i][dateField].replace(/\-/g, '/'))
                 if (currentDate < date) {
                     reduced[idx] = data[i]
                 }

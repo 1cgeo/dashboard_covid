@@ -128,44 +128,43 @@ class DataSource {
     }
 
     getTableStateData() {
-        var data = this.getStateChoroplethData()
         var ids = []
         var result = []
-        for (var i = data.length; i--;) {
-            var idx = ids.indexOf(data[i].CD_GEOCUF);
+        this.stateChoroplethData.slice().forEach((elem) => {
+            var idx = ids.indexOf(elem.CD_GEOCUF);
             if (idx < 0) {
-                ids.push(data[i].CD_GEOCUF);
-                result.push(data[i]);
+                ids.push(elem.CD_GEOCUF);
+                result.push(elem);
             } else {
                 var currentDate = new Date(
-                    result[idx].date.replace("-", "/")
+                    result[idx].date.replace(/\-/g, '/')
                 );
-                var elemDate = new Date(data[i].date.replace("-", "/"));
+                var elemDate = new Date(elem.date.replace(/\-/g, '/'));
                 result[idx] =
-                    currentDate > elemDate ? result[idx] : data[i];
+                    currentDate > elemDate ? result[idx] : elem;
             }
-        }
+        })
         return result
     }
 
     getTableCityData() {
-        var data = this.getCityChoroplethData()
+        return this.cityChoroplethData
         var ids = []
         var result = []
-        for (var i = data.length; i--;) {
-            var idx = ids.indexOf(data[i].CD_GEOCMU);
+        this.cityChoroplethData.forEach((elem) => {
+            var idx = ids.indexOf(elem.CD_GEOCMU);
             if (idx < 0) {
-                ids.push(data[i].CD_GEOCMU);
-                result.push(data[i]);
+                ids.push(elem.CD_GEOCMU);
+                result.push(elem);
             } else {
                 var currentDate = new Date(
-                    result[idx].date.replace("-", "/")
+                    result[idx].date.replace(/\-/g, '/')
                 );
-                var elemDate = new Date(data[i].date.replace("-", "/"));
+                var elemDate = new Date(elem.date.replace(/\-/g, '/'));
                 result[idx] =
-                    currentDate > elemDate ? result[idx] : data[i];
+                    currentDate > elemDate ? result[idx] : elem;
             }
-        }
+        })
         return result
     }
 

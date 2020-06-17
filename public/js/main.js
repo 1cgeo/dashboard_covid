@@ -119,33 +119,34 @@ dataSource.loadAllData(() => {
         var statisticsData = dataSource.getStatisticsData()
         if (+layerId === 1) {
             $(".recovered").each(function() {
-                $(this).addClass('hide')
-            })
-            covidTable.setOptions({
-                elementId: 'covid-table',
-                dataset: dataSource.getTableCityData(),
-                columns: [
-                    { title: "Cidade", data: "CD_GEOCMU" },
-                    { title: "Nº Casos", data: "totalCases" },
-                    { title: "Nº Óbitos", data: "deaths" },
-                ]
-            })
+                    $(this).addClass('hide')
+                })
+                /* covidTable.setOptions({
+                    elementId: 'covid-table',
+                    dataset: dataSource.getTableCityData(),
+                    columns: [
+                        { title: "Cidade", data: "CD_GEOCMU" },
+                        { title: "Nº Casos", data: "totalCases" },
+                        { title: "Nº Óbitos", data: "deaths" },
+                    ]
+                })
+                covidTable.create() */
         } else {
             $(".recovered").each(function() {
                 $(this).removeClass('hide')
             })
             barChartRecovered.loadData(statisticsData.slice())
-            covidTable.setOptions({
-                elementId: 'covid-table',
-                dataset: dataSource.getTableStateData(),
-                columns: [
-                    { title: "Estado", data: "CD_GEOCUF" },
-                    { title: "Nº Casos", data: "totalCases" },
-                    { title: "Nº Óbitos", data: "deaths" },
-                ]
-            })
+                /* covidTable.setOptions({
+                    elementId: 'covid-table',
+                    dataset: dataSource.getTableStateData(),
+                    columns: [
+                        { title: "Estado", data: "CD_GEOCUF" },
+                        { title: "Nº Casos", data: "totalCases" },
+                        { title: "Nº Óbitos", data: "deaths" },
+                    ]
+                }) */
         }
-        covidTable.create()
+        //covidTable.create()
         barChartCases.loadData(statisticsData.slice())
         barChartDeaths.loadData(statisticsData.slice())
     })
