@@ -2,6 +2,9 @@ class CovidTable {
     constructor(newOptions) {
         this.options = {}
         this.setOptions(newOptions)
+        /* window.addEventListener("resize", () => {
+            this.create()
+        }) */
         this.create()
     }
 
@@ -15,16 +18,16 @@ class CovidTable {
         return this.options
     }
 
-    getPageLength() {
+    /* getPageLength() {
         var query = window.matchMedia("(max-height: 700px)")
         if (query.matches) {
             return 4
         }
         return 13
     }
-
-    reloadDataset(dataset){
-        this.setOptions({dataset: dataset})
+ */
+    reloadDataset(dataset) {
+        this.setOptions({ dataset: dataset })
         this.create()
     }
 
@@ -47,8 +50,14 @@ class CovidTable {
                 },
                 "bLengthChange": false,
                 "bInfo": false,
-                "pageLength": this.getPageLength(),
-                "responsive": true,
+/*                 "pageLength": this.getPageLength(),
+ */                "responsive": true,
+                "order": [[1, "desc"]],
+                "scrollY": this.getOptions().scrollYHeight,
+                "scrollCollapse": true,
+                "sScrollX": "100%",
+                "bScrollCollapse": true,
+                "paging": false,
                 data: this.getOptions().dataset,
                 columns: this.getOptions().columns
             });

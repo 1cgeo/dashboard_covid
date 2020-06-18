@@ -1,7 +1,13 @@
-.legend2,
-.temporal-legend {
+.legend2, .temporal-legend {
     padding: 6px 10px;
     background: transparent;
+}
+
+@media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    #map-container {
+        height: 50vh;
+    }
 }
 
 #legendTitle {
@@ -138,8 +144,7 @@
     background-image: linear-gradient(#fde725, #70cf57, #20928c, #355e8d, #440154);
 }
 
-.gradient-value-cases,
-.gradient-value-deaths {
+.gradient-value-cases, .gradient-value-deaths {
     grid-area: value;
     text-align: center;
 }

@@ -30,7 +30,7 @@
 
 <body>
     <div style="background-color: #eeeeee; min-height: 100vh;" class="d-flex flex-column container-for-admin">
-        <header>
+        <header styles="max-height: 20vh">
             <nav class="d-flex justify-content-between navbar navbar-expand-lg navbar-expand navbar-light white">
                 <div class="eb-img">
                     <img src="images/eb.png" />
@@ -101,7 +101,7 @@
 
                 </div>
                 <div
-                    class="d-flex flex-column flex-shrink-1 flex-xl-grow-1 flex-lg-grow-1 flex-md-shrink-1 flex-sm-shrink-1 col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                    class="d-flex flex-column flex-shrink-1 flex-xl-grow-1 flex-lg-grow-1 flex-md-shrink-1 flex-sm-shrink-1 col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
                     <div class="card mb-1 d-flex flex-grow-1">
                         <div class="card-body d-flex flex-column">
                             <div id="map-container" class="map-container d-flex flex-grow-1">
@@ -130,7 +130,7 @@
                     </div>
                 </div>
                 <div id="statistics"
-                    class="d-flex flex-column flex-shrink-1 flex-xl-grow-1 flex-lg-grow-1 flex-md-shrink-1 flex-sm-shrink-1 col-12 col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                    class="d-flex flex-column flex-shrink-1 flex-xl-grow-1 flex-lg-grow-1 flex-md-shrink-1 flex-sm-shrink-1 col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
 
                     <div class="card mb-1 recovered d-flex flex-grow-1">
                         <div id="recovered-chart" class="card-body d-flex flex-column">
@@ -138,9 +138,9 @@
                             <svg id="graph-recovered" class="d-flex flex-shrink-1"></svg>
                         </div>
                     </div>
-                    <div class="card mb-1 d-flex flex-grow-1">
+                    <div styles="min-height:40vh" class="card mb-1 d-flex flex-grow-1">
                         <div id="table-container" class="card-body d-flex flex-column">
-                            <table id="covid-table" class="display" width="100%"></table>
+                            <table id="covid-table" class="display"></table>
                         </div>
                     </div>
                 </div>

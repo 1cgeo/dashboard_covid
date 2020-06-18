@@ -132,6 +132,8 @@ class DataSource {
             var idx = ids.indexOf(data[i].CD_GEOCUF);
             if (idx < 0) {
                 ids.push(data[i].CD_GEOCUF)
+                data[i].deaths_per_100k_inhabitants = Math.floor(data[i].deaths_per_100k_inhabitants)
+                data[i].totalCases_per_100k_inhabitants = Math.floor(data[i].totalCases_per_100k_inhabitants)
                 result.push(data[i])
             } else {
                 break
@@ -151,6 +153,8 @@ class DataSource {
             var idx = ids.indexOf(data[i].CD_GEOCMU);
             if (idx < 0) {
                 ids.push(data[i].CD_GEOCMU)
+                data[i].deaths_per_100k_inhabitants = Math.floor(data[i].deaths_per_100k_inhabitants)
+                data[i].totalCases_per_100k_inhabitants = Math.floor(data[i].totalCases_per_100k_inhabitants)
                 result.push(data[i])
             } else {
                 break

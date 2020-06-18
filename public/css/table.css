@@ -1,11 +1,6 @@
-.mdc-button--colored {
-    background-color: #607d8b !important;
-}
+table th { font-size: 10px !important; }
+table td { font-size: 10px !important; }
 
-.mdc-button {
-    color: #607d8b !important
-}
-
-.mdc-button.mdc-button--raised.mdc-button--colored {
-    color: white !important
+table {
+    width: 100%;
 }

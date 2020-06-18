@@ -66,14 +66,17 @@ body {
     align-self: center;
 }
 
+.navbar{
+    max-height: 9vh;
+}
 .eb-img img {
-    max-width: 57px;
-    max-height: 60px;
+    max-width: 54px;
+    max-height: 57px;
 }
 
 .dsg-img img {
-    max-width: 50px;
-    max-height: 57px;
+    max-width: 47px;
+    max-height: 54px;
 }
 
 .title {
