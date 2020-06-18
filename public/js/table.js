@@ -2,9 +2,6 @@ class CovidTable {
     constructor(newOptions) {
         this.options = {}
         this.setOptions(newOptions)
-        window.addEventListener("resize", () => {
-            this.create()
-        })
         this.create()
     }
 
