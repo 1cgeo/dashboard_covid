@@ -1,6 +1,12 @@
-table th { font-size: 10px !important; }
-table td { font-size: 10px !important; }
+table th {
+    font-size: 10px !important;
+}
+
+table td {
+    font-size: 10px !important;
+}
 
 table {
     width: 100%;
 }
+

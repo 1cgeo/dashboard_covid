@@ -55,7 +55,7 @@ dataSource.loadAllData(() => {
     var covidTable = new CovidTable({
         elementId: 'covid-table',
         dataset: dataSource.getTableStateData(),
-        scrollYHeight: '35vh',
+        scrollYHeight: '45vh',
         columns: [
             { title: "", data: "name", "width": "30%" },
             { title: "casos confirmados", data: "totalCases", "width": "10%" },

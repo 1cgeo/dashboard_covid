@@ -18,14 +18,14 @@ class CovidTable {
         return this.options
     }
 
-    /* getPageLength() {
+    getScrolly() {
         var query = window.matchMedia("(max-height: 700px)")
         if (query.matches) {
-            return 4
+            return '40vh'
         }
-        return 13
+        return '50vh'
     }
- */
+
     reloadDataset(dataset) {
         this.setOptions({ dataset: dataset })
         this.create()
@@ -53,7 +53,7 @@ class CovidTable {
 /*                 "pageLength": this.getPageLength(),
  */                "responsive": true,
                 "order": [[1, "desc"]],
-                "scrollY": this.getOptions().scrollYHeight,
+                scrollY:        this.getScrolly(),
                 "scrollCollapse": true,
                 "sScrollX": "100%",
                 "bScrollCollapse": true,
