@@ -188,15 +188,19 @@ module.exports.getChoroplethThemeData = (location, cb) => {
             newDeaths: info.newDeaths,
             meanCases: info.meanCases,
             meanRecovered: info.meanRecovered,
-            meanDeaths: info.meanDeaths
+            meanDeaths: info.meanDeaths,
+            totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
+            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants
         };
         if (location === "city") {
             data.recovered = "Sem dados";
             data.CD_GEOCMU = info.ibgeID;
+            data.name = info.city
             return data;
         }
         data.CD_GEOCUF = info.CD_GEOCUF;
         data.recovered = info.recovered;
+        data.name = info.nome
         return data;
     });
     cb(choroplethStatesData);

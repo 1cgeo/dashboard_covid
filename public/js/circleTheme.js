@@ -61,14 +61,7 @@ class CirclesLayer extends Layer {
     }
 
     getCircleStyle() {
-        return {
-            fillColor: (this.options.attributeName == 'newDeaths') ? '#555555' : '#CF1111',
-            color: (this.options.attributeName == 'newDeaths') ? '#555555' : "#cf1111",
-            weight: 1,
-            fillOpacity: 0.3,
-            opacity: 0.3
-                /* pane: 'popover' */
-        }
+        return this.options.cicleStyle
     }
 
     create() {
@@ -155,7 +148,7 @@ class CirclesLayer extends Layer {
                     <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
                 </div>
                 <div class="row2-popup">
-                    <div><b>Número de ${(this.options.attributeName === 'deaths')? 'óbitos': 'casos'}:</b></div>
+                    <div><b>${this.options.popupAttributeTitle}:</b></div>
                 </div>
                 <div class="value2-popup">
                     <div>${this.mFormatter(+circle.feature.properties[this.options.attributeName])}</div>

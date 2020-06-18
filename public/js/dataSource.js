@@ -26,13 +26,15 @@ class DataSource {
             this.setStateCircleData(data);
         });
         this.getStateThemeData("choropleth", (data) => {
-            this.setStateChoroplethData(data);
+            this.setStateChoroplethData(data.slice());
+            this.setTableStateData(data.slice())
         });
         this.getCitiesThemeData("circles", (data) => {
             this.setCityCircleData(data);
         });
         this.getCitiesThemeData("choropleth", (data) => {
-            this.setCityChoroplethData(data);
+            this.setCityChoroplethData(data.slice());
+            this.setTableCityData(data.slice())
         });
         this.getCitiesThemeData("heat", (data) => {
             this.setHeatData(data);
@@ -87,7 +89,7 @@ class DataSource {
         var endDate = new Date(+timeInterval[1]);
         return this.heatData.slice().filter((data) => {
             var elementDate = new Date(data.date.replace(/\-/g, "/"));
-            return elementDate >= startDate && elementDate <= endDate;
+            return (elementDate.getTime() >= startDate.getTime() && elementDate.getTime() <= endDate.getTime())
         });
     }
 
@@ -102,7 +104,7 @@ class DataSource {
         var geojson = JSON.parse(JSON.stringify(this.stateCircleData));
         geojson.features = geojson.features.filter((data) => {
             var elementDate = new Date(data.properties.date.replace(/\-/g, "/"));
-            return elementDate >= startDate && elementDate <= endDate;
+            return (elementDate.getTime() >= startDate.getTime() && elementDate.getTime() <= endDate.getTime())
         });
         return geojson;
     }
@@ -118,43 +120,51 @@ class DataSource {
         var geojson = JSON.parse(JSON.stringify(this.cityCircleData));
         geojson.features = geojson.features.filter((data) => {
             var elementDate = new Date(data.properties.date.replace(/\-/g, "/"));
-            return elementDate >= startDate && elementDate <= endDate;
+            return (elementDate.getTime() >= startDate.getTime() && elementDate.getTime() <= endDate.getTime())
         });
         return geojson;
     }
 
-    setStateChoroplethData(data) {
-        this.stateChoroplethData = data;
+    setTableStateData(data) {
+        var ids = []
+        var result = []
+        for (var i = data.length; i--;) {
+            var idx = ids.indexOf(data[i].CD_GEOCUF);
+            if (idx < 0) {
+                ids.push(data[i].CD_GEOCUF)
+                result.push(data[i])
+            } else {
+                break
+            }
+        }
+        this.tableStateData = result
     }
 
     getTableStateData() {
+        return this.tableStateData
+    }
+
+    setTableCityData(data) {
         var ids = []
         var result = []
-        var data = this.stateChoroplethData.slice()
-        data.reverse()
-        data.forEach((elem) => {
-            var idx = ids.indexOf(elem.CD_GEOCUF);
+        for (var i = data.length; i--;) {
+            var idx = ids.indexOf(data[i].CD_GEOCMU);
             if (idx < 0) {
-                ids.push(elem.CD_GEOCUF)
-                result.push(elem)
+                ids.push(data[i].CD_GEOCMU)
+                result.push(data[i])
+            } else {
+                break
             }
-        })
-        return result
+        }
+        this.tableCityData = result
     }
 
     getTableCityData() {
-        var ids = []
-        var result = []
-        var data = this.cityChoroplethData.slice()
-        data.reverse()
-        data.forEach((elem) => {
-            var idx = ids.indexOf(elem.CD_GEOCMU);
-            if (idx < 0) {
-                ids.push(elem.CD_GEOCMU)
-                result.push(elem)
-            }
-        })
-        return result
+        return this.tableCityData
+    }
+
+    setStateChoroplethData(data) {
+        this.stateChoroplethData = data;
     }
 
     getStateChoroplethData() {
@@ -163,16 +173,16 @@ class DataSource {
         var timeInterval = this.getDataTimeInterval();
         var startDate = new Date(+timeInterval[0]);
         var endDate = new Date(+timeInterval[1]);
-        var data = this.stateChoroplethData.slice()
-        data.reverse()
-        data.forEach((data) => {
-            var id = data.CD_GEOCMU ? data.CD_GEOCMU : data.CD_GEOCUF;
-            var elementDate = new Date(data.date.replace(/\-/g, "/"));
-            if (listedId.indexOf(id) < 0 && (elementDate >= startDate && elementDate <= endDate)) {
+        var data = this.stateChoroplethData
+        for (var i = data.length; i--;) {
+            var id = data[i].CD_GEOCUF
+            var elementDate = new Date(data[i].date.replace(/\-/g, "/"));
+            if (listedId.indexOf(id) < 0 && (elementDate.getTime() == endDate.getTime())) {
                 listedId.push(id)
-                reduced.push(data)
+                reduced.push(data[i])
             }
-        })
+            if (elementDate.getTime() < endDate.getTime()) break
+        }
         return {
             data: reduced,
             ids: listedId
@@ -189,16 +199,17 @@ class DataSource {
         var timeInterval = this.getDataTimeInterval();
         var startDate = new Date(+timeInterval[0]);
         var endDate = new Date(+timeInterval[1]);
-        var data = this.cityChoroplethData.slice()
-        data.reverse()
-        data.forEach((data) => {
-            var id = data.CD_GEOCMU ? data.CD_GEOCMU : data.CD_GEOCUF;
-            var elementDate = new Date(data.date.replace(/\-/g, "/"));
-            if (listedId.indexOf(id) < 0 && (elementDate >= startDate && elementDate <= endDate)) {
+        var data = this.cityChoroplethData
+        console.log(data)
+        for (var i = data.length; i--;) {
+            var id = data[i].CD_GEOCMU
+            var elementDate = new Date(data[i].date.replace(/\-/g, "/"));
+            if (listedId.indexOf(id) < 0 && (elementDate.getTime() == endDate.getTime())) {
                 listedId.push(id)
-                reduced.push(data)
+                reduced.push(data[i])
             }
-        })
+            if (elementDate.getTime() < endDate.getTime()) break
+        }
         return {
             data: reduced,
             ids: listedId
@@ -386,18 +397,50 @@ class DataSource {
                 type: "circles",
                 id: 4,
                 attributeLabel: "NM_ESTADO",
+                popupAttributeTitle: 'Número de casos',
                 scaleFactor: 0.003,
                 scaleLenged: [10000, 50000, 100000],
+                cicleStyle: {
+                    fillColor: '#CF1111',
+                    color: "#cf1111",
+                    weight: 1,
+                    fillOpacity: 0.3,
+                    opacity: 0.3
+                }
             },
             {
                 name: "Número de óbitos",
                 attributeName: "newDeaths",
                 attributeLabel: "NM_ESTADO",
+                popupAttributeTitle: 'Número de óbitos',
                 type: "circles",
                 id: 5,
-                attributeLabel: "state",
                 scaleFactor: 0.03,
                 scaleLenged: [500, 5000, 10000],
+                cicleStyle: {
+                    fillColor: '#555555',
+                    color: '#555555',
+                    weight: 1,
+                    fillOpacity: 0.3,
+                    opacity: 0.3
+                }
+            },
+            {
+                name: "Número de recuperados",
+                attributeName: "recovered",
+                attributeLabel: "NM_ESTADO",
+                type: "circles",
+                id: 6,
+                popupAttributeTitle: 'Número de recuperados',
+                scaleFactor: 0.003,
+                scaleLenged: [10000, 50000, 100000],
+                cicleStyle: {
+                    fillColor: '#009624',
+                    color: '#009624',
+                    weight: 1,
+                    fillOpacity: 0.3,
+                    opacity: 0.3
+                }
             },
             ],
         },
@@ -460,8 +503,16 @@ class DataSource {
                 type: "circles",
                 id: 4,
                 attributeLabel: "city",
-                scaleFactor: 0.02,
+                popupAttributeTitle: 'Número de casos',
+                scaleFactor: 0.003,
                 scaleLenged: [10000, 50000, 100000],
+                cicleStyle: {
+                    fillColor: '#CF1111',
+                    color: "#cf1111",
+                    weight: 1,
+                    fillOpacity: 0.3,
+                    opacity: 0.3
+                }
             },
             {
                 name: "Número de óbitos",
@@ -469,8 +520,16 @@ class DataSource {
                 type: "circles",
                 attributeLabel: "city",
                 id: 5,
-                scaleFactor: 0.2,
+                popupAttributeTitle: 'Número de óbitos',
+                scaleFactor: 0.03,
                 scaleLenged: [500, 5000, 10000],
+                cicleStyle: {
+                    fillColor: '#555555',
+                    color: '#555555',
+                    weight: 1,
+                    fillOpacity: 0.3,
+                    opacity: 0.3
+                }
             },
             ],
         },

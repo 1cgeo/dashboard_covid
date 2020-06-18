@@ -19,9 +19,9 @@ class BarChart {
         this.svg = this.loadSvg()
         this.g = this.loadGroup()
         this.createMarkers()
-            //this.createTitle()
+        //this.createTitle()
         this.createTooltip()
-            //this.createLineChart()
+        //this.createLineChart()
         this.createAreaChart()
         window.addEventListener("resize", () => {
             this.draw()
@@ -35,7 +35,7 @@ class BarChart {
             .attr('height', this.parent.offsetHeight - 20) */
             //.attr('height', 600)
             .attr('width', this.getWidthSvg())
-            //.attr('height', this.getHeightSvg())
+        //.attr('height', this.getHeightSvg())
     }
 
     getWidthSvg() {
@@ -108,17 +108,17 @@ class BarChart {
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
             d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
             d[attributeYLine] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
-                //if (!d[attributeY] || !d[attributeYLine]) continue
+            //if (!d[attributeY] || !d[attributeYLine]) continue
             dataFormated.push(d)
         }
-        return dataFormated.sort(function(a, b) {
+        return dataFormated.sort(function (a, b) {
             var dateA = new Date(a[attributeX]),
                 dateB = new Date(b[attributeX]);
             return dateA - dateB;
         });
     }
 
-    updateDataTimeInterval(rangeTimestamp) {}
+    updateDataTimeInterval(rangeTimestamp) { }
 
     getFormatedValue(value) {
         return Number((+value * +this.maxValue).toFixed(1))
@@ -134,10 +134,10 @@ class BarChart {
         this.currentData = []
         if (data.length < 0) return
         this.currentData = this.formatInputData(data)
-        this.x.domain(this.currentData.map((function(d) {
+        this.x.domain(this.currentData.map((function (d) {
             return d[this.options.attributeX];
         }).bind(this)));
-        this.y.domain([0, d3.max(this.currentData, (function(d) {
+        this.y.domain([0, d3.max(this.currentData, (function (d) {
             return d[this.options.attributeY];
         }).bind(this))])
         this.draw()
@@ -147,10 +147,14 @@ class BarChart {
         return { top: 30, right: 10, bottom: 30, left: 50 }
     }
 
+    numberWithPoint(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
     createTooltip() {
         this.tooltip = d3.select("body").append("div").attr("class", "toolTip")
-        this.tootipMouseover = function(d) {}
-        this.tooltipMousemove = (function(d) {
+        this.tootipMouseover = function (d) { }
+        this.tooltipMousemove =  (d) => {
             this.tooltip
                 .style("left", d3.event.pageX - 100 + "px")
                 .style("top", d3.event.pageY - 110 + "px")
@@ -159,9 +163,11 @@ class BarChart {
         <b>${new Date(d[this.options.attributeX]).getDate()} de 
         ${this.months[new Date(d[this.options.attributeX]).getMonth()]}</b>
         <br>
-        ${this.getFormatedValue(d[this.options.attributeY])} ${this.options.title}`)
-        }).bind(this)
-        this.tooltipMouseleave = (function(d) { this.tooltip.style("display", "none") }).bind(this)
+        ${this.numberWithPoint(
+            this.getFormatedValue(d[this.options.attributeY]
+        ))} ${this.options.title}`)
+        }
+        this.tooltipMouseleave = (d) => { this.tooltip.style("display", "none") }
     }
 
 
@@ -174,8 +180,8 @@ class BarChart {
 
     createAreaChart() {
         this.area = d3.area()
-            .x((function(d) { return this.x(d[this.options.attributeX]) + this.x.bandwidth() / 2; }).bind(this))
-            .y1((function(d) { return this.y(d[this.options.attributeY]); }).bind(this))
+            .x((function (d) { return this.x(d[this.options.attributeX]) + this.x.bandwidth() / 2; }).bind(this))
+            .y1((function (d) { return this.y(d[this.options.attributeY]); }).bind(this))
             .curve(d3.curveMonotoneX)
     }
 
@@ -304,8 +310,8 @@ class BarChart {
         bars
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", (function(d) { return this.x(d[this.options.attributeX]); }).bind(this))
-            .attr("y", (function(d) { return this.y(d[this.options.attributeY]); }).bind(this))
+            .attr("x", (function (d) { return this.x(d[this.options.attributeX]); }).bind(this))
+            .attr("y", (function (d) { return this.y(d[this.options.attributeY]); }).bind(this))
             .attr("width", this.x.bandwidth())
             .attr("height", (d) => {
                 var h = height - this.y(d[this.options.attributeY])
@@ -317,8 +323,8 @@ class BarChart {
             .on("mousemove", this.tooltipMousemove)
             .on("mouseleave", this.tooltipMouseleave)
 
-        bars.attr("x", (function(d) { return this.x(d[this.options.attributeX]); }).bind(this))
-            .attr("y", (function(d) { return this.y(d[this.options.attributeY]); }).bind(this))
+        bars.attr("x", (function (d) { return this.x(d[this.options.attributeX]); }).bind(this))
+            .attr("y", (function (d) { return this.y(d[this.options.attributeY]); }).bind(this))
             .attr("width", this.x.bandwidth())
             .attr("height", (d) => {
                 var h = height - this.y(d[this.options.attributeY])
@@ -340,12 +346,12 @@ class BarChart {
 
     draw(newData) {
         this.svg.attr('width', this.getWidthSvg())
-            //.attr('height', this.getHeightSvg())
+        //.attr('height', this.getHeightSvg())
         var width = this.getCurrentWidth()
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-            //this.drawArea(height)
+        //this.drawArea(height)
         this.drawBars(height)
         this.drawLine()
         this.drawLineYMiddle()

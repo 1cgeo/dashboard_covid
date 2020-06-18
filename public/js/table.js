@@ -2,6 +2,9 @@ class CovidTable {
     constructor(newOptions) {
         this.options = {}
         this.setOptions(newOptions)
+        window.addEventListener("resize", () => {
+            this.create()
+        })
         this.create()
     }
 
@@ -16,11 +19,16 @@ class CovidTable {
     }
 
     getPageLength() {
-        var w = window.matchMedia("(max-height: 700px)")
-        if (w.matches) {
-            return 5
+        var query = window.matchMedia("(max-height: 700px)")
+        if (query.matches) {
+            return 4
         }
-        return 15
+        return 13
+    }
+
+    reloadDataset(dataset){
+        this.setOptions({dataset: dataset})
+        this.create()
     }
 
     create() {
@@ -37,7 +45,8 @@ class CovidTable {
                         "sPrevious": "Anterior",
                         "sFirst": "Primeiro",
                         "sLast": "Último"
-                    }
+                    },
+                    "sZeroRecords": "Nenhum registro encontrado"
                 },
                 "bLengthChange": false,
                 "bInfo": false,

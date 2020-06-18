@@ -118,10 +118,10 @@ class CovidMap {
     create(options) {
         return L.map(
             options.elementId, {
-                minZoom: 3,
-                zoomControl: false,
-                maxBounds: this.options.maxBounds,
-            }
+            minZoom: 3,
+            zoomControl: false,
+            maxBounds: this.options.maxBounds,
+        }
         ).fitBounds(this.options.bounds).setZoom(4)
     }
 
@@ -135,10 +135,10 @@ class CovidMap {
 
     createSiderbar() {
         var sidebar = L.control.sidebar({
-                container: 'sidebar',
-                autopan: false,
-                closeButton: true,
-            })
+            container: 'sidebar',
+            autopan: false,
+            closeButton: true,
+        })
             .addTo(this.map)
         this.sidebar = sidebar
     }
@@ -151,7 +151,7 @@ class CovidMap {
         var id = 'panel-buttons'
         this.sidebar.removePanel(id);
         var buttonsDiv = $("<div></div>")
-        buttons.forEach(function(elem, idx) {
+        buttons.forEach(function (elem, idx) {
             var div = $("<div></div>")
                 .attr("class", "custom-control custom-radio")
             var input = $("<input></input>")
@@ -175,14 +175,14 @@ class CovidMap {
             pane: buttonsDiv.html(),
             title: 'Camadas'
         })
-        $("input[name='layer']").change(function(e) { cb($(this).val()) })
+        $("input[name='layer']").change(function (e) { cb($(this).val()) })
     }
 
     createThemesButtons(themes, select, cb) {
         var id = 'panel-styles'
         this.sidebar.removePanel(id);
         var buttonsDiv = $("<div></div>")
-        themes.forEach(function(elem, idx) {
+        themes.forEach(function (elem, idx) {
             var div = $("<div></div>")
                 .attr("class", "custom-control custom-radio")
             var input = $("<input></input>")
@@ -207,7 +207,7 @@ class CovidMap {
             title: 'Temas',
         };
         this.getSidebar().addPanel(panelContent)
-        $("input[name='theme']").change(function(e) { cb($(this).val()) })
+        $("input[name='theme']").change(function (e) { cb($(this).val()) })
     }
 
 
@@ -256,7 +256,11 @@ class CovidMap {
         var themeOptions = this.getCurrentLayerOptions().themeLayers.find((theme) => {
             return theme.id == themeLayerId
         })
-        if (!themeOptions) return
+        if (!themeOptions){
+            themeOptions = this.getCurrentLayerOptions().themeLayers.find((theme) => {
+                return theme.id == 0
+            })
+        }
         themeOptions.layerId = this.getCurrentLayerOptions().id
         themeOptions.idField = this.getCurrentLayerOptions().idField
         if (this.getCurrentThemeLayer()) this.getCurrentThemeLayer().remove()
