@@ -22,7 +22,7 @@ class Status {
     this.setTotalCases(this.numberWithPoint(totalCases));
     this.setRecuperadosCases(this.numberWithPoint(this.reduceValue(data, "recovered")));
     this.setTotalDeaths(this.numberWithPoint(totalDeaths));
-    this.setLethality(`${(totalDeaths / totalCases).toFixed(1)} %`)
+    this.setLethality(`${((totalDeaths / totalCases)*100).toFixed(1)} %`)
   }
 
   reduceValue(data, field) {
