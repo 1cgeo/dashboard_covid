@@ -23,18 +23,19 @@ class BarChart {
         this.createTooltip()
         //this.createLineChart()
         this.createAreaChart()
-        window.addEventListener("resize", () => {
+        /* window.addEventListener("resize", () => {
             this.draw()
-        })
+        }) */
     }
 
     loadSvg() {
         return d3.select(`#${this.options.elementId}`)
-            //.append('svg')
-            /* .attr('width', this.parent.offsetWidth - 200)
-            .attr('height', this.parent.offsetHeight - 20) */
-            //.attr('height', 600)
-            .attr('width', this.getWidthSvg())
+            .attr("viewBox", `0 0 ${460} ${155}`)
+        //.append('svg')
+        /* .attr('width', this.parent.offsetWidth - 200)
+        .attr('height', this.parent.offsetHeight - 20) */
+        //.attr('height', 600)
+        //.attr('width', this.getWidthSvg())
         //.attr('height', this.getHeightSvg())
     }
 
@@ -154,7 +155,7 @@ class BarChart {
     createTooltip() {
         this.tooltip = d3.select("body").append("div").attr("class", "toolTip")
         this.tootipMouseover = function (d) { }
-        this.tooltipMousemove =  (d) => {
+        this.tooltipMousemove = (d) => {
             this.tooltip
                 .style("left", d3.event.pageX - 100 + "px")
                 .style("top", d3.event.pageY - 110 + "px")
@@ -164,8 +165,8 @@ class BarChart {
         ${this.months[new Date(d[this.options.attributeX]).getMonth()]}</b>
         <br>
         ${this.numberWithPoint(
-            this.getFormatedValue(d[this.options.attributeY]
-        ))} ${this.options.title}`)
+                    this.getFormatedValue(d[this.options.attributeY]
+                    ))} ${this.options.title}`)
         }
         this.tooltipMouseleave = (d) => { this.tooltip.style("display", "none") }
     }
@@ -210,7 +211,7 @@ class BarChart {
             .call(d3.axisBottom(this.x).tickFormat(d3.timeFormat('%b')))
             .selectAll("text")
             .attr("y", 0)
-            .attr("x", 9)
+            .attr("x", 7)
             .attr("dy", ".35em")
             .attr("transform", "rotate(45)")
             .style("text-anchor", "start")
@@ -291,7 +292,7 @@ class BarChart {
             .attr("text-anchor", "middle")
             .attr("class", "label-chart-mean")
             .attr("x", this.x(xValue))
-            .attr("y", this.y(1.01))
+            .attr("y", this.y(1.1))
             .text("Média de 7 dias");
         this.g.append("path")
             .attr("class", "arrow")
@@ -334,18 +335,18 @@ class BarChart {
     }
 
     getCurrentHeigth() {
-        var bounds = this.svg.node().getBoundingClientRect()
-        return bounds.height - this.getMargin().top - this.getMargin().bottom
+        //var bounds = this.svg.getBoundingClientRect()
+        return 100 // - this.getMargin().left - this.getMargin().right
     }
 
     getCurrentWidth() {
-        var bounds = this.svg.node().getBoundingClientRect()
-        return bounds.width - this.getMargin().left - this.getMargin().right
+        //var bounds = this.svg.getBoundingClientRect()
+        return 400 //- this.getMargin().top - this.getMargin().bottom
     }
 
 
     draw(newData) {
-        this.svg.attr('width', this.getWidthSvg())
+        //this.svg.attr('width', this.getWidthSvg())
         //.attr('height', this.getHeightSvg())
         var width = this.getCurrentWidth()
         var height = this.getCurrentHeigth()

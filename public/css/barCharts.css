@@ -233,3 +233,7 @@
  marker#arrow {
      fill: #666;
  } */
+
+ .chart-card {
+    max-height: 27vh;
+ }

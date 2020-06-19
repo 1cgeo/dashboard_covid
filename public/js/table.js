@@ -2,9 +2,9 @@ class CovidTable {
     constructor(newOptions) {
         this.options = {}
         this.setOptions(newOptions)
-        /* window.addEventListener("resize", () => {
-            this.create()
-        }) */
+        window.addEventListener("resize", () => {
+            if(this.table) this.table.draw()
+        })
         this.create()
     }
 
@@ -37,7 +37,7 @@ class CovidTable {
                 $(`#${this.getOptions().elementId}`).DataTable().destroy();
             }
             $(`#${this.getOptions().elementId}`).empty()
-            $(`#${this.getOptions().elementId}`).DataTable({
+            this.table = $(`#${this.getOptions().elementId}`).DataTable({
                 language: {
                     search: "Pesquisar:",
                     "oPaginate": {
@@ -48,16 +48,16 @@ class CovidTable {
                     },
                     "sZeroRecords": "Nenhum registro encontrado"
                 },
+                "autoWidth": false,
                 "bLengthChange": false,
                 "bInfo": false,
-/*                 "pageLength": this.getPageLength(),
- */                "responsive": true,
+                "pageLength": 10,
+                "responsive": true,
                 "order": [[1, "desc"]],
-                scrollY:        this.getScrolly(),
-                "scrollCollapse": true,
                 "sScrollX": "100%",
+                'scrollX': 'true',
+                'scrollCollapse': true,
                 "bScrollCollapse": true,
-                "paging": false,
                 data: this.getOptions().dataset,
                 columns: this.getOptions().columns
             });

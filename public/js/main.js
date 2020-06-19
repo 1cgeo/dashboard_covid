@@ -57,11 +57,11 @@ dataSource.loadAllData(() => {
         dataset: dataSource.getTableStateData(),
         scrollYHeight: '45vh',
         columns: [
-            { title: "", data: "name", "width": "30%" },
-            { title: "casos confirmados", data: "totalCases", "width": "10%" },
-            { title: "a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants", "width": "10%" },
-            { title: "óbitos", data: "deaths", "width": "10%" },
-            { title: "a cada 100.000 hab.", data: "deaths_per_100k_inhabitants", "width": "10%" },
+            { title: "", data: "name" },
+            { title: "casos confirmados", data: "totalCases" },
+            { title: "a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
+            { title: "óbitos", data: "deaths" },
+            { title: "a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
         ]
     })
 
@@ -124,7 +124,6 @@ dataSource.loadAllData(() => {
             $(".recovered").each(function () {
                 $(this).addClass('hide')
             })
-            covidTable.setOptions({scrollYHeight: '60vh'})
             covidTable.reloadDataset(
                 dataSource.getTableCityData()
             )
@@ -133,7 +132,6 @@ dataSource.loadAllData(() => {
                 $(this).removeClass('hide')
             })
             barChartRecovered.loadData(statisticsData.slice())
-            covidTable.setOptions({scrollYHeight: '35vh'})
             covidTable.reloadDataset(
                 dataSource.getTableStateData()
             )

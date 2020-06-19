@@ -124,7 +124,7 @@
         transform: rotate(360deg);
     }
 }
-
+/* 
 .card-body #skeleton-map {
     position: absolute;
     display: none;
@@ -148,4 +148,4 @@
     40%, 100% {
         background-position: 632px;
     }
-}
+} */
