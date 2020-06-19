@@ -97,7 +97,7 @@ class BarChart {
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
             d[attributeY] = (this.maxValue == 0 || +jsonData[i][attributeY] <= 0 ) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
             d[attributeYLine] = (this.maxValue == 0 || +jsonData[i][attributeYLine] <=0 ) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
-            //if (!d[attributeY] || !d[attributeYLine]) continue
+            if (!d[attributeY] || !d[attributeYLine]) continue
             dataFormated.push(d)
         }
         return dataFormated.sort(function (a, b) {
