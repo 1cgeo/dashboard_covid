@@ -56,7 +56,7 @@ dataSource.loadAllData(() => {
         elementId: 'covid-table',
         dataset: dataSource.getTableStateData(),
         columns: [
-            { title: "Estados/Municípios", data: "name" },
+            { title: "Estados", data: "name" },
             { title: "Casos confirmados", data: "totalCases" },
             { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
             { title: "Óbitos", data: "deaths" },
@@ -123,6 +123,15 @@ dataSource.loadAllData(() => {
             $(".recovered").each(function () {
                 $(this).addClass('hide')
             })
+            covidTable.setOptions({
+                columns: [
+                    { title: "Municípios", data: "name" },
+                    { title: "Casos confirmados", data: "totalCases" },
+                    { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
+                    { title: "Óbitos", data: "deaths" },
+                    { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+                ]
+            })
             covidTable.reloadDataset(
                 dataSource.getTableCityData()
             )
@@ -131,6 +140,15 @@ dataSource.loadAllData(() => {
                 $(this).removeClass('hide')
             })
             barChartRecovered.loadData(statisticsData.slice())
+            covidTable.setOptions({
+                columns: [
+                    { title: "Estados", data: "name" },
+                    { title: "Casos confirmados", data: "totalCases" },
+                    { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
+                    { title: "Óbitos", data: "deaths" },
+                    { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+                ]
+            })
             covidTable.reloadDataset(
                 dataSource.getTableStateData()
             )

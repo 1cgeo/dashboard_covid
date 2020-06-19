@@ -17,9 +17,12 @@ class Status {
       this.clean();
       return;
     }
-    this.setTotalCases(this.numberWithPoint(this.reduceValue(data, "newCases")));
+    var totalCases = this.reduceValue(data, "newCases")
+    var totalDeaths = this.reduceValue(data, "newDeaths")
+    this.setTotalCases(this.numberWithPoint(totalCases));
     this.setRecuperadosCases(this.numberWithPoint(this.reduceValue(data, "recovered")));
-    this.setTotalDeaths(this.numberWithPoint(this.reduceValue(data, "newDeaths")));
+    this.setTotalDeaths(this.numberWithPoint(totalDeaths));
+    this.setLethality(`${(totalDeaths / totalCases).toFixed(1)} %`)
   }
 
   reduceValue(data, field) {
@@ -37,6 +40,7 @@ class Status {
     $("#cases-values").text("Sem dados");
     $("#recuperados-values").text("Sem dados");
     $("#deaths-values").text("Sem dados");
+    $("#lethality-values").text("Sem dados");
   }
 
   setLocationName(locationName) {
@@ -45,6 +49,10 @@ class Status {
 
   setTotalCases(total) {
     $("#cases-values").text(total);
+  }
+
+  setLethality(total) {
+    $("#lethality-values").text(total);
   }
 
   setRecuperadosCases(total) {

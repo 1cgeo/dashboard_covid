@@ -92,11 +92,11 @@ class BarChart {
         this.maxValue = (yValues.length < 1) ? 0 : this.getMax(yValues)
         var dataFormated = []
         for (var i = jsonData.length; i--;) {
-            if (+jsonData[i][attributeY] < 0) continue
+            //if (+jsonData[i][attributeY] < 0) continue
             var d = {}
             d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
-            d[attributeY] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
-            d[attributeYLine] = (this.maxValue == 0) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
+            d[attributeY] = (this.maxValue == 0 || +jsonData[i][attributeY] <= 0 ) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
+            d[attributeYLine] = (this.maxValue == 0 || +jsonData[i][attributeYLine] <=0 ) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
             //if (!d[attributeY] || !d[attributeYLine]) continue
             dataFormated.push(d)
         }
