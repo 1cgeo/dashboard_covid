@@ -19,5 +19,36 @@
   
 }
 
+.triangle-up {
+	width: 0;
+	height: 0;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 12px solid black;
+}
+
+#last-deaths > .triangle-up {
+  border-bottom-color: gray;
+} 
+
+#last-cases > .triangle-up {
+  border-bottom-color: red;
+} 
+
+#last-recovered > .triangle-up {
+  border-bottom-color: green;
+} 
+
+#last-deaths-values {
+  color: gray;
+}
+
+#last-cases-values {
+  color: red;
+}
+
+#last-recovered-values {
+  color: green;
+}
 
 

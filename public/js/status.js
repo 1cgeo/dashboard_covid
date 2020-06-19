@@ -4,7 +4,7 @@ class Status {
   }
 
   numberWithPoint(x) {
-    if(x === 'Sem dados'){
+    if (x === 'Sem dados') {
       return x
     }
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -19,10 +19,15 @@ class Status {
     }
     var totalCases = this.reduceValue(data, "newCases")
     var totalDeaths = this.reduceValue(data, "newDeaths")
+    var lastdata = data[data.length - 1]
     this.setTotalCases(this.numberWithPoint(totalCases));
     this.setRecuperadosCases(this.numberWithPoint(this.reduceValue(data, "recovered")));
     this.setTotalDeaths(this.numberWithPoint(totalDeaths));
-    this.setLethality(`${((totalDeaths / totalCases)*100).toFixed(1)} %`)
+    this.setLethality(`${((totalDeaths / totalCases) * 100).toFixed(1)} %`)
+    this.setLastCases(this.numberWithPoint(lastdata.newCases))
+    this.setLastDeaths(this.numberWithPoint(lastdata.newDeaths))
+    this.setLastRecovered(this.numberWithPoint(lastdata.recovered))
+
   }
 
   reduceValue(data, field) {
@@ -30,7 +35,7 @@ class Status {
       return "Sem dados";
     }
     var total = 0;
-    for (var i = data.length; i--; ) {
+    for (var i = data.length; i--;) {
       total += +data[i][field];
     }
     return total;
@@ -61,5 +66,17 @@ class Status {
 
   setTotalDeaths(total) {
     $("#deaths-values").text(total);
+  }
+
+  setLastCases(total) {
+    $("#last-cases-values").text(total);
+  }
+
+  setLastDeaths(total) {
+    $("#last-deaths-values").text(total);
+  }
+
+  setLastRecovered(total) {
+    $("#last-recovered-values").text(total);
   }
 }
