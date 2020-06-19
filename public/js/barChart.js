@@ -19,37 +19,25 @@ class BarChart {
         this.svg = this.loadSvg()
         this.g = this.loadGroup()
         this.createMarkers()
-        //this.createTitle()
         this.createTooltip()
-        //this.createLineChart()
         this.createAreaChart()
-        /* window.addEventListener("resize", () => {
+        window.addEventListener("resize", () => {
             this.draw()
-        }) */
+        })
     }
 
     loadSvg() {
         return d3.select(`#${this.options.elementId}`)
-            .attr("viewBox", `0 0 ${460} ${155}`)
-        //.append('svg')
-        /* .attr('width', this.parent.offsetWidth - 200)
-        .attr('height', this.parent.offsetHeight - 20) */
-        //.attr('height', 600)
-        //.attr('width', this.getWidthSvg())
-        //.attr('height', this.getHeightSvg())
+        .attr('width', this.getWidthSvg())
+        .attr('height', this.getHeightSvg())
     }
 
     getWidthSvg() {
-        var w = this.parent.offsetWidth
-        return (w < 0) ? 0 : w
+        return this.parent.offsetWidth
     }
 
     getHeightSvg() {
-        /* var w = window.matchMedia("(max-height: 700px)")
-        if (w.matches) {
-            return "22vh"
-        }
-        return "25vh" */
+        return this.parent.offsetHeight
     }
 
     loadGroup() {
@@ -145,7 +133,7 @@ class BarChart {
     }
 
     getMargin() {
-        return { top: 30, right: 10, bottom: 30, left: 50 }
+        return { top: 30, right: 10, bottom: 30, left: 55 }
     }
 
     numberWithPoint(x) {
@@ -335,24 +323,21 @@ class BarChart {
     }
 
     getCurrentHeigth() {
-        //var bounds = this.svg.getBoundingClientRect()
-        return 100 // - this.getMargin().left - this.getMargin().right
+        return this.parent.offsetHeight - this.getMargin().top - this.getMargin().bottom
     }
 
     getCurrentWidth() {
-        //var bounds = this.svg.getBoundingClientRect()
-        return 400 //- this.getMargin().top - this.getMargin().bottom
+        return this.parent.offsetWidth - this.getMargin().left - this.getMargin().right
     }
 
 
-    draw(newData) {
-        //this.svg.attr('width', this.getWidthSvg())
-        //.attr('height', this.getHeightSvg())
+    draw() {
+        this.svg.attr('width', this.getWidthSvg())
+            .attr('height', this.getHeightSvg())
         var width = this.getCurrentWidth()
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-        //this.drawArea(height)
         this.drawBars(height)
         this.drawLine()
         this.drawLineYMiddle()

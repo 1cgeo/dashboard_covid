@@ -13,7 +13,7 @@ dataSource.loadAllData(() => {
     })
 
     var barChartCases = new BarChart({
-        parentId: "cases-chart",
+        parentId: "cases-chart-container",
         elementId: "graph-cases",
         dataSource: dataSource,
         dataLocation: 'country',
@@ -25,7 +25,7 @@ dataSource.loadAllData(() => {
 
 
     var barChartDeaths = new BarChart({
-        parentId: "deaths-chart",
+        parentId: "deaths-chart-container",
         elementId: "graph-deaths",
         dataSource: dataSource,
         attributeX: "date",
@@ -35,7 +35,7 @@ dataSource.loadAllData(() => {
     })
 
     var barChartRecovered = new BarChart({
-        parentId: "recovered-chart",
+        parentId: "recovered-chart-container",
         elementId: "graph-recovered",
         dataSource: dataSource,
         attributeX: "date",
@@ -55,13 +55,12 @@ dataSource.loadAllData(() => {
     var covidTable = new CovidTable({
         elementId: 'covid-table',
         dataset: dataSource.getTableStateData(),
-        scrollYHeight: '45vh',
         columns: [
-            { title: "", data: "name" },
-            { title: "casos confirmados", data: "totalCases" },
-            { title: "a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
-            { title: "óbitos", data: "deaths" },
-            { title: "a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+            { title: "Estados/Municípios", data: "name" },
+            { title: "Casos confirmados", data: "totalCases" },
+            { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
+            { title: "Óbitos", data: "deaths" },
+            { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
         ]
     })
 
