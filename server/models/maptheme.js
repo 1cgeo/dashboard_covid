@@ -197,9 +197,8 @@ module.exports.getChoroplethThemeData = (location, cb) => {
             data.CD_GEOCMU = info.ibgeID;
             data.name = info.city
             return data;
-        } else{
-            data.name = info.nome
-        }
+        } 
+        data.name = info.nome
         data.CD_GEOCUF = info.CD_GEOCUF;
         data.recovered = info.recovered;
         return data;
