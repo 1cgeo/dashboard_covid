@@ -14,7 +14,7 @@ class DataSource {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
-    deepCopy(data){
+    deepCopy(data) {
         return JSON.parse(JSON.stringify(data))
     }
 
@@ -49,7 +49,7 @@ class DataSource {
         });
         this.getCitiesThemeData("heat", (data) => {
             this.setHeatData(data);
-            this.getCountryDataset( async (data) => {
+            this.getCountryDataset(async (data) => {
                 this.setCountryData(data);
                 this.setDataTimeInterval([
                     new Date("2020/02/24").getTime(),
@@ -57,7 +57,7 @@ class DataSource {
                         data.map((el) => new Date(el.date.replace(/\-/g, "/")).getTime())
                     ),
                 ]);
-                while(! this.stateChoroplethData){
+                while (!this.stateChoroplethData) {
                     await this.sleep(1000)
                 }
                 cb()
@@ -372,18 +372,18 @@ class DataSource {
         });
     }
 
-    getTendencyMapValues(){
+    getTendencyMapValues() {
         return [
-            {value: "Diminuindo", color: "#badee8" },
-            {value: "Aproximadamente o mesmo", color: "#f2df91"},
-            {value: "Crescendo 1", color: "#ffae43"},
-            {value: "Crescendo 2", color: "#ff6e0b"},
-            {value: "Crescendo 3", color: "#ce0a05"},
-            {value: "Sem ou poucos casos", color: "#f2f2f2", default: true}
+            { value: "Diminuindo", color: "#badee8" },
+            { value: "Aproximadamente o mesmo", color: "#f2df91" },
+            { value: "Crescendo 1", color: "#ffae43" },
+            { value: "Crescendo 2", color: "#ff6e0b" },
+            { value: "Crescendo 3", color: "#ce0a05" },
+            { value: "Sem ou poucos casos", color: "#f2f2f2", default: true }
         ]
     }
 
-    getTendencyColor(tendencyValue){
+    getTendencyColor(tendencyValue) {
         var found = this.getTendencyMapValues().find((elem) => {
             return elem.value === tendencyValue
         })
@@ -418,6 +418,22 @@ class DataSource {
                 attributeName: "deaths",
                 type: "heat",
                 id: 1,
+            },
+            {
+                name: "Tendência de óbitos",
+                attributeName: "tendencyDeaths",
+                attributeNameSecondary: "deaths",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 7,
+            },
+            {
+                name: "Tendência de casos",
+                attributeName: "tendencyCases",
+                attributeNameSecondary: "totalCases",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 8,
             },
             {
                 name: "Taxa de crescimento de casos",
@@ -483,24 +499,7 @@ class DataSource {
                     fillOpacity: 0.3,
                     opacity: 0.3
                 }
-            },
-            {
-                name: "Tendência de óbitos",
-                attributeName: "tendencyDeaths",
-                attributeNameSecondary: "deaths",
-                type: "choroplethTendency",
-                mapValues: this.getTendencyMapValues(),
-                id: 7,
-            },
-            {
-                name: "Tendência de casos",
-                attributeName: "tendencyCases",
-                attributeNameSecondary: "totalCases",
-                type: "choroplethTendency",
-                mapValues: this.getTendencyMapValues(),
-                id: 8,
-            }
-            ],
+            }],
         },
         {
             name: "Municípios",
@@ -540,6 +539,22 @@ class DataSource {
 
                 type: "heat",
                 id: 1,
+            },
+            {
+                name: "Tendência de óbitos",
+                attributeName: "tendencyDeaths",
+                attributeNameSecondary: "deaths",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 7,
+            },
+            {
+                name: "Tendência de casos",
+                attributeName: "tendencyCases",
+                attributeNameSecondary: "totalCases",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 8,
             },
             {
                 name: "Taxa de crescimento de casos",
@@ -588,22 +603,6 @@ class DataSource {
                     fillOpacity: 0.3,
                     opacity: 0.3
                 }
-            },
-            {
-                name: "Tendência de óbitos",
-                attributeName: "tendencyDeaths",
-                attributeNameSecondary: "deaths",
-                type: "choroplethTendency",
-                mapValues: this.getTendencyMapValues(),
-                id: 7,
-            },
-            {
-                name: "Tendência de casos",
-                attributeName: "tendencyCases",
-                attributeNameSecondary: "totalCases",
-                type: "choroplethTendency",
-                mapValues: this.getTendencyMapValues(),
-                id: 8,
             }
             ],
         },

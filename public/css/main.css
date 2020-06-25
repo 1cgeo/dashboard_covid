@@ -42,7 +42,7 @@ body {
 #sidebar {
     border-radius: 10px;
     max-width: 350px !important;
-    max-height: 250px !important;
+    max-height: 280px !important;
 }
 
 .leaflet-sidebar-left .leaflet-sidebar-content {

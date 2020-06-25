@@ -68,6 +68,7 @@ class LineChart {
         for (var x = 0; x < dataSize; x++) {
             var px = ((x * (width - 30)) / xMax) + 1
             var py = ((+yValues[x] * (height - 10)) / yMax) + 1
+            if (isNaN(px) || isNaN(py)) continue
             points.push(px)
             points.push(py)
         }

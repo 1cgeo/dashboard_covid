@@ -178,7 +178,7 @@ class CovidMap {
         $("input[name='layer']").change(function (e) { cb($(this).val()) })
     }
 
-    createThemesButtons(themes, select, cb) {
+    createThemesButtons(themes, selectId, cb) {
         var id = 'panel-styles'
         this.sidebar.removePanel(id);
         var buttonsDiv = $("<div></div>")
@@ -191,7 +191,7 @@ class CovidMap {
                 .attr("class", "custom-control-input")
                 .attr("name", "theme")
                 .attr("value", elem.id)
-            idx == select ? input.attr("checked", true) : ""
+            elem.id == selectId ? input.attr("checked", true) : ""
             var label = $("<label></label>")
                 .attr("for", elem.type.concat(idx))
                 .attr("class", "custom-control-label")
@@ -232,7 +232,7 @@ class CovidMap {
         return this.layerOptions
     }
 
-    hasThemeId(layerOptions, themeid){
+    hasThemeId(layerOptions, themeid) {
         return layerOptions.themeLayers.find((elem) => +elem.id === +themeid)
     }
 
@@ -244,7 +244,7 @@ class CovidMap {
         }
         this.createThemesButtons(
             layerOptions.themeLayers,
-            (this.hasThemeId(layerOptions, themeId))? 0: themeId,
+            (this.hasThemeId(layerOptions, themeId)) ? themeId : 0,
             this.loadThemeLayer.bind(this)
         )
         setTimeout(() => {
@@ -260,7 +260,7 @@ class CovidMap {
         var themeOptions = this.getCurrentLayerOptions().themeLayers.find((theme) => {
             return theme.id == themeLayerId
         })
-        if (!themeOptions){
+        if (!themeOptions) {
             themeOptions = this.getCurrentLayerOptions().themeLayers.find((theme) => {
                 return theme.id == 0
             })

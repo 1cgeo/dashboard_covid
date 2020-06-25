@@ -65,6 +65,8 @@ dataSource.loadAllData(() => {
             for (var i = rowIds.length; i--;) {
                 var containerId = `linechart-container-${rowIds[i]}`
                 var lineChart = new LineChart({
+                    width: 90,
+                    height: 40,
                     data: api.row(rowIds[i]).data().last14AvgCases,
                     containerId: containerId,
                     color: dataSource.getTendencyColor(
@@ -156,20 +158,18 @@ dataSource.loadAllData(() => {
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
         setTimeout(() => {
-            if (layerClicked && layerClicked.properties.CD_GEOCUF) {
+            if (!layerClicked) {
+                covidTable.changeColumnName(1, 'Estados')
+                covidTable.reloadDataset(dataSource.getTableStateData())
+            }
+            else if (layerClicked.properties.CD_GEOCUF) {
                 covidTable.changeColumnName(1, 'Municípios')
                 covidTable.reloadDataset(
                     dataSource.getTableCityData()
                 )
                 covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCUF}`)
             } else {
-                covidTable.changeColumnName(1, 'Estados')
-                covidTable.reloadDataset(
-                    dataSource.getTableStateData()
-
-                )
-                if (!layerClicked) return
-                covidTable.filterColumn(0, `${layerClicked.properties.CD_GEOCMU.slice(0, 2)}`)
+                covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCMU.slice(0, 2)}`)
             }
         }, 500)
     })
