@@ -4,6 +4,7 @@ function deepCopy(data) {
     return JSON.parse(JSON.stringify(data))
 }
 
+
 dataSource.loadAllData(() => {
 
     var locationStatus = new Status(dataSource)
@@ -88,6 +89,12 @@ dataSource.loadAllData(() => {
                 "createdCell": function (td, cellData, rowData, row, col) {
                     $(td).attr('id', `linechart-container-${row}`)
                 }
+            },
+            {
+                "render": function (data, type, row, meta) {
+                    return dataSource.numberWithPoint(data)
+                },
+                "targets": [2,3,4,5]
             }
         ],
         columns: [
@@ -158,18 +165,16 @@ dataSource.loadAllData(() => {
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
         setTimeout(() => {
-            if (!layerClicked) {
-                covidTable.changeColumnName(1, 'Estados')
-                covidTable.reloadDataset(dataSource.getTableStateData())
-            }
-            else if (layerClicked.properties.CD_GEOCUF) {
+            if (layerClicked && layerClicked.properties.CD_GEOCUF) {
                 covidTable.changeColumnName(1, 'Municípios')
                 covidTable.reloadDataset(
                     dataSource.getTableCityData()
                 )
                 covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCUF}`)
-            } else {
+            } else if (layerClicked && layerClicked.properties.CD_GEOCMU) {
                 covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCMU.slice(0, 2)}`)
+            } else {
+                covidTable.filterColumn(0, '')
             }
         }, 500)
     })

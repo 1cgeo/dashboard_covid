@@ -72,6 +72,7 @@ class LineChart {
             points.push(px)
             points.push(py)
         }
+        if (points.length == 0) return ''
         return `<svg height="${height}" width="${width}">
             <polyline points="${points.join(',')}"
                 style="fill:none;stroke:${this.getOptions().color};stroke-width:3" />

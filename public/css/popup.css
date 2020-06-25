@@ -1,11 +1,11 @@
 .header-popup {
     grid-area: header;
-    min-height: 20px;
+    min-height: 50px;
 }
 
 .linechart-popup {
     grid-area: chart;
-    min-height: 20px;
+    min-height: 50px;
 }
 
 .row1-popup {

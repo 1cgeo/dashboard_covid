@@ -154,14 +154,16 @@ class PopoverLayer extends Layer {
                 data.tendencyCases
             )
         })
+        var svgLine = lineChart.create()
+
         return `
         <div class="grid-container-popup">
             <div class="header-popup">
                 <div><b>${(props.NM_ESTADO) ? props.NM_ESTADO : props.NM_MUNICIP}</b></div>
             </div>
             <div id="linechart-popup" class="linechart-popup">
-                <span>Tendência de casos dos últimos 14 dias</span>
-                <div>${lineChart.create()}</div>
+            ${svgLine ? `<span>Tendência de casos dos últimos 14 dias</span>
+            <div>${svgLine}</div>` : ''}
             </div>
             <div class="row1-popup">
                 <div><b>Nº de casos: </b></div>

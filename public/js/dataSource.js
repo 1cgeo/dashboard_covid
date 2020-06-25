@@ -149,10 +149,10 @@ class DataSource {
             var idx = ids.indexOf(data[i].CD_GEOCUF);
             if (idx < 0) {
                 ids.push(data[i].CD_GEOCUF)
-                data[i].totalCases = this.numberWithPoint(data[i].totalCases)
-                data[i].deaths = this.numberWithPoint(data[i].deaths)
-                data[i].deaths_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].deaths_per_100k_inhabitants))
-                data[i].totalCases_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].totalCases_per_100k_inhabitants))
+                /* data[i].totalCases = data[i].totalCases
+                data[i].deaths = data[i].deaths */
+                data[i].deaths_per_100k_inhabitants = Math.floor(data[i].deaths_per_100k_inhabitants)
+                data[i].totalCases_per_100k_inhabitants = Math.floor(data[i].totalCases_per_100k_inhabitants)
                 result.push(data[i])
             } else {
                 break
@@ -419,14 +419,7 @@ class DataSource {
                 type: "heat",
                 id: 1,
             },
-            {
-                name: "Tendência de óbitos",
-                attributeName: "tendencyDeaths",
-                attributeNameSecondary: "deaths",
-                type: "choroplethTendency",
-                mapValues: this.getTendencyMapValues(),
-                id: 7,
-            },
+
             {
                 name: "Tendência de casos",
                 attributeName: "tendencyCases",
@@ -434,6 +427,14 @@ class DataSource {
                 type: "choroplethTendency",
                 mapValues: this.getTendencyMapValues(),
                 id: 8,
+            },
+            {
+                name: "Tendência de óbitos",
+                attributeName: "tendencyDeaths",
+                attributeNameSecondary: "deaths",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 7,
             },
             {
                 name: "Taxa de crescimento de casos",
@@ -540,14 +541,7 @@ class DataSource {
                 type: "heat",
                 id: 1,
             },
-            {
-                name: "Tendência de óbitos",
-                attributeName: "tendencyDeaths",
-                attributeNameSecondary: "deaths",
-                type: "choroplethTendency",
-                mapValues: this.getTendencyMapValues(),
-                id: 7,
-            },
+
             {
                 name: "Tendência de casos",
                 attributeName: "tendencyCases",
@@ -555,6 +549,14 @@ class DataSource {
                 type: "choroplethTendency",
                 mapValues: this.getTendencyMapValues(),
                 id: 8,
+            },
+            {
+                name: "Tendência de óbitos",
+                attributeName: "tendencyDeaths",
+                attributeNameSecondary: "deaths",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 7,
             },
             {
                 name: "Taxa de crescimento de casos",
