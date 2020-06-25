@@ -1,5 +1,9 @@
 var dataSource = new DataSource({})
 
+function deepCopy(data) {
+    return JSON.parse(JSON.stringify(data))
+}
+
 dataSource.loadAllData(() => {
 
     var locationStatus = new Status(dataSource)
@@ -55,12 +59,48 @@ dataSource.loadAllData(() => {
     var covidTable = new CovidTable({
         elementId: 'covid-table',
         dataset: dataSource.getTableStateData(),
+        "drawCallback": function (settings) {
+            var api = this.api()
+            var rowIds = api.rows({ page: 'current' }).indexes()
+            for (var i = rowIds.length; i--;) {
+                var containerId = `linechart-container-${rowIds[i]}`
+                var lineChart = new LineChart({
+                    data: api.row(rowIds[i]).data().last14AvgCases,
+                    containerId: containerId,
+                    color: dataSource.getTendencyColor(
+                        api.row(rowIds[i]).data().tendencyCases
+                    )
+                })
+                $(`#${containerId}`).append(lineChart.create())
+            }
+        },
+        "columnDefs": [
+            {
+                "render": function (data, type, row, meta) {
+                    return ``
+                },
+                "targets": 6
+            },
+            {
+                "targets": 6,
+                "createdCell": function (td, cellData, rowData, row, col) {
+                    $(td).attr('id', `linechart-container-${row}`)
+                }
+            }
+        ],
         columns: [
+            { title: "id", visible: false, data: "id", },
             { title: "Estados", data: "name" },
             { title: "Casos confirmados", data: "totalCases" },
             { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
             { title: "Óbitos", data: "deaths" },
             { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+            {
+                title: "Tendência de casos dos últimos 14 dias",
+                sortable: false,
+                data: "last14AvgCases",
+                "width": "12%"
+            }
         ]
     })
 
@@ -68,12 +108,12 @@ dataSource.loadAllData(() => {
         dataSource.setDataTimeInterval(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData.slice(),
+            deepCopy(statisticsData),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData.slice())
-        barChartDeaths.loadData(statisticsData.slice())
-        barChartRecovered.loadData(statisticsData.slice())
+        barChartCases.loadData(deepCopy(statisticsData))
+        barChartDeaths.loadData(deepCopy(statisticsData))
+        barChartRecovered.loadData(deepCopy(statisticsData))
         covidmap.updateAnimation(timeInterval)
     })
 
@@ -85,36 +125,53 @@ dataSource.loadAllData(() => {
         covidmap.updateAnimation(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData.slice(),
+            deepCopy(statisticsData),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData.slice())
-        barChartDeaths.loadData(statisticsData.slice())
-        barChartRecovered.loadData(statisticsData.slice())
+        barChartCases.loadData(deepCopy(statisticsData))
+        barChartDeaths.loadData(deepCopy(statisticsData))
+        barChartRecovered.loadData(deepCopy(statisticsData))
 
     }).connectStopAnimation((timeInterval) => {
         dataSource.setDataTimeInterval(timeInterval)
         covidmap.stopAnimation(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData.slice(),
+            deepCopy(statisticsData),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData.slice())
-        barChartDeaths.loadData(statisticsData.slice())
-        barChartRecovered.loadData(statisticsData.slice())
+        barChartCases.loadData(deepCopy(statisticsData))
+        barChartDeaths.loadData(deepCopy(statisticsData))
+        barChartRecovered.loadData(deepCopy(statisticsData))
     })
 
     covidmap.on('changeLocation', (layerClicked) => {
         dataSource.setCurrentLayer(layerClicked)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(
-            statisticsData.slice(),
+            deepCopy(statisticsData),
             dataSource.getLocationName()
         )
-        barChartCases.loadData(statisticsData.slice())
-        barChartDeaths.loadData(statisticsData.slice())
-        barChartRecovered.loadData(statisticsData.slice())
+        barChartCases.loadData(deepCopy(statisticsData))
+        barChartDeaths.loadData(deepCopy(statisticsData))
+        barChartRecovered.loadData(deepCopy(statisticsData))
+        setTimeout(() => {
+            if (layerClicked && layerClicked.properties.CD_GEOCUF) {
+                covidTable.changeColumnName(1, 'Municípios')
+                covidTable.reloadDataset(
+                    dataSource.getTableCityData()
+                )
+                covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCUF}`)
+            } else {
+                covidTable.changeColumnName(1, 'Estados')
+                covidTable.reloadDataset(
+                    dataSource.getTableStateData()
+
+                )
+                if (!layerClicked) return
+                covidTable.filterColumn(0, `${layerClicked.properties.CD_GEOCMU.slice(0, 2)}`)
+            }
+        }, 500)
     })
 
     covidmap.on('changeLayer', (layerId) => {
@@ -123,15 +180,7 @@ dataSource.loadAllData(() => {
             $(".recovered").each(function () {
                 $(this).addClass('hide')
             })
-            covidTable.setOptions({
-                columns: [
-                    { title: "Municípios", data: "name" },
-                    { title: "Casos confirmados", data: "totalCases" },
-                    { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
-                    { title: "Óbitos", data: "deaths" },
-                    { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
-                ]
-            })
+            covidTable.changeColumnName(1, 'Municípios')
             covidTable.reloadDataset(
                 dataSource.getTableCityData()
             )
@@ -139,32 +188,24 @@ dataSource.loadAllData(() => {
             $(".recovered").each(function () {
                 $(this).removeClass('hide')
             })
-            barChartRecovered.loadData(statisticsData.slice())
-            covidTable.setOptions({
-                columns: [
-                    { title: "Estados", data: "name" },
-                    { title: "Casos confirmados", data: "totalCases" },
-                    { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
-                    { title: "Óbitos", data: "deaths" },
-                    { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
-                ]
-            })
+            barChartRecovered.loadData(deepCopy(statisticsData))
+            covidTable.changeColumnName(1, 'Estados')
             covidTable.reloadDataset(
                 dataSource.getTableStateData()
             )
         }
-        barChartCases.loadData(statisticsData.slice())
-        barChartDeaths.loadData(statisticsData.slice())
+        barChartCases.loadData(deepCopy(statisticsData))
+        barChartDeaths.loadData(deepCopy(statisticsData))
     })
 
     var statisticsData = dataSource.getStatisticsData()
     locationStatus.loadData(
-        statisticsData.slice(),
+        deepCopy(statisticsData),
         dataSource.getLocationName()
     )
-    barChartCases.loadData(statisticsData.slice())
-    barChartDeaths.loadData(statisticsData.slice())
-    barChartRecovered.loadData(statisticsData.slice())
+    barChartCases.loadData(deepCopy(statisticsData))
+    barChartDeaths.loadData(deepCopy(statisticsData))
+    barChartRecovered.loadData(deepCopy(statisticsData))
 
     $('#loader').hide()
 })

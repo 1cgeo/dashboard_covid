@@ -232,6 +232,10 @@ class CovidMap {
         return this.layerOptions
     }
 
+    hasThemeId(layerOptions, themeid){
+        return layerOptions.themeLayers.find((elem) => +elem.id === +themeid)
+    }
+
     loadMapData(layerId) {
         var themeId = 0
         var layerOptions = this.dataSource.getMapLayer(+layerId)
@@ -240,7 +244,7 @@ class CovidMap {
         }
         this.createThemesButtons(
             layerOptions.themeLayers,
-            themeId,
+            (this.hasThemeId(layerOptions, themeId))? 0: themeId,
             this.loadThemeLayer.bind(this)
         )
         setTimeout(() => {

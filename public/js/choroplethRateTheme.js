@@ -1,4 +1,4 @@
-class ChoroplethLayer extends Layer {
+class ChoroplethRateLayer extends Layer {
     constructor(newOptions) {
         super(newOptions)
         this.currentProcessKey = ""
@@ -49,8 +49,6 @@ class ChoroplethLayer extends Layer {
                     this.options.map.getFeatureGroup().removeLayer(l)
                 }
             }, 1500)
-            /* this.options.map.getFeatureGroup().removeLayer(this.mainVectorTile)
-            this.mainVectorTile = layer */
     }
 
     remove() {
@@ -102,7 +100,6 @@ class ChoroplethLayer extends Layer {
         var jsonData = this.getJsonData()
         if (jsonData.length < 1) { return }
         var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
-        var mainLayer = mapLayers.find((l) => l.main)
         this.lastData = jsonData
         if (mapLayers.length < 1) { return }
         if (processKey !== this.currentProcessKey) return
@@ -191,58 +188,6 @@ class ChoroplethLayer extends Layer {
             )
             .setContent(this.getPopupContent(e))
             .openOn(this.options.map.getMap());
-    }
-
-    getFeatureData(featId) {
-        if (!this.lastData) return
-        var idx = this.lastData.ids.indexOf(featId)
-        if (idx >= 0) {
-            return this.lastData.data[idx]
-        }
-    }
-
-    getPopupContent(e) {
-        var props = e.layer.properties
-        var featId = (props.CD_GEOCUF) ? props.CD_GEOCUF : props.CD_GEOCMU
-        var data = this.getFeatureData(featId)
-        if (!data) {
-            return `
-        <div class="grid-container-popup">
-            <div class="header-popup">
-                <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
-            </div>
-            <div class="row1-popup">
-                <div><b>Taxa de crescimento:</b></div>
-            </div>
-            <div class="value1-popup">
-                <div>Sem dados</div>
-            </div>
-            <div class="row2-popup">
-                <div><b>Número de ${(this.getAttributeName() === 'deaths')? 'óbitos' : 'casos'}:</b></div>
-            </div>
-            <div class="value2-popup">
-                <div>Sem dados</div>
-            </div>
-        </div>`
-        }
-        return `
-        <div class="grid-container-popup">
-            <div class="header-popup">
-                <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
-            </div>
-            <div class="row1-popup">
-                <div><b>Taxa de crescimento:</b></div>
-            </div>
-            <div class="value1-popup">
-                <div>${data[this.options.attributeName]} dias</div>
-            </div>
-            <div class="row2-popup">
-                <div><b>Número de ${(this.getAttributeName() === 'deaths')? 'óbitos' : 'casos'}:</b></div>
-            </div>
-            <div class="value2-popup">
-                <div>${this.mFormatter((this.getAttributeName() === 'deaths')? +data.deaths: +data.totalCases)}</div>
-            </div>
-        </div>`
     }
 
     getStyle(attrLabel1, attrLabel2) {

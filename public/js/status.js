@@ -42,10 +42,13 @@ class Status {
   }
 
   clean() {
-    $("#cases-values").text("Sem dados");
-    $("#recuperados-values").text("Sem dados");
-    $("#deaths-values").text("Sem dados");
-    $("#lethality-values").text("Sem dados");
+    this.setTotalCases("Sem dados")
+    this.setRecuperadosCases("Sem dados")
+    this.setTotalDeaths("Sem dados")
+    this.setLethality("Sem dados")
+    this.setLastCases("Sem dados")
+    this.setLastDeaths("Sem dados")
+    this.setLastRecovered("Sem dados")
   }
 
   setLocationName(locationName) {

@@ -119,6 +119,15 @@
     grid-template-areas: "y y y y y y" "a b c d e f" "g h i j l m";
 }
 
+.grid-choropleth-tendency-legend {
+    transform: scale(0.6, 0.7);
+    margin-right: 350px;
+    width: 40px;
+    font-size: 15px;
+    display: grid;
+    grid-template-areas: "y y y y y y" "a b c d e f" "g h i j j m";
+}
+
 .info-popover {
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;

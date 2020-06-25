@@ -85,8 +85,6 @@ class CirclesLayer extends Layer {
                         this.getCircleStyle()
                     )
                     circle.getCircleStyle = this.getCircleStyle.bind(this)
-                    this.circlesData.ids.push(feature.properties.ibgeID)
-                    this.circlesData.features.push(circle)
                     return circle
                 }
             }
@@ -134,28 +132,6 @@ class CirclesLayer extends Layer {
         return layer
     }
 
-    getPopupContent(e) {
-        var props = e.layer.properties
-        var featId = (props.CD_GEOCUF) ? props.CD_GEOCUF : props.CD_GEOCMU
-        var idx = this.circlesData.ids.indexOf(featId)
-        if (idx < 0) return
-        var circle = this.circlesData.features[idx]
-        if (!circle._containsPoint(e.layerPoint)) return
-        var props = e.layer.properties
-        return `
-            <div class="grid-container-popup">
-                <div class="header-popup">
-                    <div><b>${(props.NM_ESTADO)? props.NM_ESTADO: props.NM_MUNICIP }</b></div>
-                </div>
-                <div class="row2-popup">
-                    <div><b>${this.options.popupAttributeTitle}:</b></div>
-                </div>
-                <div class="value2-popup">
-                    <div>${this.mFormatter(+circle.feature.properties[this.options.attributeName])}</div>
-                </div>
-            </div>`
-    }
-
     updatePropSymbols() {
         var attributeName = this.options.attributeName
         this.layer.eachLayer((layer) => {
@@ -178,7 +154,6 @@ class CirclesLayer extends Layer {
             L.DomEvent.addListener(legendContainer, "mousedown", function(e) {
                 L.DomEvent.stopPropagation(e);
             });
-            //$(legendContainer).append(`<h4 id="legendTitle">${this.options.name}</h4>`)
             this.options.scaleLenged.forEach((function(value) {
                 var legendCircle = L.DomUtil.create("div", "legendCircle");
                 $(legendCircle).attr('height', 300)

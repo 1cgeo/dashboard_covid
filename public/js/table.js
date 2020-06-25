@@ -3,7 +3,8 @@ class CovidTable {
         this.options = {}
         this.setOptions(newOptions)
         window.addEventListener("resize", () => {
-            if(this.table) this.table.draw()
+            if (!this.table) return
+            this.table.draw(false)
         })
         this.create()
     }
@@ -31,36 +32,60 @@ class CovidTable {
         this.create()
     }
 
+    getColumnsDefs() {
+        return [
+            { "className": "dt-center", "targets": "_all" }
+        ].concat(
+            this.getOptions().columnDefs
+        )
+    }
+
+    changeColumnName(colIdx, colName) {
+        this.getOptions().columns[colIdx].title = colName
+        this.create()
+    }
+
+    filterColumn(colIdx, value) {
+        if (!this.table) return
+        this.table.columns(colIdx).search(
+            value,
+            true
+        ).draw()
+    }
+
     create() {
-        $(document).ready(() => {
-            if ($.fn.DataTable.isDataTable(`#${this.getOptions().elementId}`)) {
-                $(`#${this.getOptions().elementId}`).DataTable().destroy();
-            }
-            $(`#${this.getOptions().elementId}`).empty()
-            this.table = $(`#${this.getOptions().elementId}`).DataTable({
-                language: {
-                    search: "Pesquisar:",
-                    "oPaginate": {
-                        "sNext": "Próximo",
-                        "sPrevious": "Anterior",
-                        "sFirst": "Primeiro",
-                        "sLast": "Último"
-                    },
-                    "sZeroRecords": "Nenhum registro encontrado"
+        if ($.fn.DataTable.isDataTable(`#${this.getOptions().elementId}`)) {
+            $(`#${this.getOptions().elementId}`).DataTable().destroy();
+        }
+        $(`#${this.getOptions().elementId}`).empty()
+        this.table = $(`#${this.getOptions().elementId}`).DataTable({
+            language: {
+                search: "Pesquisar:",
+                "oPaginate": {
+                    "sNext": "Próximo",
+                    "sPrevious": "Anterior",
+                    "sFirst": "Primeiro",
+                    "sLast": "Último"
                 },
-                "autoWidth": false,
-                "bLengthChange": false,
-                "bInfo": false,
-                "pageLength": 10,
-                "responsive": true,
-                "order": [[1, "desc"]],
-                "sScrollX": "100%",
-                'scrollX': 'true',
-                'scrollCollapse': true,
-                "bScrollCollapse": true,
-                data: this.getOptions().dataset,
-                columns: this.getOptions().columns
-            });
+                "sZeroRecords": "Nenhum registro encontrado"
+            },
+            "drawCallback": this.getOptions().drawCallback,
+            "autoWidth": false,
+            "bLengthChange": false,
+            "bInfo": false,
+            "pageLength": 10,
+            "responsive": true,
+            "order": [[2, "desc"]],
+            "sScrollX": "100%",
+            'scrollX': 'true',
+            'scrollCollapse': true,
+            "bScrollCollapse": true,
+            scroller: {
+                rowHeight: 10
+            },
+            data: this.getOptions().dataset,
+            "columnDefs": this.getColumnsDefs(),
+            columns: this.getOptions().columns
         });
     }
 }

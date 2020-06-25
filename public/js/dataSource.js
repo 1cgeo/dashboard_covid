@@ -7,6 +7,17 @@ class DataSource {
         this.setOptions(newOptions);
     }
 
+    numberWithPoint(x) {
+        if (x === 'Sem dados') {
+            return x
+        }
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    deepCopy(data){
+        return JSON.parse(JSON.stringify(data))
+    }
+
     setDataTimeInterval(timeInterval) {
         this.options.dataTimeInterval = [
             new Date(timeInterval[0]).getTime(),
@@ -26,20 +37,19 @@ class DataSource {
             this.setStateCircleData(data);
         });
         this.getStateThemeData("choropleth", (data) => {
-            this.setStateChoroplethData(data.slice());
-            this.setTableStateData(data.slice())
+            this.setStateChoroplethData(deepCopy(data));
+            this.setTableStateData(deepCopy(data))
         });
         this.getCitiesThemeData("circles", (data) => {
             this.setCityCircleData(data);
         });
         this.getCitiesThemeData("choropleth", (data) => {
-            this.setCityChoroplethData(data.slice());
-            this.setTableCityData(data.slice())
+            this.setCityChoroplethData(deepCopy(data));
+            this.setTableCityData(deepCopy(data))
         });
         this.getCitiesThemeData("heat", (data) => {
             this.setHeatData(data);
-
-            this.getCountryDataset((data) => {
+            this.getCountryDataset( async (data) => {
                 this.setCountryData(data);
                 this.setDataTimeInterval([
                     new Date("2020/02/24").getTime(),
@@ -47,9 +57,16 @@ class DataSource {
                         data.map((el) => new Date(el.date.replace(/\-/g, "/")).getTime())
                     ),
                 ]);
-                cb();
+                while(! this.stateChoroplethData){
+                    await this.sleep(1000)
+                }
+                cb()
             });
         });
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     getMax(items) {
@@ -132,8 +149,10 @@ class DataSource {
             var idx = ids.indexOf(data[i].CD_GEOCUF);
             if (idx < 0) {
                 ids.push(data[i].CD_GEOCUF)
-                data[i].deaths_per_100k_inhabitants = Math.floor(data[i].deaths_per_100k_inhabitants)
-                data[i].totalCases_per_100k_inhabitants = Math.floor(data[i].totalCases_per_100k_inhabitants)
+                data[i].totalCases = this.numberWithPoint(data[i].totalCases)
+                data[i].deaths = this.numberWithPoint(data[i].deaths)
+                data[i].deaths_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].deaths_per_100k_inhabitants))
+                data[i].totalCases_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].totalCases_per_100k_inhabitants))
                 result.push(data[i])
             } else {
                 break
@@ -153,8 +172,10 @@ class DataSource {
             var idx = ids.indexOf(data[i].CD_GEOCMU);
             if (idx < 0) {
                 ids.push(data[i].CD_GEOCMU)
-                data[i].deaths_per_100k_inhabitants = Math.floor(data[i].deaths_per_100k_inhabitants)
-                data[i].totalCases_per_100k_inhabitants = Math.floor(data[i].totalCases_per_100k_inhabitants)
+                data[i].totalCases = this.numberWithPoint(data[i].totalCases)
+                data[i].deaths = this.numberWithPoint(data[i].deaths)
+                data[i].deaths_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].deaths_per_100k_inhabitants))
+                data[i].totalCases_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].totalCases_per_100k_inhabitants))
                 result.push(data[i])
             } else {
                 break
@@ -204,7 +225,6 @@ class DataSource {
         var startDate = new Date(+timeInterval[0]);
         var endDate = new Date(+timeInterval[1]);
         var data = this.cityChoroplethData
-        console.log(data)
         for (var i = data.length; i--;) {
             var id = data[i].CD_GEOCMU
             var elementDate = new Date(data[i].date.replace(/\-/g, "/"));
@@ -352,6 +372,24 @@ class DataSource {
         });
     }
 
+    getTendencyMapValues(){
+        return [
+            {value: "Diminuindo", color: "#badee8" },
+            {value: "Aproximadamente o mesmo", color: "#f2df91"},
+            {value: "Crescendo 1", color: "#ffae43"},
+            {value: "Crescendo 2", color: "#ff6e0b"},
+            {value: "Crescendo 3", color: "#ce0a05"},
+            {value: "Sem ou poucos casos", color: "#f2f2f2", default: true}
+        ]
+    }
+
+    getTendencyColor(tendencyValue){
+        var found = this.getTendencyMapValues().find((elem) => {
+            return elem.value === tendencyValue
+        })
+        return found.color
+    }
+
     getAllLayers() {
         return [{
             name: "Estados",
@@ -385,14 +423,14 @@ class DataSource {
                 name: "Taxa de crescimento de casos",
                 attributeName: "nrDiasDobraCasos",
                 attributeNameSecondary: "totalCases",
-                type: "choropleth",
+                type: "choroplethRate",
                 id: 2,
             },
             {
                 name: "Taxa de crescimento de óbitos",
                 attributeName: "nrDiasDobraMortes",
                 attributeNameSecondary: "deaths",
-                type: "choropleth",
+                type: "choroplethRate",
                 id: 3,
             },
             {
@@ -446,6 +484,22 @@ class DataSource {
                     opacity: 0.3
                 }
             },
+            {
+                name: "Tendência de óbitos",
+                attributeName: "tendencyDeaths",
+                attributeNameSecondary: "deaths",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 7,
+            },
+            {
+                name: "Tendência de casos",
+                attributeName: "tendencyCases",
+                attributeNameSecondary: "totalCases",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 8,
+            }
             ],
         },
         {
@@ -491,14 +545,14 @@ class DataSource {
                 name: "Taxa de crescimento de casos",
                 attributeName: "nrDiasDobraCasos",
                 attributeNameSecondary: "totalCases",
-                type: "choropleth",
+                type: "choroplethRate",
                 id: 2,
             },
             {
                 name: "Taxa de crescimento de óbitos",
                 attributeName: "nrDiasDobraMortes",
                 attributeNameSecondary: "deaths",
-                type: "choropleth",
+                type: "choroplethRate",
                 id: 3,
             },
             {
@@ -535,6 +589,22 @@ class DataSource {
                     opacity: 0.3
                 }
             },
+            {
+                name: "Tendência de óbitos",
+                attributeName: "tendencyDeaths",
+                attributeNameSecondary: "deaths",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 7,
+            },
+            {
+                name: "Tendência de casos",
+                attributeName: "tendencyCases",
+                attributeNameSecondary: "totalCases",
+                type: "choroplethTendency",
+                mapValues: this.getTendencyMapValues(),
+                id: 8,
+            }
             ],
         },
         ];

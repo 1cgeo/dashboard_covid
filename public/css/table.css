@@ -10,3 +10,6 @@ table {
     width: 100%;
 }
 
+th.dt-center, td.dt-center {
+    text-align: center;
+}

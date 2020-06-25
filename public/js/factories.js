@@ -4,14 +4,16 @@ class Factories {
         var layer
         if (type === "heat") {
             layer = new HeatLayer(options)
-        } else if (type === "choropleth") {
-            layer = new ChoroplethLayer(options)
+        } else if (type === "choroplethRate") {
+            layer = new ChoroplethRateLayer(options)
         } else if (type === "circles") {
             layer = new CirclesLayer(options)
         } else if (type === "vectorTile") {
             layer = new VectorTileLayer(options)
         } else if (type === "popover") {
             layer = new PopoverLayer(options)
+        } else if (type === "choroplethTendency") {
+            layer = new ChoroplethTendencyLayer(options)
         }
         return layer;
     }

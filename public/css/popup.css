@@ -1,36 +1,101 @@
 .header-popup {
     grid-area: header;
-    min-height: 50px;
+    min-height: 20px;
+}
+
+.linechart-popup {
+    grid-area: chart;
+    min-height: 20px;
 }
 
 .row1-popup {
     grid-area: row1;
 }
 
-.row2-popup {
-    grid-area: row2;
-}
-
 .value1-popup {
     grid-area: value1;
+}
+
+.row2-popup {
+    grid-area: row2;
 }
 
 .value2-popup {
     grid-area: value2;
 }
 
+.row3-popup {
+    grid-area: row3;
+}
+
+.value3-popup {
+    grid-area: value3;
+}
+
+.row4-popup {
+    grid-area: row4;
+}
+
+.value4-popup {
+    grid-area: value4;
+}
+
+.row5-popup {
+    grid-area: row5;
+}
+
+.value5-popup {
+    grid-area: value5;
+}
+
+.row6-popup {
+    grid-area: row6;
+}
+
+.value6-popup {
+    grid-area: value6;
+}
+
+.row7-popup {
+    grid-area: row7;
+}
+
+.value7-popup {
+    grid-area: value7;
+}
+
 .header-popup {}
 
 .header-popup,
 .row1-popup,
-.value1-popup {
+.value1-popup,
+.row2-popup,
+.value2-popup,
+.row3-popup,
+.value3-popup,
+.row4-popup,
+.value4-popup,
+.row5-popup,
+.value5-popup,
+.row6-popup,
+.value6-popup,
+.linechart-popup {
     border-bottom: 1px solid;
 }
 
 .grid-container-popup {
     display: grid;
-    grid-template-areas: 'header header header header' 'header header header header' 'row1 row1 value1 value1' 'row2 row2 value2 value2';
+    grid-template-areas: 
+    'header header header chart' 
+    'header header header chart' 
+    'row1 row1 row1 value1' 
+    'row2 row2 row2 value2'
+    'row3 row3 row3 value3'
+    'row4 row4 row4 value4'
+    'row5 row5 row5 value5'
+    'row6 row6 row6 value6'
+    'row7 row7 row7 value7';
     margin-bottom: 10px;
     border-radius: 10px;
-    width: 200px;
+    min-width: 270px;
 }

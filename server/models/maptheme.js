@@ -56,14 +56,14 @@ const SUMMARY_CITIES_FILE_PATH = path.join(
 var dadosBrasil;
 csv()
     .fromFile(SUMMARY_BRASIL_FILE_PATH)
-    .then(function(jsonData) {
+    .then(function (jsonData) {
         dadosBrasil = jsonData;
     });
 
 var dadosEstados;
 csv()
     .fromFile(SUMMARY_STATES_FILE_PATH)
-    .then(function(jsonData) {
+    .then(function (jsonData) {
         dadosEstados = jsonData;
     });
 
@@ -71,7 +71,7 @@ var dadosCidades;
 
 csv()
     .fromFile(SUMMARY_CITIES_FILE_PATH)
-    .then(function(jsonData) {
+    .then(function (jsonData) {
         dadosCidades = jsonData;
     });
 
@@ -189,15 +189,19 @@ module.exports.getChoroplethThemeData = (location, cb) => {
             meanCases: info.meanCases,
             meanRecovered: info.meanRecovered,
             meanDeaths: info.meanDeaths,
+            last14AvgCases: info.last14AvgCases,
+            tendencyCases: info.tendencia_casos,
+            tendencyDeaths: info.tendencia_obitos,
             totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
-            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants
+            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants,
+            id: (info.CD_GEOCUF) ? info.CD_GEOCUF : info.ibgeID
         };
         if (location === "city") {
             data.recovered = "Sem dados";
             data.CD_GEOCMU = info.ibgeID;
             data.name = info.city
             return data;
-        } 
+        }
         data.name = info.nome
         data.CD_GEOCUF = info.CD_GEOCUF;
         data.recovered = info.recovered;

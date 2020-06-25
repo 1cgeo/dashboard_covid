@@ -106,31 +106,32 @@ class SliderDate {
         var startDate = new Date(playTimeInterval[0])
         var currentDate = new Date(playTimeInterval[0])
         var endDate = new Date(playTimeInterval[1])
-        $('#current-date').addClass('active')
+        //$('#end-date').addClass('active')
         while (currentDate < endDate) {
             if (!this.playActive) {
-                $('#current-date').text('')
-                $('#current-date').removeClass('active')
+                //$('#current-date').text('')
+                //$('#end-date').removeClass('active')
+                this.dateSlider.noUiSlider.set([startDate, endDate])
                 return
             }
             currentDate.setDate(currentDate.getDate() + 2)
             currentDate = (currentDate > endDate) ? endDate : currentDate
-            $('#current-date').text(
+            $('#end-date').text(
                     `Data atual:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
                 )
-                //this.dateSlider.noUiSlider.set([currentDate, endDate])
+            this.dateSlider.noUiSlider.set([startDate, currentDate])
             this.updateAnimationCb([startDate, currentDate])
             await this.sleep(1000)
         }
-        $('#current-date').text('')
-        $('#current-date').removeClass('active')
+        //$('#current-date').text('')
+        //$('#end-date').removeClass('active')
         this.playActive = false
         this.setPlayButtonStyle()
         this.stop()
     }
 
     stop() {
-        this.stopAnimationCb(this.dateSlider.noUiSlider.get())
+        //this.stopAnimationCb(this.dateSlider.noUiSlider.get())
         this.enable()
         this.setPlayButtonStyle()
     }
