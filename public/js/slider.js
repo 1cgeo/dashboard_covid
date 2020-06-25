@@ -112,6 +112,7 @@ class SliderDate {
                 //$('#current-date').text('')
                 //$('#end-date').removeClass('active')
                 this.dateSlider.noUiSlider.set([startDate, endDate])
+                this.stopAnimationCb([startDate, endDate])
                 return
             }
             currentDate.setDate(currentDate.getDate() + 2)
