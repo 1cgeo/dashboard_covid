@@ -217,6 +217,7 @@ class CovidMap {
 
     updateAnimation() {
         this.getCurrentThemeLayer().updateAnimation()
+        this.getCurrentPopoverLayer().setJsonData()
 
     }
 

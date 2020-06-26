@@ -76,14 +76,15 @@ class PopoverLayer extends Layer {
                     this.options.map.triggerChangeLocation(feat)
                 })
         }
-        this.lastData = this.getJsonData()
+        this.setJsonData()
     }
 
-    getJsonData() {
+    setJsonData() {
         if (this.options.id == 0) {
-            return this.options.map.getDataSource().getStateChoroplethData()
+            this.lastData = this.options.map.getDataSource().getStateChoroplethData()
+            return
         }
-        return this.options.map.getDataSource().getCityChoroplethData()
+        this.lastData = this.options.map.getDataSource().getCityChoroplethData()
     }
 
     getDefaultStyle() {

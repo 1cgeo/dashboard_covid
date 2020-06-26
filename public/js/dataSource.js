@@ -38,14 +38,14 @@ class DataSource {
         });
         this.getStateThemeData("choropleth", (data) => {
             this.setStateChoroplethData(deepCopy(data));
-            this.setTableStateData(deepCopy(data))
+            //this.setTableStateData(deepCopy(data))
         });
         this.getCitiesThemeData("circles", (data) => {
             this.setCityCircleData(data);
         });
         this.getCitiesThemeData("choropleth", (data) => {
             this.setCityChoroplethData(deepCopy(data));
-            this.setTableCityData(deepCopy(data))
+            //this.setTableCityData(deepCopy(data))
         });
         this.getCitiesThemeData("heat", (data) => {
             this.setHeatData(data);
@@ -142,17 +142,13 @@ class DataSource {
         return geojson;
     }
 
-    setTableStateData(data) {
+    /* setTableStateData(data) {
         var ids = []
         var result = []
         for (var i = data.length; i--;) {
             var idx = ids.indexOf(data[i].CD_GEOCUF);
             if (idx < 0) {
                 ids.push(data[i].CD_GEOCUF)
-                /* data[i].totalCases = data[i].totalCases
-                data[i].deaths = data[i].deaths */
-                data[i].deaths_per_100k_inhabitants = Math.floor(data[i].deaths_per_100k_inhabitants)
-                data[i].totalCases_per_100k_inhabitants = Math.floor(data[i].totalCases_per_100k_inhabitants)
                 result.push(data[i])
             } else {
                 break
@@ -172,10 +168,6 @@ class DataSource {
             var idx = ids.indexOf(data[i].CD_GEOCMU);
             if (idx < 0) {
                 ids.push(data[i].CD_GEOCMU)
-                data[i].totalCases = this.numberWithPoint(data[i].totalCases)
-                data[i].deaths = this.numberWithPoint(data[i].deaths)
-                data[i].deaths_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].deaths_per_100k_inhabitants))
-                data[i].totalCases_per_100k_inhabitants = this.numberWithPoint(Math.floor(data[i].totalCases_per_100k_inhabitants))
                 result.push(data[i])
             } else {
                 break
@@ -186,7 +178,7 @@ class DataSource {
 
     getTableCityData() {
         return this.tableCityData
-    }
+    } */
 
     setStateChoroplethData(data) {
         this.stateChoroplethData = data;

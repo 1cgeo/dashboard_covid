@@ -1,3 +1,19 @@
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "formatted-num-pre": function ( a ) {
+        a = (a === "-" || a === "") ? 0 : a.replace( /\./g, "" ) ;
+        return parseInt( a );
+    },
+ 
+    "formatted-num-asc": function ( a, b ) {
+        return a - b;
+    },
+ 
+    "formatted-num-desc": function ( a, b ) {
+        return b - a;
+    }
+} );
+
+
 var dataSource = new DataSource({})
 
 function deepCopy(data) {
@@ -59,7 +75,7 @@ dataSource.loadAllData(() => {
 
     var covidTable = new CovidTable({
         elementId: 'covid-table',
-        dataset: dataSource.getTableStateData(),
+        dataset: dataSource.getStateChoroplethData().data,
         "drawCallback": function (settings) {
             var api = this.api()
             var rowIds = api.rows({ page: 'current' }).indexes()
@@ -92,10 +108,11 @@ dataSource.loadAllData(() => {
             },
             {
                 "render": function (data, type, row, meta) {
-                    return dataSource.numberWithPoint(data)
+                    return dataSource.numberWithPoint(Math.floor(data))
                 },
                 "targets": [2,3,4,5]
-            }
+            },
+            { type: 'formatted-num', targets: [2,3,4,5] }
         ],
         columns: [
             { title: "id", visible: false, data: "id", },
@@ -124,6 +141,9 @@ dataSource.loadAllData(() => {
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
         covidmap.updateAnimation(timeInterval)
+        setTimeout(()=>{
+            covidTable.updateDataset(dataSource)
+        }, 500)
     })
 
     dateSlider.connectStartAnimation(() => {
@@ -140,6 +160,9 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        setTimeout(()=>{
+            covidTable.updateDataset(dataSource)
+        }, 500)
 
     }).connectStopAnimation((timeInterval) => {
         dataSource.setDataTimeInterval(timeInterval)
@@ -152,6 +175,9 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        setTimeout(()=>{
+            covidTable.updateDataset(dataSource)
+        }, 500)
     })
 
     covidmap.on('changeLocation', (layerClicked) => {
@@ -168,7 +194,7 @@ dataSource.loadAllData(() => {
             if (layerClicked && layerClicked.properties.CD_GEOCUF) {
                 covidTable.changeColumnName(1, 'Municípios')
                 covidTable.reloadDataset(
-                    dataSource.getTableCityData()
+                    dataSource.getCityChoroplethData().data
                 )
                 covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCUF}`)
             } else if (layerClicked && layerClicked.properties.CD_GEOCMU) {
@@ -187,7 +213,7 @@ dataSource.loadAllData(() => {
             })
             covidTable.changeColumnName(1, 'Municípios')
             covidTable.reloadDataset(
-                dataSource.getTableCityData()
+                dataSource.getCityChoroplethData().data
             )
         } else {
             $(".recovered").each(function () {
@@ -196,7 +222,7 @@ dataSource.loadAllData(() => {
             barChartRecovered.loadData(deepCopy(statisticsData))
             covidTable.changeColumnName(1, 'Estados')
             covidTable.reloadDataset(
-                dataSource.getTableStateData()
+                dataSource.getStateChoroplethData().data
             )
         }
         barChartCases.loadData(deepCopy(statisticsData))

@@ -74,7 +74,7 @@ class LineChart {
         }
         if (points.length == 0) return ''
         return `<svg height="${height}" width="${width}">
-            <polyline points="${points.join(',')}"
+            <polyline transform="scale(1, -1) translate(0, -${height})" points="${points.join(',')}"
                 style="fill:none;stroke:${this.getOptions().color};stroke-width:3" />
         </svg>`
     }

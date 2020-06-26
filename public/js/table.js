@@ -53,6 +53,17 @@ class CovidTable {
         ).draw()
     }
 
+    updateDataset(dataSource){
+        var data = []
+        if(this.getOptions().columns[1].title == 'Estados'){
+            data = dataSource.getStateChoroplethData().data
+        }else{
+            data = dataSource.getCityChoroplethData().data
+        }
+        this.getOptions().dataset = data
+        this.create()
+    }
+
     create() {
         if ($.fn.DataTable.isDataTable(`#${this.getOptions().elementId}`)) {
             $(`#${this.getOptions().elementId}`).DataTable().destroy();
