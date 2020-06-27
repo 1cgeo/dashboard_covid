@@ -55,13 +55,17 @@ class CovidTable {
 
     updateDataset(dataSource){
         var data = []
-        if(this.getOptions().columns[1].title == 'Estados'){
+        if(this.getColumnName(1) == 'Estados'){
             data = dataSource.getStateChoroplethData().data
         }else{
             data = dataSource.getCityChoroplethData().data
         }
         this.getOptions().dataset = data
         this.create()
+    }
+
+    getColumnName(colIdx){
+        return this.getOptions().columns[colIdx].title
     }
 
     create() {

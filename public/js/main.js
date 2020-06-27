@@ -1,17 +1,17 @@
-jQuery.extend( jQuery.fn.dataTableExt.oSort, {
-    "formatted-num-pre": function ( a ) {
-        a = (a === "-" || a === "") ? 0 : a.replace( /\./g, "" ) ;
-        return parseInt( a );
+jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    "formatted-num-pre": function (a) {
+        a = (a === "-" || a === "") ? 0 : a.replace(/\./g, "");
+        return parseInt(a);
     },
- 
-    "formatted-num-asc": function ( a, b ) {
+
+    "formatted-num-asc": function (a, b) {
         return a - b;
     },
- 
-    "formatted-num-desc": function ( a, b ) {
+
+    "formatted-num-desc": function (a, b) {
         return b - a;
     }
-} );
+});
 
 
 var dataSource = new DataSource({})
@@ -110,9 +110,9 @@ dataSource.loadAllData(() => {
                 "render": function (data, type, row, meta) {
                     return dataSource.numberWithPoint(Math.floor(data))
                 },
-                "targets": [2,3,4,5]
+                "targets": [2, 3, 4, 5]
             },
-            { type: 'formatted-num', targets: [2,3,4,5] }
+            { type: 'formatted-num', targets: [2, 3, 4, 5] }
         ],
         columns: [
             { title: "id", visible: false, data: "id", },
@@ -141,7 +141,7 @@ dataSource.loadAllData(() => {
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
         covidmap.updateAnimation(timeInterval)
-        setTimeout(()=>{
+        setTimeout(() => {
             covidTable.updateDataset(dataSource)
         }, 500)
     })
@@ -160,7 +160,7 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
-        setTimeout(()=>{
+        setTimeout(() => {
             covidTable.updateDataset(dataSource)
         }, 500)
 
@@ -175,7 +175,7 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
-        setTimeout(()=>{
+        setTimeout(() => {
             covidTable.updateDataset(dataSource)
         }, 500)
     })
@@ -191,16 +191,24 @@ dataSource.loadAllData(() => {
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
         setTimeout(() => {
-            if (layerClicked && layerClicked.properties.CD_GEOCUF) {
+            if (!layerClicked) {
+                if (covidmap.getCurrentLayerOptions().id == 0) {
+                    if (covidTable.getColumnName(1) == 'Municípios') {
+                        covidTable.reloadDataset(
+                            dataSource.getStateChoroplethData().data
+                        )
+                    }
+                }
+                covidTable.filterColumn(0, '')
+            }
+            else if (layerClicked.properties.CD_GEOCUF) {
                 covidTable.changeColumnName(1, 'Municípios')
                 covidTable.reloadDataset(
                     dataSource.getCityChoroplethData().data
                 )
                 covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCUF}`)
-            } else if (layerClicked && layerClicked.properties.CD_GEOCMU) {
+            } else if (layerClicked.properties.CD_GEOCMU) {
                 covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCMU.slice(0, 2)}`)
-            } else {
-                covidTable.filterColumn(0, '')
             }
         }, 500)
     })
