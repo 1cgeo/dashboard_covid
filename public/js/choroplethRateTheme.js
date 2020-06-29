@@ -233,7 +233,7 @@ class ChoroplethRateLayer extends Layer {
   getHexColors() {
     return this.getAttributeName() === "deaths"
       ? ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#6a51a3"]
-      : ["#fee5d9", "#fcae91", "#fb6a4a", "#cb181d"];
+      : ["#fee5d9", "#ffae43", "#ff6e0b", "#ce0a05"];
   }
 
   getLegendContent() {
