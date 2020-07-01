@@ -268,6 +268,9 @@ const modify_csv_estado_semana = (file, output) => {
       data[id].CENTROID_Y = d.CENTROID_Y;
       data[id].nrDiasDobraCasos = d.nrDiasDobraCasos;
       data[id].nrDiasDobraMortes = d.nrDiasDobraMortes;
+      data[id].tendencia_casos = d.tendencia_casos;
+      data[id].last14AvgCases = d.last14AvgCases;
+      data[id].tendencia_obitos = d.tendencia_obitos;
     })
     .on("end", function () {
       const dataArray = [];
@@ -569,6 +572,9 @@ const modify_csv_cidade_semana = (file, output) => {
       data[id].lon = d.lon;
       data[id].nrDiasDobraCasos = d.nrDiasDobraCasos;
       data[id].nrDiasDobraMortes = d.nrDiasDobraMortes;
+      data[id].tendencia_casos = d.tendencia_casos;
+      data[id].last14AvgCases = d.last14AvgCases;
+      data[id].tendencia_obitos = d.tendencia_obitos;
     })
     .on("end", function () {
       const dataArray = [];
