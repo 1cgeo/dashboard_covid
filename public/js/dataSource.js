@@ -146,7 +146,7 @@ class DataSource {
                 var elementDate = new Date(data.properties.date.replace(/\-/g, "/"));
                 return (elementDate.getTime() >= timeInterval[0] && elementDate.getTime() <= timeInterval[1])
             }
-            return (data.properties.data.week >= timeInterval[0] && data.properties.data.week <= timeInterval[1])
+            return (data.properties.week >= timeInterval[0] && data.properties.week <= timeInterval[1])
         })
         return geojson;
     }
