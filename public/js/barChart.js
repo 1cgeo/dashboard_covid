@@ -135,7 +135,7 @@ class BarChart {
     }
 
     getMargin() {
-        return { top: 30, right: 10, bottom: 30, left: 55 }
+        return { top: 30, right: 10, bottom: 30, left: 70 }
     }
 
     numberWithPoint(x) {
