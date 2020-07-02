@@ -49,14 +49,16 @@ class SliderDate {
     connectReloadSliderButton() {
         $("#group-data-by").change(() => {
             if ($("#group-data-by").val() == 'week') {
+                var maxWeek = this.options.dataSource.getMaxWeek()
+                console.log(maxWeek)
                 this.updateSliderOptions({
-                    start: [9, 27],
+                    start: [9, maxWeek],
                     step: 1,
                     connect: true,
                     behaviour: 'drag',
                     range: {
                         'min': 9,
-                        'max': 27
+                        'max': maxWeek
                     }
                 })
                 return

@@ -32,7 +32,7 @@ class CovidMap {
     }
 
     createSearch() {
-        var search = L.control({ position: 'topleft' });
+        var search = L.control({ position: 'topright' });
         search.onAdd = (map) => {
             var div = L.DomUtil.create('div', '')
             L.DomEvent

@@ -39,12 +39,22 @@ class DataSource {
         ];
     }
 
+    getMaxWeek(){
+        return this.getMax(
+            this.countryData.week.map((el) => +el.week)
+        )
+    }
+
+    getMaxDay(){
+        return this.getMax(
+            this.countryData.day.map((el) => new Date(el.date.replace(/\-/g, "/")).getTime())
+        )
+    }
+
     setInitTimeInterval(data) {
         this.setDataTimeInterval([
             new Date("2020/02/24").getTime(),
-            this.getMax(
-                data[this.getCurrentGroupData()].map((el) => new Date(el.date.replace(/\-/g, "/")).getTime())
-            ),
+            this.getMaxDay(),
         ])
     }
 
@@ -269,8 +279,8 @@ class DataSource {
         var timeInterval = this.getDataTimeInterval()
         var data = (layerProperties.CD_GEOCMU) ? this.cityChoroplethData : this.stateChoroplethData
         return data[this.getCurrentGroupData()].slice().filter((data) => {
-            if (broupBy == 'day') {
-                var id = data.CD_GEOCMU ? data.CD_GEOCMU : data.CD_GEOCUF;
+            var id = data.CD_GEOCMU ? data.CD_GEOCMU : data.CD_GEOCUF;
+            if (broupBy == 'day') {  
                 var elementDate = new Date(data.date.replace(/\-/g, "/"));
                 return elementDate >= timeInterval[0] && elementDate <= timeInterval[1] && featureId === id;
             }
