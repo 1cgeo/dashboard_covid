@@ -441,7 +441,7 @@ const modify_csv_estado = (file, nomes, output) => {
             if (last14AvgDeaths[dataArray[i].state].length > 14) {
               last14AvgDeaths[dataArray[i].state].shift();
             }
-            if (dataArray[i].deaths < 100) {
+            if (dataArray[i].deaths < 10) {
               dataArray[i].tendencia_obitos = "Sem ou poucos casos";
             } else if (last14AvgDeaths[dataArray[i].state].length < 14) {
               dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
@@ -766,7 +766,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                 if (last14AvgDeaths[dataArray[i].ibgeID].length > 14) {
                   last14AvgDeaths[dataArray[i].ibgeID].shift();
                 }
-                if (dataArray[i].deaths < 100) {
+                if (dataArray[i].deaths < 10) {
                   dataArray[i].tendencia_obitos = "Sem ou poucos casos";
                 } else if (last14AvgDeaths[dataArray[i].ibgeID].length < 14) {
                   dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
