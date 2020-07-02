@@ -24,9 +24,10 @@ class Status {
     this.setRecuperadosCases(this.numberWithPoint(this.reduceValue(data, "recovered")));
     this.setTotalDeaths(this.numberWithPoint(totalDeaths));
     this.setLethality(`${((totalDeaths / totalCases) * 100).toFixed(1)} %`)
-    this.setLastCases(this.numberWithPoint(lastdata.newCases))
-    this.setLastDeaths(this.numberWithPoint(lastdata.newDeaths))
-    this.setLastRecovered(this.numberWithPoint(lastdata.recovered))
+    var suffix = (lastdata.week)? 'última semana' : 'último dia'
+    this.setLastCases(this.numberWithPoint(lastdata.newCases), suffix)
+    this.setLastDeaths(this.numberWithPoint(lastdata.newDeaths), suffix)
+    this.setLastRecovered(this.numberWithPoint(lastdata.recovered), suffix)
 
   }
 
@@ -71,15 +72,18 @@ class Status {
     $("#deaths-values").text(total);
   }
 
-  setLastCases(total) {
-    $("#last-cases-values").text(total);
+  setLastCases(total, suffix) {
+    $("#last-cases-values").text(total)
+    $("#last-cases-tag").text(suffix);
   }
 
-  setLastDeaths(total) {
+  setLastDeaths(total, suffix) {
     $("#last-deaths-values").text(total);
+    $("#last-deaths-tag").text(suffix);
   }
 
-  setLastRecovered(total) {
+  setLastRecovered(total, suffix) {
     $("#last-recovered-values").text(total);
+    $("#last-recovered-tag").text(suffix);
   }
 }

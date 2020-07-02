@@ -97,7 +97,7 @@ module.exports.getCountryInformation = async(req, res) => {
 }
 
 
-
+/* 
 module.exports.getInformation = async(req, res) => {
     let location = req.query.location
     let id = req.query.id
@@ -130,4 +130,4 @@ module.exports.getInformation = async(req, res) => {
         })
     }
 
-}
+} */

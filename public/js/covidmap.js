@@ -20,6 +20,7 @@ class CovidMap {
         this.map = this.create(this.options)
         this.featureGroup = this.createFeatureGroup()
         this.createPanels()
+        this.createSearch()
         this.createControls()
         this.createSiderbar()
         this.connectEvents()
@@ -28,6 +29,41 @@ class CovidMap {
             this.loadMapData.bind(this)
         )
         this.loadMapData(0)
+    }
+
+    createSearch() {
+        var search = L.control({ position: 'topleft' });
+        search.onAdd = (map) => {
+            var div = L.DomUtil.create('div', '')
+            L.DomEvent
+                .disableClickPropagation(div)
+                .disableScrollPropagation(div);
+            div.innerHTML = `<input id="locations" placeholder="Pesquisar"/>`
+            return div;
+        }
+        search.addTo(this.getMap());
+        $("#locations").easyAutocomplete({
+            data: this.getDataSource().getCityChoroplethData().data
+            /* this.getDataSource().getStateChoroplethData().data.concat(
+                this.getDataSource().getCityChoroplethData().data
+            ) */,
+            getValue: "name",
+            list: {
+                match: {
+                    enabled: true
+                },
+                onChooseEvent: () => {
+                    var selectedData = $("#locations").getSelectedItemData()
+                    if(this.getCurrentLayerOptions().id == 0){
+                        this.loadMapData(1)
+                        $("input[name='layer'][value='1']").prop('checked', true)
+                    }
+                    this.getCurrentPopoverLayer().clickFeatureFromLatlng(
+                        { lat: selectedData.lat, lng: selectedData.lng }
+                    )
+                },
+            }
+        })
     }
 
     on(eventName, listener) {
@@ -248,9 +284,7 @@ class CovidMap {
             (this.hasThemeId(layerOptions, themeId)) ? themeId : 0,
             this.loadThemeLayer.bind(this)
         )
-        setTimeout(() => {
-            this.loadPopoverLayer(layerOptions)
-        }, 1)
+        this.loadPopoverLayer(layerOptions)
         this.setCurrentLayerOptions(layerOptions)
         this.loadThemeLayer(themeId)
         this.triggerChangeLayer(layerId)
@@ -288,30 +322,5 @@ class CovidMap {
         layerOptions.map = this
         var factories = new Factories()
         this.currentPopoverLayer = factories.createLayer('popover', layerOptions)
-    }
-}
-
-
-class Signal {
-    constructor() {
-        this.events = {}
-    }
-
-    createEvent(eventName) {
-        this.events[eventName] = []
-    }
-
-    connect(event, listener) {
-        if (this.events[event]) {
-            this.events[event].push(listener)
-        }
-    }
-
-    trigger(eventName, value) {
-        if (this.events[eventName]) {
-            for (var i = this.events[eventName].length; i--;) {
-                this.events[eventName][i](value)
-            }
-        }
     }
 }

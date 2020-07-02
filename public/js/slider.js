@@ -3,22 +3,18 @@ class SliderDate {
         this.months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
         this.shortMonthsLabel = ["Jan.", "Fev.", "Mar.", "Abr.", "Maio", "Jun.", "Jul.", "Ago.", "Set.", "Out.", "Nov.", "Dez."]
         this.options = {}
-        this.setOptions(options)
-        this.dateSlider = this.createSlider()
         this.elementIds = ["start-date", "end-date"]
-        this.connectPlayButton()
-        this.connectUpdateEvent((values, handle) => {
-            var date = new Date(values[handle]),
-                text
-            if (handle === 0) {
-                text = `Data inicial:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
-            } else {
-                text = `Data final:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
-            }
-
-            $(`#${this.elementIds[handle]}`).text(text)
-        })
         this.playActive = false
+        this.setOptions(options)
+        this.createSlider()
+        this.createEvents()
+        this.connectReloadSliderButton()
+        this.connectPlayButton()
+    }
+
+    createEvents() {
+        this.events = new Signal()
+        this.events.createEvent('endChange')
     }
 
     setOptions(options) {
@@ -41,12 +37,93 @@ class SliderDate {
             start: this.options.dataTimeInterval,
             format: {
                 from: Number,
-                to: function(value) {
+                to: function (value) {
                     return new Date(value);
                 }
             }
         })
-        return dateSlider
+        this.dateSlider = dateSlider
+        this.connectSliderEvents()
+    }
+
+    connectReloadSliderButton() {
+        $("#group-data-by").change(() => {
+            if ($("#group-data-by").val() == 'week') {
+                this.updateSliderOptions({
+                    start: [9, 27],
+                    step: 1,
+                    connect: true,
+                    behaviour: 'drag',
+                    range: {
+                        'min': 9,
+                        'max': 27
+                    }
+                })
+                return
+            }
+            this.updateSliderOptions({
+                range: {
+                    min: this.options.dataTimeInterval[0],
+                    max: this.options.dataTimeInterval[1]
+                },
+                //tooltips: [true, true],
+                behaviour: 'drag',
+                connect: true,
+                step: 24 * 60 * 60 * 1000,
+                start: this.options.dataTimeInterval,
+                format: {
+                    from: Number,
+                    to: function (value) {
+                        return new Date(value);
+                    }
+                }
+            })
+
+        });
+    }
+
+
+    updateSliderOptions(newOptions) {
+        this.dateSlider.noUiSlider.destroy()
+        var dateSlider = document.getElementById("slider-date");
+        noUiSlider.create(dateSlider, newOptions)
+        this.dateSlider = dateSlider
+        this.connectSliderEvents()
+        setTimeout(() => {
+            this.events.trigger('endChange', newOptions.start.map(v => Math.floor(v)))
+        }, 1000)
+    }
+
+    connectSliderEvents() {
+        this.dateSlider.noUiSlider.on('end', (timeInterval) => {
+            setTimeout(() => this.events.trigger('endChange', timeInterval.map(v => Math.floor(v))), 1000)
+        })
+        this.dateSlider.noUiSlider.on('update', (values, handle) => {
+            $(`#${this.elementIds[handle]}`).text(
+                this.getLabelValue(values, handle)
+            )
+        })
+    }
+
+    getLabelValue(values, handle) {
+        if (this.options.dataSource.getCurrentGroupData() == 'day') {
+            var date = new Date(values[handle]),
+                text
+            if (handle === 0) {
+                text = `Data inicial:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
+            } else {
+                text = `Data final:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
+            }
+            return text
+        }
+        var week = Math.floor(values[handle]),
+            text
+        if (handle === 0) {
+            text = `Semana inicial:    ${week}`
+        } else {
+            text = `Semana final:    ${week}`
+        }
+        return text
     }
 
     desable() {
@@ -57,20 +134,8 @@ class SliderDate {
         this.dateSlider.removeAttribute('disabled')
     }
 
-    connectEndChange(cb) {
-        this.dateSlider.noUiSlider.on('end', (timeInterval) => {
-            setTimeout(() => cb(timeInterval), 1000)
-        })
-    }
-
-    disconnectEndChange(cb) {
-        this.dateSlider.noUiSlider.off('end', cb)
-    }
-
-    connectUpdateEvent(cb) {
-        this.dateSlider.noUiSlider.on('update', function(values, handle) {
-            cb(values, handle)
-        })
+    on(eventName, listener) {
+        this.events.connect(eventName, listener)
     }
 
     connectPlayButton() {
@@ -78,7 +143,7 @@ class SliderDate {
             if (!this.playActive) {
                 this.playActive = true
                 this.setPauseButtonStyle()
-                this.play()
+                $("#group-data-by").val() == 'week' ? this.playByWeek() : this.playByDay()
             } else {
                 this.playActive = false
                 this.setPlayButtonStyle()
@@ -99,7 +164,7 @@ class SliderDate {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async play() {
+    async playByDay() {
         this.startAnimationCb()
         this.desable()
         var playTimeInterval = this.dateSlider.noUiSlider.get()
@@ -117,15 +182,38 @@ class SliderDate {
             }
             currentDate.setDate(currentDate.getDate() + 2)
             currentDate = (currentDate > endDate) ? endDate : currentDate
-            $('#end-date').text(
-                    `Data atual:    ${currentDate.getDate()}/${this.months[currentDate.getMonth()]}/${currentDate.getFullYear()}`
-                )
             this.dateSlider.noUiSlider.set([startDate, currentDate])
             this.updateAnimationCb([startDate, currentDate])
             await this.sleep(1000)
         }
         //$('#current-date').text('')
         //$('#end-date').removeClass('active')
+        this.playActive = false
+        this.setPlayButtonStyle()
+        this.stop()
+    }
+
+    async playByWeek() {
+        console.log('hop')
+        this.startAnimationCb()
+        this.desable()
+        var playTimeInterval = this.dateSlider.noUiSlider.get()
+        console.log(playTimeInterval)
+        var startWeek = +playTimeInterval[0]
+        var endWeek = +playTimeInterval[1]
+        var currentWeek = +playTimeInterval[0]
+        while (currentWeek < endWeek) {
+            if (!this.playActive) {
+                this.dateSlider.noUiSlider.set([startWeek, endWeek])
+                this.stopAnimationCb([startWeek, endWeek])
+                return
+            }
+            currentWeek++
+            currentWeek = (currentWeek > endWeek) ? endWeek : currentWeek
+            this.dateSlider.noUiSlider.set([startWeek, currentWeek])
+            this.updateAnimationCb([startWeek, currentWeek])
+            await this.sleep(2000)
+        }
         this.playActive = false
         this.setPlayButtonStyle()
         this.stop()

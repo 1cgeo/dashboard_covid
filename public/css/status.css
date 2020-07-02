@@ -6,6 +6,21 @@
   
 }
 
+#last-cases-tag{
+  font-size: 10px;
+  color: red;
+}
+
+#last-deaths-tag{
+  font-size: 10px;
+  color: gray;
+}
+
+#last-recovered-tag{
+  font-size: 10px;
+  color: green;
+}
+
 .tag-cases,
 .tag-recuperados,
 .tag-deaths,

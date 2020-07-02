@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="lib/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="lib/dataTables.material.min.css" />
     <link rel="stylesheet" href="lib/style.css" />
+    <link rel="stylesheet" href="lib/easy-autocomplete.min.css" />
     <link rel="shortcut icon" href="images/favicon.ico" />
     <link rel="stylesheet" href="css/popup.css" />
     <link rel="stylesheet" href="css/loader.css" />
@@ -57,8 +58,8 @@
                             <div class="text-center" id="cases-values"></div>
                             <div id="last-cases" class="d-flex align-items-center justify-content-center">
                                 <div class="triangle-up"></div>
-                                <div class="p-2 text-center" id="last-cases-values">
-                                </div>
+                                <div class="p-2 text-center" id="last-cases-values"></div>
+                                <div class="text-center" id="last-cases-tag"></div>
                             </div>
                         </div>
                         <div class="d-flex flex-column recovered">
@@ -68,8 +69,8 @@
                             <div class="text-center" id="recuperados-values"></div>
                             <div id="last-recovered" class="d-flex align-items-center justify-content-center">
                                 <div class="triangle-up"></div>
-                                <div class="p-2 text-center" id="last-recovered-values">
-                                </div>
+                                <div class="p-2 text-center" id="last-recovered-values"></div>
+                                <div class="text-center" id="last-recovered-tag"></div>
                             </div>
                         </div>
                         <div class="d-flex flex-column">
@@ -79,8 +80,8 @@
                             <div class="text-center" id="deaths-values"></div>
                             <div id="last-deaths" class="d-flex align-items-center justify-content-center">
                                 <div class="triangle-up"></div>
-                                <div class="p-2 text-center" id="last-deaths-values">
-                                </div>
+                                <div class="p-2 text-center" id="last-deaths-values"></div>
+                                <div class="text-center" id="last-deaths-tag"></div>
                             </div>
                         </div>
                         <div class="d-flex flex-column">
@@ -99,6 +100,10 @@
                             </div>
                         </div>
                         <div id="play-container" class="d-flex flex-column">
+                            <select id="group-data-by" style="width: 195px; height: 35px;"  class="custom-select">
+                                <option value="day">Dados por dia</option>
+                                <option value="week">Dados por semana</option>
+                              </select>
                             <div class="d-flex flex-row justify-content-center">
                                 <div>
                                     <button style="background-color: #607d8b;" type="button"
@@ -161,7 +166,7 @@
         <footer style="background-color: #607d8b;" class="page-footer text-left font-small darken-2 pb-2 pl-4 pr-4">
             <div class="row">
                 <div class="container col-md-6 text-center text-md-left">
-                    Desenvolvido pelo Diretoria de Serviço Geográfico (DSG). Versão: 0.5
+                    Desenvolvido pelo Diretoria de Serviço Geográfico (DSG). Versão: 0.6
                 </div>
                 <div class="container col-md-6 text-center text-md-right">
                     <b>Fonte de dados: github.com/wcota/covid19br</b>
@@ -181,6 +186,9 @@
     <script src="lib/Leaflet.VectorGrid.js"></script>
     <script src="lib/leaflet-sidebar.js"></script>
     <script src="lib/leaflet.heat.js"></script>
+    <script src="lib/jquery.easy-autocomplete.min.js"></script>
+    <script src="lib/geojson-utils.min.js"></script>
+    <script src="js/signal.js"></script>
     <script src="js/http.js"></script>
     <script src="js/dataSource.js"></script>
     <script src="js/layer.js"></script>

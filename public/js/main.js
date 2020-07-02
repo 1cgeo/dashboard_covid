@@ -26,6 +26,7 @@ dataSource.loadAllData(() => {
     var locationStatus = new Status(dataSource)
 
     var dateSlider = new SliderDate({
+        dataSource: dataSource,
         dataTimeInterval: dataSource.getDataTimeInterval(),
         dateValues: [
             document.getElementById('start-date'),
@@ -33,7 +34,7 @@ dataSource.loadAllData(() => {
         ]
     })
 
-    var barChartCases = new BarChart({
+     var barChartCases = new BarChart({
         parentId: "cases-chart-container",
         elementId: "graph-cases",
         dataSource: dataSource,
@@ -130,7 +131,7 @@ dataSource.loadAllData(() => {
         ]
     })
 
-    dateSlider.connectEndChange((timeInterval) => {
+    dateSlider.on('endChange', (timeInterval) => {
         dataSource.setDataTimeInterval(timeInterval)
         var statisticsData = dataSource.getStatisticsData()
         locationStatus.loadData(

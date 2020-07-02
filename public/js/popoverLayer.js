@@ -66,17 +66,61 @@ class PopoverLayer extends Layer {
                     //this.options.map.getMap().closePopup()
                 }).on('click', (e) => {
                     this.receivedEvent = true
-                    var feat = e.layer
-                    this.options.map.setBounds([
-                        [feat.properties.ymin, feat.properties.xmin],
-                        [feat.properties.ymax, feat.properties.xmax]
-                    ])
-                    this.highlightFeature(feat)
-                    this.showPopupThemeLayer(e)
-                    this.options.map.triggerChangeLocation(feat)
+                    this.clickFeature(e)
+
                 })
         }
         this.setJsonData()
+    }
+
+    clickFeatureFromLatlng(latlng) {
+        var tileSize = { x: 256, y: 256 }
+        var pixelPoint = this.options.map.getMap().project(
+            latlng,
+            this.options.map.getMap().getZoom()
+        ).floor()
+        var coords = pixelPoint.unscaleBy(tileSize).floor()
+        coords.z = this.options.map.getMap().getZoom()
+        var vectorTilePromise = this.mainVectorTile._getVectorTilePromise(coords);
+        vectorTilePromise.then((vectorTile) => {
+            for (var layerName in vectorTile.layers) {
+                var layer = vectorTile.layers[layerName];
+                for (var i in layer.features) {
+                    var feat = layer.features[i].toGeoJSON(coords.x, coords.y, coords.z)
+                    var check = gju.pointInPolygon(
+                        { "type": "Point", "coordinates": [latlng.lng, latlng.lat] },
+                        feat.geometry
+                    )
+                    if (!check) continue
+                    this.zoomToFeature(feat)
+                    this.highlightFeature(feat)
+                    this.showPopupThemeLayer({
+                        layer: feat,
+                        latlng: latlng
+                    })
+                    /* this.clickFeature({
+                        layer: geojson,
+                        latlng: latlng
+                    }) */
+                    return
+                }
+            }
+        })
+    }
+
+    clickFeature(e) {
+        var feat = e.layer
+        this.zoomToFeature(feat)
+        this.highlightFeature(feat)
+        this.showPopupThemeLayer(e)
+        this.options.map.triggerChangeLocation(feat)
+    }
+
+    zoomToFeature(feat){
+        this.options.map.setBounds([
+            [feat.properties.ymin, feat.properties.xmin],
+            [feat.properties.ymax, feat.properties.xmax]
+        ])
     }
 
     setJsonData() {

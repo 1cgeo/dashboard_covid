@@ -28,9 +28,4 @@ router
     .route('/information/country')
     .get(mapthemeCtrl.getCountryInformation)
 
-router
-    .route('/information')
-    .get(mapthemeCtrl.getInformation)
-
-
 module.exports = router;

@@ -28,8 +28,8 @@ class BarChart {
 
     loadSvg() {
         return d3.select(`#${this.options.elementId}`)
-        .attr('width', this.getWidthSvg())
-        .attr('height', this.getHeightSvg())
+            .attr('width', this.getWidthSvg())
+            .attr('height', this.getHeightSvg())
     }
 
     getWidthSvg() {
@@ -92,11 +92,14 @@ class BarChart {
         this.maxValue = (yValues.length < 1) ? 0 : this.getMax(yValues)
         var dataFormated = []
         for (var i = jsonData.length; i--;) {
-            //if (+jsonData[i][attributeY] < 0) continue
             var d = {}
-            d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
-            d[attributeY] = (this.maxValue == 0 || isNaN(jsonData[i][attributeY]) ) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
-            d[attributeYLine] = (this.maxValue == 0 || isNaN(jsonData[i][attributeYLine]) ) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
+            if (this.options.dataSource.getCurrentGroupData() == 'day') {
+                d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
+            }else{
+                d[attributeX] = +jsonData[i].week
+            }
+            d[attributeY] = (this.maxValue == 0 || isNaN(jsonData[i][attributeY])) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
+            d[attributeYLine] = (this.maxValue == 0 || isNaN(jsonData[i][attributeYLine])) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
             dataFormated.push(d)
         }
         return dataFormated.sort(function (a, b) {
@@ -195,13 +198,20 @@ class BarChart {
         this.x.rangeRound([0, width]);
         this.g.select(".axis--x")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(this.x).tickFormat(d3.timeFormat('%b')))
+            .call(
+                (this.options.dataSource.getCurrentGroupData() == 'day') ?
+                    d3.axisBottom(this.x).tickFormat(d3.timeFormat('%b')) :
+                    d3.axisBottom(this.x).ticks(1)
+            )
             .selectAll("text")
             .attr("y", 0)
             .attr("x", 7)
             .attr("dy", ".35em")
             .attr("transform", "rotate(45)")
             .style("text-anchor", "start")
+        if (this.options.dataSource.getCurrentGroupData() != 'day') {
+            return
+        }
         var xTicks = this.g.select(".axis--x").selectAll(".tick text").nodes()
         var xTickNames = xTicks.map((n) => n.textContent)
         xTicks.forEach((n, idx) => {
