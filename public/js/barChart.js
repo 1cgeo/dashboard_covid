@@ -151,8 +151,10 @@ class BarChart {
                 .style("top", d3.event.pageY - 110 + "px")
                 .style("display", "inline-block")
                 .html(`
-        <b>${new Date(d[this.options.attributeX]).getDate()} de 
-        ${this.months[new Date(d[this.options.attributeX]).getMonth()]}</b>
+        ${(this.options.dataSource.getCurrentGroupData() == 'day')?
+    `<b>${new Date(d[this.options.attributeX]).getDate()} de 
+    ${this.months[new Date(d[this.options.attributeX]).getMonth()]}</b>`: 
+    `Semana ${d[this.options.attributeX]}`}
         <br>
         ${this.numberWithPoint(
                     this.getFormatedValue(d[this.options.attributeY]

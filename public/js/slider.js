@@ -50,7 +50,6 @@ class SliderDate {
         $("#group-data-by").change(() => {
             if ($("#group-data-by").val() == 'week') {
                 var maxWeek = this.options.dataSource.getMaxWeek()
-                console.log(maxWeek)
                 this.updateSliderOptions({
                     start: [9, maxWeek],
                     step: 1,
@@ -196,11 +195,9 @@ class SliderDate {
     }
 
     async playByWeek() {
-        console.log('hop')
         this.startAnimationCb()
         this.desable()
         var playTimeInterval = this.dateSlider.noUiSlider.get()
-        console.log(playTimeInterval)
         var startWeek = +playTimeInterval[0]
         var endWeek = +playTimeInterval[1]
         var currentWeek = +playTimeInterval[0]

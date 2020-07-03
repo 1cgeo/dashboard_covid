@@ -2,8 +2,7 @@ body * {
     font-family: "Public Sans", sans-serif !important;
 }
 
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -22,13 +21,28 @@ body {
     color: white;
 }
 
+.leaflet-control {
+    z-index: 3000;
+}
+
+.leaflet-control-zoom {
+    z-index: 2990;
+}
+
+.wait {cursor: wait !important;}
+
+.leaflet-bottom.leaflet-right {
+    z-index: 400;
+}
+
 .map-container {
     background-color: white;
     overflow: hidden;
     /* padding-bottom: 50%; */
     position: relative;
-/*     height: 300px;
- */}
+    /*     height: 300px;
+ */
+}
 
 .leaflet-sidebar-tabs {
     background-color: #607d8b;
@@ -50,9 +64,7 @@ body {
     opacity: 0.8;
 }
 
-.leaflet-sidebar-header,
-.leaflet-sidebar-tabs>li.active,
-.leaflet-sidebar-tabs>ul>li.active {
+.leaflet-sidebar-header, .leaflet-sidebar-tabs>li.active, .leaflet-sidebar-tabs>ul>li.active {
     background-color: #607d8b !important;
 }
 
