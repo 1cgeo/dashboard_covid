@@ -188,18 +188,10 @@ const csv_brasil_semana = (file, output) => {
       data[semana].deaths_by_totalCases = +d.deaths_by_totalCases;
       data[semana].recovered += +d.recovered;
       data[semana].totalRecovered = +d.totalRecovered;
-      data[semana].meanCases =
-        (+d.meanCases +
-          (data[semana].dias_semana - 1) * +data[semana].meanCases) /
-        data[semana].dias_semana;
-      data[semana].meanDeaths =
-        (+d.meanDeaths +
-          (data[semana].dias_semana - 1) * +data[semana].meanDeaths) /
-        data[semana].dias_semana;
+      data[semana].meanCases = +d.meanCases + data[semana].meanCases;
+      data[semana].meanDeaths = +d.meanDeaths + data[semana].meanDeaths;
       data[semana].meanRecovered =
-        (+d.meanRecovered +
-          (data[semana].dias_semana - 1) * +data[semana].meanRecovered) /
-        data[semana].dias_semana;
+        +d.meanRecovered + data[semana].meanRecovered;
     })
     .on("end", function () {
       const dataArray = [];
@@ -253,16 +245,11 @@ const modify_csv_estado_semana = (file, output) => {
       data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
       data[id].recovered += +d.recovered;
       data[id].totalRecovered = +d.totalRecovered;
-      data[id].meanCases =
-        (+d.meanCases + (data[id].dias_semana - 1) * +data[id].meanCases) /
-        data[id].dias_semana;
-      data[id].meanDeaths =
-        (+d.meanDeaths + (data[id].dias_semana - 1) * +data[id].meanDeaths) /
-        data[id].dias_semana;
-      data[id].meanRecovered =
-        (+d.meanRecovered +
-          (data[id].dias_semana - 1) * +data[id].meanRecovered) /
-        data[id].dias_semana;
+
+      data[id].meanCases = +d.meanCases + data[id].meanCases;
+      data[id].meanDeaths = +d.meanDeaths + data[id].meanDeaths;
+      data[id].meanRecovered = +d.meanRecovered + data[id].meanRecovered;
+
       data[id].CD_GEOCUF = d.CD_GEOCUF;
       data[id].CENTROID_X = d.CENTROID_X;
       data[id].CENTROID_Y = d.CENTROID_Y;
@@ -560,12 +547,11 @@ const modify_csv_cidade_semana = (file, output) => {
         id
       ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
       data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
-      data[id].meanCases =
-        (+d.meanCases + (data[id].dias_semana - 1) * +data[id].meanCases) /
-        data[id].dias_semana;
-      data[id].meanDeaths =
-        (+d.meanDeaths + (data[id].dias_semana - 1) * +data[id].meanDeaths) /
-        data[id].dias_semana;
+
+      data[id].meanCases = +d.meanCases + data[id].meanCases;
+      data[id].meanDeaths = +d.meanDeaths + data[id].meanDeaths;
+      data[id].meanRecovered = +d.meanRecovered + data[id].meanRecovered;
+
       data[id].centroid_lat = d.centroid_lat;
       data[id].centroid_long = d.centroid_long;
       data[id].lat = d.lat;
