@@ -392,7 +392,7 @@ const modify_csv_estado = (file, nomes, output) => {
               ].join("|");
               const d1 = last14AvgCases[dataArray[i].state][0];
               const d2 = last14AvgCases[dataArray[i].state][13];
-              if (d2 > d1 * 2.0) {
+              if (d2 > d1 * 2.5) {
                 dataArray[i].tendencia_casos = "Crescendo 3";
               } else if (d2 > d1 * 1.5) {
                 dataArray[i].tendencia_casos = "Crescendo 2";
@@ -435,7 +435,7 @@ const modify_csv_estado = (file, nomes, output) => {
             } else {
               const d1 = last14AvgDeaths[dataArray[i].state][0];
               const d2 = last14AvgDeaths[dataArray[i].state][13];
-              if (d2 > d1 * 2.0) {
+              if (d2 > d1 * 2.5) {
                 dataArray[i].tendencia_obitos = "Crescendo 3";
               } else if (d2 > d1 * 1.5) {
                 dataArray[i].tendencia_obitos = "Crescendo 2";
@@ -714,7 +714,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                   ].join("|");
                   const d1 = last14AvgCases[dataArray[i].ibgeID][0];
                   const d2 = last14AvgCases[dataArray[i].ibgeID][13];
-                  if (d2 > d1 * 2.0) {
+                  if (d2 > d1 * 2.5) {
                     dataArray[i].tendencia_casos = "Crescendo 3";
                   } else if (d2 > d1 * 1.5) {
                     dataArray[i].tendencia_casos = "Crescendo 2";
@@ -759,7 +759,7 @@ const modify_csv_cidade = (file, coords, centroid, output) => {
                 } else {
                   const d1 = last14AvgDeaths[dataArray[i].ibgeID][0];
                   const d2 = last14AvgDeaths[dataArray[i].ibgeID][13];
-                  if (d2 > d1 * 2.0) {
+                  if (d2 > d1 * 2.5) {
                     dataArray[i].tendencia_obitos = "Crescendo 3";
                   } else if (d2 > d1 * 1.5) {
                     dataArray[i].tendencia_obitos = "Crescendo 2";
