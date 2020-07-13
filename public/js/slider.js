@@ -211,7 +211,7 @@ class SliderDate {
             currentWeek = (currentWeek > endWeek) ? endWeek : currentWeek
             this.dateSlider.noUiSlider.set([startWeek, currentWeek])
             this.updateAnimationCb([startWeek, currentWeek])
-            await this.sleep(2000)
+            await this.sleep(4000)
         }
         this.playActive = false
         this.setPlayButtonStyle()
