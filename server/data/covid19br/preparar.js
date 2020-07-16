@@ -15,5 +15,6 @@ modify_csv_cidade(
   path.join(__dirname, "cidades_original.csv"),
   path.join(__dirname, "coords_cidade_original.csv"),
   path.join(__dirname, "centroides_municipios.csv"),
+  path.join(__dirname, "area_protecao_integrada.csv"),
   path.join(__dirname, "cidades.csv")
 );

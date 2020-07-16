@@ -2,6 +2,8 @@
 
 *public/data/*
 
+.vscode
+
 cidades_original.csv
 coords_cidade_original.csv
 cidades.csv
@@ -13,3 +15,7 @@ estados_semana.csv
 cidades_semana.csv
 estados_regiao.csv
 estados_regiao_semana.csv
+cidades_api.csv
+cidades_api_semana.csv
+cidades_sapi.csv
+cidades_sapi_semana.csv
