@@ -1075,7 +1075,6 @@ const modify_csv_cidade = (file, coords, centroid, protecao_integrada, output) =
                 dataArray[0].nrDiasDobraCasos = 0;
                 dataArray[0].nrDiasDobraMortes = 0;
                 for (var i = dataArray.length - 1; i > 0; i--) {
-                  /**
                   for (var j = i - 1; j >= 0; j--) {
                     if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
                       if (
@@ -1092,10 +1091,10 @@ const modify_csv_cidade = (file, coords, centroid, protecao_integrada, output) =
                         break;
                       }
                     }
-                  } */
+                  }
                   if (!dataArray[i].nrDiasDobraCasos) {
                     dataArray[i].nrDiasDobraCasos = 0;
-                  }/**
+                  }
                   for (var j = i - 1; j >= 0; j--) {
                     if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
                       if (dataArray[j].deaths <= dataArray[i].deaths / 2) {
@@ -1109,7 +1108,7 @@ const modify_csv_cidade = (file, coords, centroid, protecao_integrada, output) =
                         break;
                       }
                     }
-                  }*/
+                  }
                   if (!dataArray[i].nrDiasDobraMortes) {
                     dataArray[i].nrDiasDobraMortes = 0;
                   }
