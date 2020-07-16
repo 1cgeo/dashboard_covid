@@ -6,12 +6,12 @@ const { Parser } = require("json2csv");
 const epi = require("./epidemiological-week");
 
 const centroide_regiao = {
-  "Sudeste": [-46.388371766, -19.772750807599998],
-  "Sul": [-52.8368404615, -28.133689489600002],
+  Sudeste: [-46.388371766, -19.772750807599998],
+  Sul: [-52.8368404615, -28.133689489600002],
   "Centro-Oeste": [-53.770157066, -15.70869986395],
-  "Nordeste": [-41.774017855500006, -9.6965501243],
-  "Norte": [-59.843560357, -4.210929523099999]
-}
+  Nordeste: [-41.774017855500006, -9.6965501243],
+  Norte: [-59.843560357, -4.210929523099999],
+};
 
 const centroide_sapi = {
   "2ª Bda C Mec": [-56.216524268499995, -29.86198892635],
@@ -23,14 +23,14 @@ const centroide_sapi = {
   "3ª Bda C Mec": [-54.61908440495, -30.997590611249997],
   "8ª Bda Inf Mtz": [-51.71784407045, -30.653584850999998],
   "6ª Bda Inf Bld": [-53.664214672499995, -29.6236634728],
-  "1ª Bda C Mec": [-55.1459490654, -28.37737602875]
-}
+  "1ª Bda C Mec": [-55.1459490654, -28.37737602875],
+};
 
 const centroide_api = {
   "3ª DE": [-54.6053580925, -28.9089720818],
   "6ª DE": [-52.99074199945, -30.653584850999998],
-  "5ª DE": [-51.32162136865, -25.935863894249998]
-}
+  "5ª DE": [-51.32162136865, -25.935863894249998],
+};
 
 const STATES_MAP = {
   ac: "12",
@@ -192,7 +192,7 @@ const csv_brasil_semana = (file, output) => {
         data[semana] = {};
         data[semana].semana = semana;
         data[semana].dias_semana = 0;
-        data[semana].nome = 'Brasil';
+        data[semana].nome = "Brasil";
         data[semana].newDeaths = 0;
         data[semana].newCases = 0;
         data[semana].recovered = 0;
@@ -285,7 +285,7 @@ const modify_csv_estado_semana = (file, output) => {
 };
 
 const agrupa_semana = (file, output) => {
-  console.log(`Agrupando dados por semana ${output}`)
+  console.log(`Agrupando dados por semana ${output}`);
   const data = {};
   fs.createReadStream(file)
     .pipe(csv())
@@ -339,12 +339,12 @@ const agrupa_semana = (file, output) => {
 };
 
 const agrupa_area_geografica = (file, output, chave, centroide) => {
-  console.log(`Agrupando dados por área geográfica ${output}`)
+  console.log(`Agrupando dados por área geográfica ${output}`);
   const data = {};
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      if(chave in d && d[chave]){
+      if (chave in d && d[chave]) {
         let id = `${d.date}_${d[chave]}`;
         if (!(id in data)) {
           data[id] = {};
@@ -356,10 +356,10 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           data[id].meanCases = 0;
           data[id].meanDeaths = 0;
           data[id].meanRecovered = 0;
-          data[id].CENTROID_X = centroide[d[chave]][0]
-          data[id].CENTROID_Y = centroide[d[chave]][1]
+          data[id].CENTROID_X = centroide[d[chave]][0];
+          data[id].CENTROID_Y = centroide[d[chave]][1];
         }
-  
+
         data[id].newDeaths += +d.newDeaths;
         data[id].deaths = +d.deaths;
         data[id].newCases += +d.newCases;
@@ -371,7 +371,7 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
         data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
         data[id].recovered += +d.recovered;
         data[id].totalRecovered = +d.totalRecovered;
-  
+
         data[id].meanCases = +d.meanCases + data[id].meanCases;
         data[id].meanDeaths = +d.meanDeaths + data[id].meanDeaths;
         data[id].meanRecovered = +d.meanRecovered + data[id].meanRecovered;
@@ -390,9 +390,7 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
       const last14AvgDeaths = {};
 
       const average = (list) =>
-        Math.round(
-          list.reduce((prev, curr) => +prev + +curr) / list.length
-        );
+        Math.round(list.reduce((prev, curr) => +prev + +curr) / list.length);
 
       for (var i = 0; i < dataArray.length; i++) {
         if (!(dataArray[i].nome in last7Cases)) {
@@ -423,9 +421,9 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
           dataArray[i].last14AvgCases = "";
         } else {
-          dataArray[i].last14AvgCases = last14AvgCases[
-            dataArray[i].nome
-          ].join("|");
+          dataArray[i].last14AvgCases = last14AvgCases[dataArray[i].nome].join(
+            "|"
+          );
           const d1 = last14AvgCases[dataArray[i].nome][0];
           const d2 = last14AvgCases[dataArray[i].nome][13];
           if (d2 > d1 * 2.5) {
@@ -452,9 +450,7 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
         if (last7Deaths[dataArray[i].nome].length < 7) {
           dataArray[i].meanDeaths = +dataArray[i].newDeaths;
         } else {
-          dataArray[i].meanDeaths = average(
-            last7Deaths[dataArray[i].nome]
-          );
+          dataArray[i].meanDeaths = average(last7Deaths[dataArray[i].nome]);
         }
 
         if (!(dataArray[i].nome in last14AvgDeaths)) {
@@ -542,10 +538,7 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
       const result = parser.parse(dataArray);
 
       fs.writeFileSync(output, result);
-      agrupa_semana(
-        output,
-        `${output.split(".")[0]}_semana.csv`
-      );
+      agrupa_semana(output, `${output.split(".")[0]}_semana.csv`);
     });
 };
 
@@ -791,7 +784,7 @@ const modify_csv_estado = (file, nomes, output) => {
           agrupa_area_geografica(
             output,
             `${output.split(".")[0]}_regiao.csv`,
-            'regiao',
+            "regiao",
             centroide_regiao
           );
         });
@@ -833,8 +826,6 @@ const modify_csv_cidade_semana = (file, output) => {
       data[id].centroid_long = d.centroid_long;
       data[id].lat = d.lat;
       data[id].lon = d.lon;
-      data[id].nrDiasDobraCasos = d.nrDiasDobraCasos;
-      data[id].nrDiasDobraMortes = d.nrDiasDobraMortes;
       data[id].tendencia_casos = d.tendencia_casos;
       data[id].last14AvgCases = d.last14AvgCases;
       data[id].tendencia_obitos = d.tendencia_obitos;
@@ -855,295 +846,276 @@ const modify_csv_cidade_semana = (file, output) => {
     });
 };
 
-const modify_csv_cidade = (file, coords, centroid, protecao_integrada, output) => {
+const modify_csv_cidade = (
+  file,
+  coords,
+  centroid,
+  protecao_integrada,
+  output
+) => {
   console.log("Preparo do CSV dos Municipios iniciado.");
   const dataArray = [];
-  const api = {}
-  const sapi = {}
+  const api = {};
+  const sapi = {};
   fs.createReadStream(protecao_integrada)
-  .pipe(csv())
-  .on("data", function (data) {
-    api[data['CD_GEOCMU']] = data['API']
-    sapi[data['CD_GEOCMU']] = data['SAPI']
-  })
-  .on("end", function () {
-    fs.createReadStream(file)
-      .pipe(csv())
-      .on("data", function (data) {
-        if (
-          !data.city.includes("CASO SEM LOCALIZAÇÃO DEFINIDA") &&
-          data.city !== "TOTAL"
-        ) {
-          if(data['ibgeID'] in api){
-            data.api = api[data['ibgeID']]
-          } else {
-            data.api = ''
-          }
-          if(data['ibgeID'] in sapi){
-            data.sapi = sapi[data['ibgeID']]
-          } else {
-            data.sapi = ''
-          }
-          dataArray.push(data);
-        }
-      })
-      .on("end", function () {
-        const gpsArray = [];
-        fs.createReadStream(coords)
-          .pipe(csv())
-          .on("data", function (data) {
-            if (!data.id.includes("CASO SEM LOCALIZAÇÃO DEFINIDA")) {
-              gpsArray.push(data);
+    .pipe(csv())
+    .on("data", function (data) {
+      api[data["CD_GEOCMU"]] = data["API"];
+      sapi[data["CD_GEOCMU"]] = data["SAPI"];
+    })
+    .on("end", function () {
+      fs.createReadStream(file)
+        .pipe(csv())
+        .on("data", function (data) {
+          if (
+            !data.city.includes("CASO SEM LOCALIZAÇÃO DEFINIDA") &&
+            data.city !== "TOTAL"
+          ) {
+            if (data["ibgeID"] in api) {
+              data.api = api[data["ibgeID"]];
+            } else {
+              data.api = "";
             }
-          })
-          .on("end", function () {
-            const centroidArray = [];
-            fs.createReadStream(centroid)
-              .pipe(csv())
-              .on("data", function (data) {
-                centroidArray.push(data);
-              })
-              .on("end", function () {
-                dataArray.forEach((d) => {
-                  centroidArray.forEach((c) => {
-                    if (+d.ibgeID == +c.ibgeID) {
-                      d.centroid_lat = c.centroid_lat;
-                      d.centroid_long = c.centroid_long;
-                    }
+            if (data["ibgeID"] in sapi) {
+              data.sapi = sapi[data["ibgeID"]];
+            } else {
+              data.sapi = "";
+            }
+            dataArray.push(data);
+          }
+        })
+        .on("end", function () {
+          const gpsArray = [];
+          fs.createReadStream(coords)
+            .pipe(csv())
+            .on("data", function (data) {
+              if (!data.id.includes("CASO SEM LOCALIZAÇÃO DEFINIDA")) {
+                gpsArray.push(data);
+              }
+            })
+            .on("end", function () {
+              const centroidArray = [];
+              fs.createReadStream(centroid)
+                .pipe(csv())
+                .on("data", function (data) {
+                  centroidArray.push(data);
+                })
+                .on("end", function () {
+                  dataArray.forEach((d) => {
+                    centroidArray.forEach((c) => {
+                      if (+d.ibgeID == +c.ibgeID) {
+                        d.centroid_lat = c.centroid_lat;
+                        d.centroid_long = c.centroid_long;
+                      }
+                    });
                   });
-                });
-                console.log("Cidades: centroide adicionado");
+                  console.log("Cidades: centroide adicionado");
 
-                dataArray.forEach((d) => {
-                  gpsArray.forEach((g) => {
-                    if (+d.ibgeID == +g.ibgeID) {
-                      d.lat = g.lat;
-                      d.lon = g.lon;
-                    }
+                  dataArray.forEach((d) => {
+                    gpsArray.forEach((g) => {
+                      if (+d.ibgeID == +g.ibgeID) {
+                        d.lat = g.lat;
+                        d.lon = g.lon;
+                      }
+                    });
                   });
-                });
-                console.log("Cidades: lat/long cidade principal adicionado");
+                  console.log("Cidades: lat/long cidade principal adicionado");
 
-                const negativoCases = {};
-                const negativoDeaths = {};
-                for (var i = 0; i < dataArray.length; i++) {
-                  if (dataArray[i].ibgeID in negativoCases) {
-                    dataArray[i].newCases =
-                      +dataArray[i].newCases - negativoCases[dataArray[i].ibgeID];
-                    negativoCases[dataArray[i].ibgeID] = 0;
-                    delete negativoCases[dataArray[i].ibgeID];
-                  }
-
-                  if (dataArray[i].newCases < 0) {
-                    if (!(dataArray[i].ibgeID in negativoCases)) {
+                  const negativoCases = {};
+                  const negativoDeaths = {};
+                  for (var i = 0; i < dataArray.length; i++) {
+                    if (dataArray[i].ibgeID in negativoCases) {
+                      dataArray[i].newCases =
+                        +dataArray[i].newCases -
+                        negativoCases[dataArray[i].ibgeID];
                       negativoCases[dataArray[i].ibgeID] = 0;
+                      delete negativoCases[dataArray[i].ibgeID];
                     }
-                    negativoCases[dataArray[i].ibgeID] =
-                      +negativoCases[dataArray[i].ibgeID] - dataArray[i].newCases;
-                    dataArray[i].newCases = 0;
-                  }
 
-                  if (dataArray[i].ibgeID in negativoDeaths) {
-                    dataArray[i].newDeaths =
-                      +dataArray[i].newDeaths -
-                      negativoDeaths[dataArray[i].ibgeID];
-                    negativoDeaths[dataArray[i].ibgeID] = 0;
-                    delete negativoDeaths[dataArray[i].ibgeID];
-                  }
+                    if (dataArray[i].newCases < 0) {
+                      if (!(dataArray[i].ibgeID in negativoCases)) {
+                        negativoCases[dataArray[i].ibgeID] = 0;
+                      }
+                      negativoCases[dataArray[i].ibgeID] =
+                        +negativoCases[dataArray[i].ibgeID] -
+                        dataArray[i].newCases;
+                      dataArray[i].newCases = 0;
+                    }
 
-                  if (dataArray[i].newDeaths < 0) {
-                    if (!(dataArray[i].ibgeID in negativoDeaths)) {
+                    if (dataArray[i].ibgeID in negativoDeaths) {
+                      dataArray[i].newDeaths =
+                        +dataArray[i].newDeaths -
+                        negativoDeaths[dataArray[i].ibgeID];
                       negativoDeaths[dataArray[i].ibgeID] = 0;
+                      delete negativoDeaths[dataArray[i].ibgeID];
                     }
-                    negativoDeaths[dataArray[i].ibgeID] =
-                      +negativoDeaths[dataArray[i].ibgeID] -
-                      dataArray[i].newDeaths;
-                    dataArray[i].newDeaths = 0;
-                  }
-                }
-                console.log("Cidades: casos negativos corrigidos");
 
-                const last7Cases = {};
-                const last7Deaths = {};
-                const last14AvgCases = {};
-                const last14AvgDeaths = {};
-                const average = (list) =>
-                  Math.round(
-                    list.reduce((prev, curr) => +prev + +curr) / list.length
-                  );
-
-                for (var i = 0; i < dataArray.length; i++) {
-                  if (!(dataArray[i].ibgeID in last7Cases)) {
-                    last7Cases[dataArray[i].ibgeID] = [];
+                    if (dataArray[i].newDeaths < 0) {
+                      if (!(dataArray[i].ibgeID in negativoDeaths)) {
+                        negativoDeaths[dataArray[i].ibgeID] = 0;
+                      }
+                      negativoDeaths[dataArray[i].ibgeID] =
+                        +negativoDeaths[dataArray[i].ibgeID] -
+                        dataArray[i].newDeaths;
+                      dataArray[i].newDeaths = 0;
+                    }
                   }
-                  last7Cases[dataArray[i].ibgeID].push(dataArray[i].newCases);
-                  if (last7Cases[dataArray[i].ibgeID].length > 7) {
-                    last7Cases[dataArray[i].ibgeID].shift();
-                  }
+                  console.log("Cidades: casos negativos corrigidos");
 
-                  if (last7Cases[dataArray[i].ibgeID].length < 7) {
-                    dataArray[i].meanCases = +dataArray[i].newCases;
-                  } else {
-                    dataArray[i].meanCases = average(
-                      last7Cases[dataArray[i].ibgeID]
+                  const last7Cases = {};
+                  const last7Deaths = {};
+                  const last14AvgCases = {};
+                  const last14AvgDeaths = {};
+                  const average = (list) =>
+                    Math.round(
+                      list.reduce((prev, curr) => +prev + +curr) / list.length
                     );
-                  }
 
-                  if (!(dataArray[i].ibgeID in last14AvgCases)) {
-                    last14AvgCases[dataArray[i].ibgeID] = [];
-                  }
-                  last14AvgCases[dataArray[i].ibgeID].push(
-                    dataArray[i].meanCases
-                  );
-                  if (last14AvgCases[dataArray[i].ibgeID].length > 14) {
-                    last14AvgCases[dataArray[i].ibgeID].shift();
-                  }
-                  if (dataArray[i].totalCases < 100) {
-                    dataArray[i].tendencia_casos = "Sem ou poucos casos";
-                    dataArray[i].last14AvgCases = "";
-                  } else if (last14AvgCases[dataArray[i].ibgeID].length < 14) {
-                    dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
-                    dataArray[i].last14AvgCases = "";
-                  } else {
-                    dataArray[i].last14AvgCases = last14AvgCases[
-                      dataArray[i].ibgeID
-                    ].join("|");
-                    const d1 = last14AvgCases[dataArray[i].ibgeID][0];
-                    const d2 = last14AvgCases[dataArray[i].ibgeID][13];
-                    if (d2 > d1 * 2.5) {
-                      dataArray[i].tendencia_casos = "Crescendo 3";
-                    } else if (d2 > d1 * 1.5) {
-                      dataArray[i].tendencia_casos = "Crescendo 2";
-                    } else if (d2 > d1 * 1.05) {
-                      dataArray[i].tendencia_casos = "Crescendo 3";
-                    } else if (d2 > d1 * 0.95) {
-                      dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
+                  for (var i = 0; i < dataArray.length; i++) {
+                    if (!(dataArray[i].ibgeID in last7Cases)) {
+                      last7Cases[dataArray[i].ibgeID] = [];
+                    }
+                    last7Cases[dataArray[i].ibgeID].push(dataArray[i].newCases);
+                    if (last7Cases[dataArray[i].ibgeID].length > 7) {
+                      last7Cases[dataArray[i].ibgeID].shift();
+                    }
+
+                    if (last7Cases[dataArray[i].ibgeID].length < 7) {
+                      dataArray[i].meanCases = +dataArray[i].newCases;
                     } else {
-                      dataArray[i].tendencia_casos = "Diminuindo";
+                      dataArray[i].meanCases = average(
+                        last7Cases[dataArray[i].ibgeID]
+                      );
                     }
-                  }
 
-                  if (!(dataArray[i].ibgeID in last7Deaths)) {
-                    last7Deaths[dataArray[i].ibgeID] = [];
-                  }
-                  last7Deaths[dataArray[i].ibgeID].push(dataArray[i].newDeaths);
-                  if (last7Deaths[dataArray[i].ibgeID].length > 7) {
-                    last7Deaths[dataArray[i].ibgeID].shift();
-                  }
-
-                  if (last7Deaths[dataArray[i].ibgeID].length < 7) {
-                    dataArray[i].meanDeaths = +dataArray[i].newDeaths;
-                  } else {
-                    dataArray[i].meanDeaths = average(
-                      last7Deaths[dataArray[i].ibgeID]
+                    if (!(dataArray[i].ibgeID in last14AvgCases)) {
+                      last14AvgCases[dataArray[i].ibgeID] = [];
+                    }
+                    last14AvgCases[dataArray[i].ibgeID].push(
+                      dataArray[i].meanCases
                     );
-                  }
+                    if (last14AvgCases[dataArray[i].ibgeID].length > 14) {
+                      last14AvgCases[dataArray[i].ibgeID].shift();
+                    }
+                    if (dataArray[i].totalCases < 100) {
+                      dataArray[i].tendencia_casos = "Sem ou poucos casos";
+                      dataArray[i].last14AvgCases = "";
+                    } else if (
+                      last14AvgCases[dataArray[i].ibgeID].length < 14
+                    ) {
+                      dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
+                      dataArray[i].last14AvgCases = "";
+                    } else {
+                      dataArray[i].last14AvgCases = last14AvgCases[
+                        dataArray[i].ibgeID
+                      ].join("|");
+                      const d1 = last14AvgCases[dataArray[i].ibgeID][0];
+                      const d2 = last14AvgCases[dataArray[i].ibgeID][13];
+                      if (d2 > d1 * 2.5) {
+                        dataArray[i].tendencia_casos = "Crescendo 3";
+                      } else if (d2 > d1 * 1.5) {
+                        dataArray[i].tendencia_casos = "Crescendo 2";
+                      } else if (d2 > d1 * 1.05) {
+                        dataArray[i].tendencia_casos = "Crescendo 3";
+                      } else if (d2 > d1 * 0.95) {
+                        dataArray[i].tendencia_casos =
+                          "Aproximadamente o mesmo";
+                      } else {
+                        dataArray[i].tendencia_casos = "Diminuindo";
+                      }
+                    }
 
-                  if (!(dataArray[i].ibgeID in last14AvgDeaths)) {
-                    last14AvgDeaths[dataArray[i].ibgeID] = [];
-                  }
-                  last14AvgDeaths[dataArray[i].ibgeID].push(
-                    dataArray[i].meanDeaths
-                  );
-                  if (last14AvgDeaths[dataArray[i].ibgeID].length > 14) {
-                    last14AvgDeaths[dataArray[i].ibgeID].shift();
-                  }
-                  if (dataArray[i].deaths < 10) {
-                    dataArray[i].tendencia_obitos = "Sem ou poucos casos";
-                  } else if (last14AvgDeaths[dataArray[i].ibgeID].length < 14) {
-                    dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
-                  } else {
-                    const d1 = last14AvgDeaths[dataArray[i].ibgeID][0];
-                    const d2 = last14AvgDeaths[dataArray[i].ibgeID][13];
-                    if (d2 > d1 * 2.5) {
-                      dataArray[i].tendencia_obitos = "Crescendo 3";
-                    } else if (d2 > d1 * 1.5) {
-                      dataArray[i].tendencia_obitos = "Crescendo 2";
-                    } else if (d2 > d1 * 1.05) {
-                      dataArray[i].tendencia_obitos = "Crescendo 3";
-                    } else if (d2 > d1 * 0.95) {
+                    if (!(dataArray[i].ibgeID in last7Deaths)) {
+                      last7Deaths[dataArray[i].ibgeID] = [];
+                    }
+                    last7Deaths[dataArray[i].ibgeID].push(
+                      dataArray[i].newDeaths
+                    );
+                    if (last7Deaths[dataArray[i].ibgeID].length > 7) {
+                      last7Deaths[dataArray[i].ibgeID].shift();
+                    }
+
+                    if (last7Deaths[dataArray[i].ibgeID].length < 7) {
+                      dataArray[i].meanDeaths = +dataArray[i].newDeaths;
+                    } else {
+                      dataArray[i].meanDeaths = average(
+                        last7Deaths[dataArray[i].ibgeID]
+                      );
+                    }
+
+                    if (!(dataArray[i].ibgeID in last14AvgDeaths)) {
+                      last14AvgDeaths[dataArray[i].ibgeID] = [];
+                    }
+                    last14AvgDeaths[dataArray[i].ibgeID].push(
+                      dataArray[i].meanDeaths
+                    );
+                    if (last14AvgDeaths[dataArray[i].ibgeID].length > 14) {
+                      last14AvgDeaths[dataArray[i].ibgeID].shift();
+                    }
+                    if (dataArray[i].deaths < 10) {
+                      dataArray[i].tendencia_obitos = "Sem ou poucos casos";
+                    } else if (
+                      last14AvgDeaths[dataArray[i].ibgeID].length < 14
+                    ) {
                       dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
                     } else {
-                      dataArray[i].tendencia_obitos = "Diminuindo";
-                    }
-                  }
-                }
-                console.log(
-                  "Cidades: média ultimos 7 dias de obitos/casos adicionado"
-                );
-
-                dataArray[0].nrDiasDobraCasos = 0;
-                dataArray[0].nrDiasDobraMortes = 0;
-                for (var i = dataArray.length - 1; i > 0; i--) {
-                  for (var j = i - 1; j >= 0; j--) {
-                    if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
-                      if (
-                        dataArray[j].totalCases <=
-                        dataArray[i].totalCases / 2
-                      ) {
-                        const date1 = new Date(dataArray[j].date);
-                        const date2 = new Date(dataArray[i].date);
-                        const diffTime = Math.abs(date2 - date1);
-                        const diffDays = Math.ceil(
-                          diffTime / (1000 * 60 * 60 * 24)
-                        );
-                        dataArray[i].nrDiasDobraCasos = diffDays;
-                        break;
+                      const d1 = last14AvgDeaths[dataArray[i].ibgeID][0];
+                      const d2 = last14AvgDeaths[dataArray[i].ibgeID][13];
+                      if (d2 > d1 * 2.5) {
+                        dataArray[i].tendencia_obitos = "Crescendo 3";
+                      } else if (d2 > d1 * 1.5) {
+                        dataArray[i].tendencia_obitos = "Crescendo 2";
+                      } else if (d2 > d1 * 1.05) {
+                        dataArray[i].tendencia_obitos = "Crescendo 3";
+                      } else if (d2 > d1 * 0.95) {
+                        dataArray[i].tendencia_obitos =
+                          "Aproximadamente o mesmo";
+                      } else {
+                        dataArray[i].tendencia_obitos = "Diminuindo";
                       }
                     }
                   }
-                  if (!dataArray[i].nrDiasDobraCasos) {
-                    dataArray[i].nrDiasDobraCasos = 0;
-                  }
-                  for (var j = i - 1; j >= 0; j--) {
-                    if (+dataArray[i].ibgeID == +dataArray[j].ibgeID) {
-                      if (dataArray[j].deaths <= dataArray[i].deaths / 2) {
-                        const date1 = new Date(dataArray[j].date);
-                        const date2 = new Date(dataArray[i].date);
-                        const diffTime = Math.abs(date2 - date1);
-                        const diffDays = Math.ceil(
-                          diffTime / (1000 * 60 * 60 * 24)
-                        );
-                        dataArray[i].nrDiasDobraMortes = diffDays;
-                        break;
-                      }
+                  console.log(
+                    "Cidades: média ultimos 7 dias de obitos/casos adicionado"
+                  );
+
+                  const filterWeek =
+                    dataArray[dataArray.length - 1].epi_week - 5;
+                  const dataArrayFiltered = [];
+
+                  dataArray.forEach((d) => {
+                    if (d.epi_week > filterWeek) {
+                      dataArrayFiltered.push(d);
                     }
-                  }
-                  if (!dataArray[i].nrDiasDobraMortes) {
-                    dataArray[i].nrDiasDobraMortes = 0;
-                  }
-                }
-                console.log(
-                  "Cidades: número de dias para dobrar casos/obitos adicionado"
-                );
+                  });
 
-                const fields = Object.keys(dataArray[0]);
-                const opts = { fields };
-                const parser = new Parser(opts);
-                const result = parser.parse(dataArray);
+                  const fields = Object.keys(dataArrayFiltered[0]);
+                  const opts = { fields };
+                  const parser = new Parser(opts);
+                  const result = parser.parse(dataArrayFiltered);
 
-                fs.writeFileSync(output, result);
-                console.log("Preparo do CSV dos Municipios FINALIZADO!");
-                modify_csv_cidade_semana(
-                  output,
-                  `${output.split(".")[0]}_semana.csv`
-                );
-                agrupa_area_geografica(
-                  output,
-                  `${output.split(".")[0]}_api.csv`,
-                  'api',
-                  centroide_api
-                );
-                agrupa_area_geografica(
-                  output,
-                  `${output.split(".")[0]}_sapi.csv`,
-                  'sapi',
-                  centroide_sapi
-                );
-              });
-          });
-      });
-  });
+                  fs.writeFileSync(output, result);
+                  console.log("Preparo do CSV dos Municipios FINALIZADO!");
+                  modify_csv_cidade_semana(
+                    output,
+                    `${output.split(".")[0]}_semana.csv`
+                  );
+                  agrupa_area_geografica(
+                    output,
+                    `${output.split(".")[0]}_api.csv`,
+                    "api",
+                    centroide_api
+                  );
+                  agrupa_area_geografica(
+                    output,
+                    `${output.split(".")[0]}_sapi.csv`,
+                    "sapi",
+                    centroide_sapi
+                  );
+                });
+            });
+        });
+    });
 };
 
 module.exports = {
