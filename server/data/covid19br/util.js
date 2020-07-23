@@ -351,35 +351,35 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           data[id].nome = d[chave];
           data[id].date = d.date;
           data[id].newDeaths = 0;
+          data[id].deaths = 0;
           data[id].newCases = 0;
+          data[id].totalCases = 0;
           data[id].recovered = 0;
-          data[id].meanCases = 0;
-          data[id].meanDeaths = 0;
-          data[id].meanRecovered = 0;
+          data[id].totalRecovered = 0;
+          data[id].populacao = 0;
           data[id].CENTROID_X = centroide[d[chave]][0];
           data[id].CENTROID_Y = centroide[d[chave]][1];
         }
 
         data[id].newDeaths += +d.newDeaths;
-        data[id].deaths = +d.deaths;
+        data[id].deaths += +d.deaths;
         data[id].newCases += +d.newCases;
-        data[id].totalCases = +d.totalCases;
-        data[id].deaths_per_100k_inhabitants = +d.deaths_per_100k_inhabitants;
-        data[
-          id
-        ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
-        data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
+        data[id].totalCases += +d.totalCases;
+        data[id].populacao +=
+          +data[id].totalCases / +d.totalCases_per_100k_inhabitants;
         data[id].recovered += +d.recovered;
-        data[id].totalRecovered = +d.totalRecovered;
-
-        data[id].meanCases = +d.meanCases + data[id].meanCases;
-        data[id].meanDeaths = +d.meanDeaths + data[id].meanDeaths;
-        data[id].meanRecovered = +d.meanRecovered + data[id].meanRecovered;
+        data[id].totalRecovered += +d.totalRecovered;
       }
     })
     .on("end", function () {
       const dataArray = [];
       for (var key in data) {
+        data[key].deaths_by_totalCases =
+          data[key].deaths / data[key].totalCases;
+        data[key].totalCases_per_100k_inhabitants =
+          data[key].totalCases / data[key].populacao;
+        data[key].deaths_per_100k_inhabitants =
+          data[key].deaths / data[key].populacao;
         dataArray.push(data[key]);
       }
       const last7Cases = {};
