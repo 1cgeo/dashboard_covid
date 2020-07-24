@@ -9,6 +9,10 @@ class PopoverLayer extends Layer {
         this.create()
     }
 
+    getDataset(){
+        return this.options.popoverLayer.datasetCallback()
+    }
+
     getLayers() {
         return this.vectorTiles
     }
@@ -109,14 +113,31 @@ class PopoverLayer extends Layer {
     }
 
     clickFeature(e) {
-        var feat = e.layer
-        this.zoomToFeature(feat)
-        this.highlightFeature(feat)
+        var layer = e.layer
+        this.zoomToFeature(layer)
+        this.highlightFeature(layer)
         this.showPopupThemeLayer(e)
-        this.options.map.triggerChangeLocation(feat)
+        this.setCurrentFeatureProperties(layer.properties)
+        this.options.map.triggerChangeLocation(layer)
     }
 
-    zoomToFeature(feat){
+    getCurrentFeatureName(){
+        var prop = this.getCurrentFeatureProperties()
+        if(!prop){
+            return null
+        }
+        return prop[this.getFieldTitle()]
+    }
+
+    setCurrentFeatureProperties(properties) {
+        this.currentlayerProperties = properties
+    }
+
+    getCurrentFeatureProperties() {
+        return this.currentlayerProperties
+    }
+
+    zoomToFeature(feat) {
         this.options.map.setBounds([
             [feat.properties.ymin, feat.properties.xmin],
             [feat.properties.ymax, feat.properties.xmax]
@@ -124,11 +145,11 @@ class PopoverLayer extends Layer {
     }
 
     setJsonData() {
-        if (this.options.id == 0) {
-            this.lastData = this.options.map.getDataSource().getStateChoroplethData()
-            return
-        }
-        this.lastData = this.options.map.getDataSource().getCityChoroplethData()
+        this.lastData = this.getDataset()
+    }
+
+    getStatisticDataset(){
+        return this.options.popoverLayer.statisticDataset()
     }
 
     getDefaultStyle() {
@@ -164,9 +185,25 @@ class PopoverLayer extends Layer {
         }
     }
 
+    getCurrentFeatureId(){
+        return this.getCurrentFeatureProperties()[this.getFieldIdGeojson()]
+    }
+
+    getFieldIdGeojson(){
+        return this.options.popoverLayer.fieldIdGeojson
+    }
+
+    getFieldIdDataset(){
+        return this.options.popoverLayer.fieldIdDataset
+    }
+
+    getFieldTitle(){
+        return this.options.popoverLayer.fieldTitle
+    }
+
     showPopupThemeLayer(e) {
         var props = e.layer.properties
-        var featId = (props.CD_GEOCUF) ? props.CD_GEOCUF : props.CD_GEOCMU
+        var featId = props[this.getFieldIdGeojson()]
         var data = this.getFeatureData(featId)
         if (!data) return
         var content = this.getPopupContent(props, data)
@@ -185,10 +222,6 @@ class PopoverLayer extends Layer {
         }
     }
 
-    mFormatter(num) {
-        return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + ' mil' : Math.sign(num) * Math.abs(num)
-    }
-
     getPopupContent(props, data) {
         var lineChart = new LineChart({
             width: 80,
@@ -200,58 +233,66 @@ class PopoverLayer extends Layer {
             )
         })
         var svgLine = lineChart.create()
-
-        return `
-        <div class="grid-container-popup">
-            <div class="header-popup">
-                <div><b>${(props.NM_ESTADO) ? props.NM_ESTADO : props.NM_MUNICIP}</b></div>
-            </div>
-            <div id="linechart-popup" class="linechart-popup">
-            ${svgLine ? `<span>Tendência de casos dos últimos 14 dias</span>
-            <div>${svgLine}</div>` : ''}
-            </div>
-            <div class="row1-popup">
-                <div><b>Nº de casos: </b></div>
-            </div>
-            <div class="value1-popup">
-                <div class="text-center">${(data) ? this.mFormatter(data.totalCases) : 'sem dados'}</div>
-            </div>
-            <div class="row2-popup">
-                <div><b>Casos por 100 mil hab.: </b></div>
-            </div>
-            <div class="value2-popup">
-                <div class="text-center">${(data) ? Math.floor(data.totalCases_per_100k_inhabitants) : 'sem dados'}</div>
-            </div>
-            <div class="row3-popup">
-                <div><b>Nº de óbitos: </b></div>
-            </div>
-            <div class="value3-popup">
-                <div class="text-center">${(data) ? this.mFormatter(data.deaths) : 'sem dados'}</div>
-            </div>
-            <div class="row4-popup">
-                <div><b>Óbitos por 100 mil hab.:</b></div>
-            </div>
-            <div class="value4-popup">
-                <div class="text-center">${(data) ? Math.floor(data.deaths_per_100k_inhabitants) : 'sem dados'}</div>
-            </div>
-            <div class="row5-popup">
-                <div><b>Letalidade: </b></div>
-            </div>
-            <div class="value5-popup">
-                <div class="text-center">${(data) ? `${((+data.deaths / +data.totalCases) * 100).toFixed(1)} %` : 'sem dados'}</div>
-            </div>
-            <div class="row6-popup">
-                <div><b>Dias para dobrar casos: </b></div>
-            </div>
-            <div class="value6-popup">
-                <div class="text-center">${(data) ? data.nrDiasDobraCasos : 'sem dados'}</div>
-            </div>
-            <div class="row7-popup">
-                <div><b>Dias para dobrar óbitos: </b></div>
-            </div>
-            <div class="value7-popup">
-                <div class="text-center">${(data) ? data.nrDiasDobraMortes : 'sem dados'}</div>
-            </div>
-        </div>`
+        var popupContent
+        popupContent = `<div class="grid-container-popup">
+                <div class="header-popup">
+                    <div><b>${props[this.getFieldTitle()]}</b></div>
+                </div>
+                <div id="linechart-popup" class="linechart-popup">
+                ${svgLine ? `<span>Tendência de casos dos últimos 14 dias</span>
+                <div>${svgLine}</div>` : ''}
+                </div>
+                ${(data && data.totalCases) ? `
+                <div class="row1-popup">
+                    <div><b>Nº de casos: </b></div>
+                </div>
+                <div class="value1-popup">
+                    <div class="text-center">${(data) ? mFormatter(data.totalCases) : 'sem dados'}</div>
+                </div>
+                `: ``}
+                ${(data && data.totalCases_per_100k_inhabitants)?`
+                <div class="row2-popup">
+                    <div><b>Casos por 100 mil hab.: </b></div>
+                </div>
+                <div class="value2-popup">
+                    <div class="text-center">${(data) ? Math.floor(data.totalCases_per_100k_inhabitants) : 'sem dados'}</div>
+                </div>
+                `:``}
+                ${(data && data.deaths)?`
+                <div class="row3-popup">
+                    <div><b>Nº de óbitos: </b></div>
+                </div>
+                <div class="value3-popup">
+                    <div class="text-center">${(data) ? mFormatter(data.deaths) : 'sem dados'}</div>
+                </div>
+                `:``}
+                ${(data && data.deaths_per_100k_inhabitants)? `
+                <div class="row4-popup">
+                    <div><b>Óbitos por 100 mil hab.:</b></div>
+                </div>
+                <div class="value4-popup">
+                    <div class="text-center">${(data) ? Math.floor(data.deaths_per_100k_inhabitants) : 'sem dados'}</div>
+                </div>
+                `: ``}
+                <div class="row5-popup">
+                    <div><b>Letalidade: </b></div>
+                </div>
+                <div class="value5-popup">
+                    <div class="text-center">${(data) ? `${((+data.deaths / +data.totalCases) * 100).toFixed(1)} %` : 'sem dados'}</div>
+                </div>
+                <div class="row6-popup">
+                    <div><b>Dias para dobrar casos: </b></div>
+                </div>
+                <div class="value6-popup">
+                    <div class="text-center">${(data) ? data.nrDiasDobraCasos : 'sem dados'}</div>
+                </div>
+                <div class="row7-popup">
+                    <div><b>Dias para dobrar óbitos: </b></div>
+                </div>
+                <div class="value7-popup">
+                    <div class="text-center">${(data) ? data.nrDiasDobraMortes : 'sem dados'}</div>
+                </div>
+            </div>`
+        return popupContent
     }
 }

@@ -3,35 +3,28 @@ class Status {
     this.dataSource = dataSource;
   }
 
-  numberWithPoint(x) {
-    if (x === 'Sem dados') {
-      return x
-    }
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
-
-
   loadData(data, locationName) {
     this.setLocationName(locationName);
     if (data.length < 1) {
       this.clean();
       return;
     }
-    var totalCases = this.reduceValue(data, "newCases")
-    var totalDeaths = this.reduceValue(data, "newDeaths")
     var lastdata = data[data.length - 1]
-    this.setTotalCases(this.numberWithPoint(totalCases));
-    this.setRecuperadosCases(this.numberWithPoint(this.reduceValue(data, "recovered")));
-    this.setTotalDeaths(this.numberWithPoint(totalDeaths));
+    var totalCases = lastdata.totalCases
+    var totalDeaths = lastdata.deaths
+    this.setTotalCases(numberWithPoint(totalCases));
+    if (lastdata.totalRecovered) {
+      this.setRecuperadosCases(numberWithPoint(lastdata.totalRecovered))
+    }
+    this.setTotalDeaths(numberWithPoint(totalDeaths));
     this.setLethality(`${((totalDeaths / totalCases) * 100).toFixed(1)} %`)
-    var suffix = (lastdata.week)? 'última semana' : 'último dia'
-    this.setLastCases(this.numberWithPoint(lastdata.newCases), suffix)
-    this.setLastDeaths(this.numberWithPoint(lastdata.newDeaths), suffix)
-    this.setLastRecovered(this.numberWithPoint(lastdata.recovered), suffix)
-
+    var suffix = (lastdata.week) ? 'última semana' : 'último dia'
+    this.setLastCases(numberWithPoint(lastdata.newCases), suffix)
+    this.setLastDeaths(numberWithPoint(lastdata.newDeaths), suffix)
+    this.setLastRecovered(numberWithPoint(lastdata.recovered), suffix)
   }
 
-  reduceValue(data, field) {
+  /* reduceValue(data, field) {
     if (data[data.length - 1][field] === "Sem dados") {
       return "Sem dados";
     }
@@ -40,7 +33,7 @@ class Status {
       total += +data[i][field];
     }
     return total;
-  }
+  } */
 
   clean() {
     this.setTotalCases("Sem dados")

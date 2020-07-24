@@ -20,7 +20,7 @@ class ChoroplethTendencyLayer extends Layer {
     updateAnimation() {
         var processKey = this.createUUID()
         this.currentProcessKey = processKey
-        var jsonData = this.getJsonData()
+        var jsonData = this.getDataset()
         if (jsonData.length < 1) { return }
         var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
         if (mapLayers.length < 1) { return }
@@ -86,17 +86,11 @@ class ChoroplethTendencyLayer extends Layer {
         }
     }
 
-    getJsonData() {
-        if (this.options.layerId == 0) {
-            return this.options.map.getDataSource().getStateChoroplethData()
-        }
-        return this.options.map.getDataSource().getCityChoroplethData()
-    }
-
     create() {
+        this.loadTimeInterval()
         var processKey = this.createUUID()
         this.currentProcessKey = processKey
-        var jsonData = this.getJsonData()
+        var jsonData = this.getDataset()
         if (jsonData.length < 1) { return }
         var mapLayers = this.options.map.getCurrentLayerOptions().mapLayers
         this.lastData = jsonData

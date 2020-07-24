@@ -43,10 +43,7 @@ class CovidMap {
         }
         search.addTo(this.getMap());
         $("#locations").easyAutocomplete({
-            data: this.getDataSource().getCityChoroplethData().data
-            /* this.getDataSource().getStateChoroplethData().data.concat(
-                this.getDataSource().getCityChoroplethData().data
-            ) */,
+            data: this.getDataSource().getSearchData(),
             getValue: "name",
             list: {
                 match: {
@@ -54,7 +51,7 @@ class CovidMap {
                 },
                 onChooseEvent: () => {
                     var selectedData = $("#locations").getSelectedItemData()
-                    if(this.getCurrentLayerOptions().id == 0){
+                    if (this.getCurrentLayerOptions().id == 0) {
                         this.loadMapData(1)
                         $("input[name='layer'][value='1']").prop('checked', true)
                     }
@@ -70,8 +67,16 @@ class CovidMap {
         this.events.connect(eventName, listener)
     }
 
-    triggerChangeLocation(layerClicked) {
-        this.events.trigger('changeLocation', layerClicked)
+    getCurrentFeatureName() {
+        var locationName = this.getCurrentPopoverLayer().getCurrentFeatureName()
+        if (!locationName) {
+            return "Brasil";
+        }
+        return locationName
+    }
+
+    triggerChangeLocation(layerClicked, idField, titleField) {
+        this.events.trigger('changeLocation', layerClicked, idField, titleField)
     }
 
     triggerChangeLayer(layerId) {
@@ -94,9 +99,13 @@ class CovidMap {
         this.map.on('click', () => {
             this.closeSidebar()
             if (this.getCurrentPopoverLayer() && !this.getCurrentPopoverLayer().eventWasReceived()) {
-                this.zoomToDefaultBounds()
+                this.setView(
+                    this.getCurrentLayerOptions().center,
+                    this.getCurrentLayerOptions().zoom
+                )
                 this.map.closePopup()
-                this.map.setZoom(4)
+                //this.map.setZoom(4)
+                this.getCurrentPopoverLayer().setCurrentFeatureProperties(null)
                 this.triggerChangeLocation()
             }
         })
@@ -108,6 +117,10 @@ class CovidMap {
         this.map.on('movestart', () => {
             this.closeSidebar()
         })
+        /* this.map.on('moveend', () => {
+            console.log(this.map.getCenter())
+            console.log(this.map.getZoom())
+        }); */
     }
 
     closeSidebar() {
@@ -147,8 +160,8 @@ class CovidMap {
         this.map.fitBounds(bbox)
     }
 
-    zoomToDefaultBounds() {
-        this.map.fitBounds(this.options.bounds).setZoom(4)
+    setView(center, zoomLevel) {
+        this.map.setView(center, zoomLevel)
     }
 
     create(options) {
@@ -157,8 +170,7 @@ class CovidMap {
             minZoom: 3,
             zoomControl: false,
             maxBounds: this.options.maxBounds,
-        }
-        ).fitBounds(this.options.bounds).setZoom(4)
+        })//.fitBounds(this.options.bounds).setZoom(4)
     }
 
     createFeatureGroup() {
@@ -274,19 +286,23 @@ class CovidMap {
     }
 
     loadMapData(layerId) {
-        var themeId = 0
+        var themeId
         var layerOptions = this.dataSource.getMapLayer(+layerId)
         if (this.getCurrentThemeLayer()) {
             themeId = this.getCurrentThemeLayer().getOptions().id
         }
         this.createThemesButtons(
             layerOptions.themeLayers,
-            (this.hasThemeId(layerOptions, themeId)) ? themeId : 0,
+            (this.hasThemeId(layerOptions, themeId)) ? themeId : layerOptions.themeLayers[0].id,
             this.loadThemeLayer.bind(this)
         )
-        this.loadPopoverLayer(layerOptions)
         this.setCurrentLayerOptions(layerOptions)
+        this.setView(
+            layerOptions.center,
+            layerOptions.zoom
+        )
         this.loadThemeLayer(themeId)
+        this.loadPopoverLayer(layerOptions)
         this.triggerChangeLayer(layerId)
     }
 
@@ -296,9 +312,7 @@ class CovidMap {
             return theme.id == themeLayerId
         })
         if (!themeOptions) {
-            themeOptions = this.getCurrentLayerOptions().themeLayers.find((theme) => {
-                return theme.id == 0
-            })
+            themeOptions = this.getCurrentLayerOptions().themeLayers[0]
         }
         themeOptions.layerId = this.getCurrentLayerOptions().id
         themeOptions.idField = this.getCurrentLayerOptions().idField

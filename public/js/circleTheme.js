@@ -41,23 +41,8 @@ class CirclesLayer extends Layer {
         this.layer.clearLayers()
         this.circlesData.ids = []
         this.circlesData.features = []
-        this.layer.addData(this.getGeoJson())
+        this.layer.addData(this.getDataset())
         this.updatePropSymbols()
-    }
-
-    getGeoJson() {
-        var jsonData
-        if (this.options.layerId == 0) {
-            jsonData = this.options.map.getDataSource().getStateCircleData()
-        } else {
-            jsonData = this.options.map.getDataSource().getCityCircleData()
-        }
-        jsonData.features = this.getReduceGeojsonFeatures(
-            jsonData.features,
-            "ibgeID",
-            this.options.attributeName,
-        )
-        return jsonData
     }
 
     getCircleStyle() {
@@ -65,6 +50,7 @@ class CirclesLayer extends Layer {
     }
 
     create() {
+        this.loadTimeInterval()
         setTimeout(() => {
             this.loadVectorTile()
         }, 1)
@@ -77,7 +63,7 @@ class CirclesLayer extends Layer {
 
     loadGeoJson() {
         this.layer = L.geoJson(
-            this.getGeoJson(), {
+            this.getDataset(), {
                 pointToLayer: (feature, latlng) => {
                     if (!latlng.lat || !latlng.lng) return
                     var circle = L.circleMarker(
@@ -165,7 +151,7 @@ class CirclesLayer extends Layer {
                 width: ${(currentRadius * 2)}px;
                 height: ${(currentRadius * 2)}px; 
                 margin-left:${margin}px`);
-                $(legendCircle).append(`<span class='legendValue'>${this.mFormatter(value)}</span>`)
+                $(legendCircle).append(`<span class='legendValue'>${mFormatter(value)}</span>`)
                 $(symbolsContainer).append(legendCircle);
                 lastRadius = currentRadius;
             }).bind(this))

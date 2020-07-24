@@ -8,7 +8,6 @@ class SliderDate {
         this.setOptions(options)
         this.createSlider()
         this.createEvents()
-        this.connectReloadSliderButton()
         this.connectPlayButton()
     }
 
@@ -46,64 +45,34 @@ class SliderDate {
         this.connectSliderEvents()
     }
 
-    connectReloadSliderButton() {
-        $("#group-data-by").change(() => {
-            if ($("#group-data-by").val() == 'week') {
-                var maxWeek = this.options.dataSource.getMaxWeek()
-                this.updateSliderOptions({
-                    start: [9, maxWeek],
-                    step: 1,
-                    connect: true,
-                    behaviour: 'drag',
-                    range: {
-                        'min': 9,
-                        'max': maxWeek
-                    }
-                })
-                return
-            }
-            this.updateSliderOptions({
-                range: {
-                    min: this.options.dataTimeInterval[0],
-                    max: this.options.dataTimeInterval[1]
-                },
-                //tooltips: [true, true],
-                behaviour: 'drag',
-                connect: true,
-                step: 24 * 60 * 60 * 1000,
-                start: this.options.dataTimeInterval,
-                format: {
-                    from: Number,
-                    to: function (value) {
-                        return new Date(value);
-                    }
-                }
-            })
-
-        });
-    }
-
-
-    updateSliderOptions(newOptions) {
+    reloadSliderOptions(newOptions) {
         this.dateSlider.noUiSlider.destroy()
         var dateSlider = document.getElementById("slider-date");
         noUiSlider.create(dateSlider, newOptions)
         this.dateSlider = dateSlider
         this.connectSliderEvents()
-        setTimeout(() => {
-            this.events.trigger('endChange', newOptions.start.map(v => Math.floor(v)))
-        }, 1000)
+        /* setTimeout(() => {
+            this.events.trigger('changeGroupData', newOptions.start.map(v => Math.floor(v)))
+        }, 1000) */
     }
+
+    /* updateSliderOtions(options) {
+        this.dateSlider.noUiSlider.updateOptions(options)
+    } */
 
     connectSliderEvents() {
         this.dateSlider.noUiSlider.on('end', (timeInterval) => {
             setTimeout(() => this.events.trigger('endChange', timeInterval.map(v => Math.floor(v))), 1000)
         })
         this.dateSlider.noUiSlider.on('update', (values, handle) => {
-            $(`#${this.elementIds[handle]}`).text(
-                this.getLabelValue(values, handle)
-            )
+            this.setLabelSlider(values, handle)
         })
+    }
+
+    setLabelSlider(values, handle) {
+        $(`#${this.elementIds[handle]}`).text(
+            this.getLabelValue(values, handle)
+        )
     }
 
     getLabelValue(values, handle) {
@@ -161,10 +130,6 @@ class SliderDate {
         $('.play-button i').text('stop')
     }
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     async playByDay() {
         this.startAnimationCb()
         this.desable()
@@ -181,11 +146,11 @@ class SliderDate {
                 this.stopAnimationCb([startDate, endDate])
                 return
             }
-            currentDate.setDate(currentDate.getDate() + 2)
+            currentDate.setDate(currentDate.getDate() + 1)
             currentDate = (currentDate > endDate) ? endDate : currentDate
             this.dateSlider.noUiSlider.set([startDate, currentDate])
             this.updateAnimationCb([startDate, currentDate])
-            await this.sleep(1000)
+            await sleep(1000)
         }
         //$('#current-date').text('')
         //$('#end-date').removeClass('active')
@@ -211,7 +176,7 @@ class SliderDate {
             currentWeek = (currentWeek > endWeek) ? endWeek : currentWeek
             this.dateSlider.noUiSlider.set([startWeek, currentWeek])
             this.updateAnimationCb([startWeek, currentWeek])
-            await this.sleep(4000)
+            await sleep(4000)
         }
         this.playActive = false
         this.setPlayButtonStyle()

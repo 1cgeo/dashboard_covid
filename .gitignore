@@ -4,6 +4,7 @@
 
 .vscode
 
+access.log
 cidades_original.csv
 coords_cidade_original.csv
 cidades.csv

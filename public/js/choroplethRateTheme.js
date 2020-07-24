@@ -20,7 +20,7 @@ class ChoroplethRateLayer extends Layer {
   updateAnimation() {
     var processKey = this.createUUID();
     this.currentProcessKey = processKey;
-    var jsonData = this.getJsonData();
+    var jsonData = this.getDataset();
     if (jsonData.length < 1) {
       return;
     }
@@ -61,15 +61,15 @@ class ChoroplethRateLayer extends Layer {
       this.options.map.getMap().removeControl(this.currentLegend);
       this.currentLegend = null;
     }
-    for (var i = this.vectorTiles.length; i--; ) {
+    for (var i = this.vectorTiles.length; i--;) {
       this.options.map.getFeatureGroup().removeLayer(this.vectorTiles[i]);
     }
     this.layers = [];
-    for (var i = this.limits.length; i--; ) {
+    for (var i = this.limits.length; i--;) {
       this.options.map.getFeatureGroup().removeLayer(this.limits[i]);
     }
     this.limits = [];
-    for (var i = this.scenes.length; i--; ) {
+    for (var i = this.scenes.length; i--;) {
       this.options.map.getFeatureGroup().removeLayer(this.scenes[i]);
     }
     this.scenes = [];
@@ -91,17 +91,24 @@ class ChoroplethRateLayer extends Layer {
     }
   }
 
-  getJsonData() {
+ /*  getJsonData() {
     if (this.options.layerId == 0) {
       return this.options.map.getDataSource().getStateChoroplethData();
     }
     return this.options.map.getDataSource().getCityChoroplethData();
+  } */
+
+  loadTimeInterval() {
+    this.options.map.getDataSource().setChoroplethTimeInterval(
+      this.options.map.getCurrentLayerOptions().id
+    )
   }
 
   create() {
+    this.loadTimeInterval()
     var processKey = this.createUUID();
     this.currentProcessKey = processKey;
-    var jsonData = this.getJsonData();
+    var jsonData = this.getDataset();
     if (jsonData.length < 1) {
       return;
     }
@@ -113,7 +120,7 @@ class ChoroplethRateLayer extends Layer {
     if (processKey !== this.currentProcessKey) return;
     this.loadPanels();
     this.loadLimits(mapLayers);
-    for (var i = mapLayers.length; i--; ) {
+    for (var i = mapLayers.length; i--;) {
       this.idField = mapLayers[i].idField;
       var loadOtherStyle = mapLayers[i].main ? false : true;
       this.currentPane = "fill1";
@@ -134,7 +141,7 @@ class ChoroplethRateLayer extends Layer {
   }
 
   loadLimits(mapLayers) {
-    for (var i = mapLayers.length; i--; ) {
+    for (var i = mapLayers.length; i--;) {
       var idField = mapLayers[i].idField;
       var layer = L.vectorGrid.protobuf(mapLayers[i].url, {
         pane: "limitpane",
@@ -215,10 +222,10 @@ class ChoroplethRateLayer extends Layer {
       return attrLabel1 < 7
         ? colors[3]
         : attrLabel1 < 14
-        ? colors[2]
-        : attrLabel1 < 30
-        ? colors[1]
-        : colors[0];
+          ? colors[2]
+          : attrLabel1 < 30
+            ? colors[1]
+            : colors[0];
     }
   }
 
@@ -245,26 +252,26 @@ class ChoroplethRateLayer extends Layer {
                 </div>
                 <div class="a" style="width:60px; height:15px; background-color: none; border-right:solid">
                     <div style="width:60px; height:10px; background-color: ${
-                      colors[3]
-                    };">
+      colors[3]
+      };">
                     </div>
                 </div>
                 <div class="b" style="width:60px; height:15px; background-color: none; border-right:solid">
                     <div style="width:60px; height:10px; background-color: ${
-                      colors[2]
-                    };">
+      colors[2]
+      };">
                     </div>
                 </div>
                 <div class="c" style="width:60px; height:15px; background-color: none; border-right:solid">
                     <div style="width:60px; height:10px; background-color: ${
-                      colors[1]
-                    };">
+      colors[1]
+      };">
                     </div>
                 </div>
                 <div class="d" style="width:80px; height:15px; background-color: none;">
                     <div style="width:60px; height:10px; background-color: ${
-                      colors[0]
-                    };">
+      colors[0]
+      };">
                     </div>
                 </div>
                 <div class="e" style="width:70px; height:15px; background-color: none;">

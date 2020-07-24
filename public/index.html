@@ -100,10 +100,10 @@
                             </div>
                         </div>
                         <div id="play-container" class="d-flex flex-column">
-                            <select id="group-data-by" style="width: 195px; height: 35px;"  class="custom-select">
+                            <select id="group-data-by" style="width: 195px; height: 35px;" class="custom-select">
                                 <option value="day">Dados por dia</option>
                                 <option value="week">Dados por semana</option>
-                              </select>
+                            </select>
                             <div class="d-flex flex-row justify-content-center">
                                 <div>
                                     <button style="background-color: #607d8b;" type="button"
@@ -129,7 +129,18 @@
 
                 <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card flex-fill">
                     <div class="card-body d-flex flex-column">
-                        <div class="text-center"><b>Casos confirmados</b></div>
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="flex-grow-1">
+                                <div class="text-center">
+                                    <b>Casos Confirmados</b>
+                                </div>
+                            </div>
+                            <a id="download-cases" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
                         <div id="cases-chart-container" class="w-100 flex-fill">
                             <svg id="graph-cases"></svg>
                         </div>
@@ -137,7 +148,18 @@
                 </div>
                 <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card recovered flex-fill">
                     <div class="card-body d-flex flex-column">
-                        <div class="text-center"><b>Recuperados</b></div>
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="flex-grow-1">
+                                <div class="text-center">
+                                    <b>Recuperados</b>
+                                </div>
+                            </div>
+                            <a id="download-recovered" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
                         <div id="recovered-chart-container" class="w-100 flex-fill">
                             <svg id="graph-recovered"></svg>
                         </div>
@@ -145,13 +167,94 @@
                 </div>
                 <div class="card chart-card w-100 flex-fill">
                     <div class="card-body d-flex flex-column">
-                        <div class="text-center"><b>Óbitos</b></div>
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="flex-grow-1">
+                                <div class="text-center">
+                                    <b>Óbitos</b>
+                                </div>
+                            </div>
+                            <a id="download-deaths" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
                         <div id="deaths-chart-container" class="w-100 flex-fill">
                             <svg id="graph-deaths"></svg>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div
+                class="d-flex flex-column mb-2 flex-shrink-1 flex-md-column flex-xl-row flex-lg-row flex-sm-column col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
 
+                <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card flex-fill">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="flex-grow-1">
+                                <div class="text-center">
+                                    <b>Taxa de Letalidade</b>
+                                </div>
+                            </div>
+                            <a id="download-lethality" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
+                        <div id="lethality-chart-container" class="w-100 flex-fill">
+                            <svg id="graph-lethality"></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card flex-fill">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="flex-grow-1">
+                                <div class="text-center">
+                                    <b>Taxa de Incidência</b>
+                                </div>
+                            </div>
+                            <a id="download-incidence" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
+                        <div id="incidence-chart-container" class="w-100 flex-fill">
+                            <svg id="graph-incidence"></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card chart-card w-100 flex-fill">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="flex-grow-1">
+                                <div class="text-center">
+                                    <b>Taxa de Mortalidade</b>
+                                </div>
+                            </div>
+                            <a id="download-mortality" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
+                        <div id="mortality-chart-container" class="w-100 flex-fill">
+                            <svg id="graph-mortality"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="position: absolute !important; left: -9999px !important; z-index: -1 !important;"
+                class="d-flex flex-column mb-2 flex-shrink-1 flex-md-column flex-xl-column flex-lg-column flex-sm-column col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card flex-fill">
+                    <div class="card-body d-flex flex-column">
+                        <div id="print-container" class="w-100 flex-fill">
+
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="statistics"
                 class="d-flex mb-2 flex-shrink-1 flex-row col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -166,10 +269,10 @@
         <footer style="background-color: #607d8b;" class="page-footer text-left font-small darken-2 pb-2 pl-4 pr-4">
             <div class="row">
                 <div class="container col-md-6 text-center text-md-left">
-                    Desenvolvido pelo Diretoria de Serviço Geográfico (DSG). Versão: 1.0
+                    Desenvolvido pelo Diretoria de Serviço Geográfico (DSG). Versão: 1.1
                 </div>
                 <div class="container col-md-6 text-center text-md-right">
-                    <b>Fonte de dados:   <a href="https://covid19br.wcota.me/">https://covid19br.wcota.me</a></b>
+                    <b>Fonte de dados: <a href="https://covid19br.wcota.me/">https://covid19br.wcota.me</a></b>
                 </div>
             </div>
         </footer>
@@ -188,8 +291,10 @@
     <script src="lib/leaflet.heat.js"></script>
     <script src="lib/jquery.easy-autocomplete.min.js"></script>
     <script src="lib/geojson-utils.min.js"></script>
+    <script src="js/utils.js"></script>
     <script src="js/signal.js"></script>
     <script src="js/http.js"></script>
+    <script src="js/d3ToPng.js"></script>
     <script src="js/dataSource.js"></script>
     <script src="js/layer.js"></script>
     <script src="js/popoverLayer.js"></script>

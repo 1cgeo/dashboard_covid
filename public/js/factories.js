@@ -25,4 +25,23 @@ class Factories {
         }
         return layer;
     }
+
+    createBarChart(type, options) {
+        var barChart
+        options.chartType = type
+        if (type === "recovered") {
+            barChart = new BarChartRecovered(options)
+        } else if (type === "cases") {
+            barChart = new BarChartCases(options)
+        } else if (type === "deaths") {
+            barChart = new BarChartDeaths(options)
+        } else if (type === "lethality") {
+            barChart = new BarChartLethality(options)
+        } else if (type === "incidence") {
+            barChart = new BarChartIncidence(options)
+        } else if (type === "mortality") {
+            barChart = new BarChartMortality(options)
+        }
+        return barChart;
+    }
 }

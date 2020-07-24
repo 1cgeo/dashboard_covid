@@ -42,10 +42,6 @@ class Layer {
         return unique
     }
 
-    mFormatter(num) {
-        return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + ' mil' : Math.sign(num) * Math.abs(num)
-    }
-
     getReduce(arr, id, comp) {
         var listedId = [];
         var reduced = [];
@@ -76,20 +72,12 @@ class Layer {
 
     }
 
-    getReduceGeojsonFeatures(features, id, comp) {
-        var listedId = [];
-        var reduced = [];
-        for (var i = features.length; i--;) {
-            if (+features[i].properties[comp] === 0) continue
-            var idx = listedId.indexOf(features[i].properties[id])
-            if (idx < 0) {
-                listedId.push(features[i].properties[id])
-                reduced.push(features[i])
-            } else {
-                reduced[idx].properties[comp] = +reduced[idx].properties[comp] + +features[i].properties[comp]
-            }
-        }
-        return reduced
+    getDataset(){
+        return this.options.datasetCallback()
+    }
+
+    loadTimeInterval() {
+        this.options.loadTimeIntervalCallback(this.options.layerId)
     }
 
     createUUID() {
@@ -100,25 +88,6 @@ class Layer {
             return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
         });
         return uuid;
-    }
-
-    getLastData(data, id, dateField) {
-        var listedId = [];
-        var reduced = [];
-        for (var i = data.length; i--;) {
-            var idx = listedId.indexOf(data[i][id])
-            if (idx < 0) {
-                listedId.push(data[i][id])
-                reduced.push(data[i])
-            } else {
-                var currentDate = new Date(reduced[idx][dateField].replace(/\-/g, '/'))
-                var date = new Date(data[i][dateField].replace(/\-/g, '/'))
-                if (currentDate < date) {
-                    reduced[idx] = data[i]
-                }
-            }
-        }
-        return reduced
     }
 
 

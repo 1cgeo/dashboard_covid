@@ -3,9 +3,9 @@ const ttlSeconds = 60 * 60 * 1;
 const resCache = new NodeCache({ stdTTL: ttlSeconds, checkperiod: ttlSeconds * 0.2, useClones: false });
 const mapthemeModel = require('../models/maptheme.js')
 
-module.exports.getCircleThemeData = async(req, res) => {
+module.exports.getCircleThemeData = async (req, res) => {
     let location = req.query.location
-    if (!location || !['city', 'state'].includes(location)) {
+    if (!location) {
         res.writeHead(400, { 'Content-Type': 'text/plain' })
         res.end('400 Bad Request')
         return
@@ -17,7 +17,7 @@ module.exports.getCircleThemeData = async(req, res) => {
         res.end(JSON.stringify(cacheValue))
         return
     }
-    mapthemeModel.getCircleThemeData(location, function(themeData) {
+    mapthemeModel.getCircleThemeData(location, function (themeData) {
         if (!themeData) {
             res.writeHead(404, { 'Content-Type': 'text/plain' })
             res.end("404 ot found")
@@ -30,9 +30,9 @@ module.exports.getCircleThemeData = async(req, res) => {
 }
 
 
-module.exports.getChoroplethThemeData = async(req, res) => {
+module.exports.getChoroplethThemeData = async (req, res) => {
     let location = req.query.location
-    if (!location || !['city', 'state'].includes(location)) {
+    if (!location) {
         res.writeHead(400, { 'Content-Type': 'text/plain' })
         res.end('400 Bad Request')
         return
@@ -44,7 +44,7 @@ module.exports.getChoroplethThemeData = async(req, res) => {
         res.end(JSON.stringify(cacheValue))
         return
     }
-    mapthemeModel.getChoroplethThemeData(location, function(themeData) {
+    mapthemeModel.getChoroplethThemeData(location, function (themeData) {
         if (!themeData) {
             res.writeHead(404, { 'Content-Type': 'text/plain' })
             res.end("404 ot found")
@@ -57,9 +57,9 @@ module.exports.getChoroplethThemeData = async(req, res) => {
 }
 
 
-module.exports.getHeatThemeData = async(req, res) => {
+module.exports.getHeatThemeData = async (req, res) => {
     let location = req.query.location
-    if (!location || !['city'].includes(location)) {
+    if (!location) {
         res.writeHead(400, { 'Content-Type': 'text/plain' })
         res.end('400 Bad Request')
         return
@@ -71,7 +71,7 @@ module.exports.getHeatThemeData = async(req, res) => {
         res.end(JSON.stringify(cacheValue))
         return
     }
-    mapthemeModel.getHeatThemeData((themeData) => {
+    mapthemeModel.getHeatThemeData(location, (themeData) => {
         if (!themeData) {
             res.writeHead(404, { 'Content-Type': 'text/plain' })
             res.end("404 ot found")
@@ -84,7 +84,7 @@ module.exports.getHeatThemeData = async(req, res) => {
 }
 
 
-module.exports.getCountryInformation = async(req, res) => {
+module.exports.getCountryInformation = async (req, res) => {
     mapthemeModel.getCountryInformation((info) => {
         if (!info) {
             res.writeHead(404, { 'Content-Type': 'text/plain' })
@@ -97,7 +97,7 @@ module.exports.getCountryInformation = async(req, res) => {
 }
 
 
-/* 
+/*
 module.exports.getInformation = async(req, res) => {
     let location = req.query.location
     let id = req.query.id

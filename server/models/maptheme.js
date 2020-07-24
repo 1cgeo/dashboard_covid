@@ -77,6 +77,54 @@ const WEEK_STATES_FILE_PATH = path.join(
     "estados_semana.csv"
 );
 
+const DAY_API_FILE_PATH = path.join(
+    __dirname,
+    "..",
+    "data",
+    "covid19br",
+    "cidades_api.csv"
+);
+
+const WEEK_API_FILE_PATH = path.join(
+    __dirname,
+    "..",
+    "data",
+    "covid19br",
+    "cidades_api_semana.csv"
+);
+
+const DAY_SAPI_FILE_PATH = path.join(
+    __dirname,
+    "..",
+    "data",
+    "covid19br",
+    "cidades_sapi.csv"
+);
+
+const WEEK_SAPI_FILE_PATH = path.join(
+    __dirname,
+    "..",
+    "data",
+    "covid19br",
+    "cidades_sapi_semana.csv"
+);
+
+const DAY_REGIONS_FILE_PATH = path.join(
+    __dirname,
+    "..",
+    "data",
+    "covid19br",
+    "estados_regiao.csv"
+);
+
+const WEEK_REGIONS_FILE_PATH = path.join(
+    __dirname,
+    "..",
+    "data",
+    "covid19br",
+    "estados_regiao_semana.csv"
+);
+
 var weekCountry;
 csv()
     .fromFile(WEEK_COUNTRY_FILE_PATH)
@@ -90,7 +138,7 @@ csv()
     .then(function (jsonData) {
         weekStates = jsonData;
     });
-    
+
 var weekCities;
 csv()
     .fromFile(WEEK_CITIES_FILE_PATH)
@@ -113,11 +161,52 @@ csv()
     });
 
 var dadosCidades;
-
 csv()
     .fromFile(SUMMARY_CITIES_FILE_PATH)
     .then(function (jsonData) {
         dadosCidades = jsonData;
+    });
+
+var dayApi;
+csv()
+    .fromFile(DAY_API_FILE_PATH)
+    .then(function (jsonData) {
+        dayApi = jsonData;
+    });
+
+var weekApi;
+csv()
+    .fromFile(WEEK_API_FILE_PATH)
+    .then(function (jsonData) {
+        weekApi = jsonData;
+    });
+
+var daySapi;
+csv()
+    .fromFile(DAY_SAPI_FILE_PATH)
+    .then(function (jsonData) {
+        daySapi = jsonData;
+    });
+
+var weekSapi;
+csv()
+    .fromFile(WEEK_SAPI_FILE_PATH)
+    .then(function (jsonData) {
+        weekSapi = jsonData;
+    });
+
+var dayRegions;
+csv()
+    .fromFile(DAY_REGIONS_FILE_PATH)
+    .then(function (jsonData) {
+        dayRegions = jsonData;
+    });
+
+var weekRegions;
+csv()
+    .fromFile(WEEK_REGIONS_FILE_PATH)
+    .then(function (jsonData) {
+        weekRegions = jsonData;
     });
 
 getGeoJsonCollectionTemplate = () => {
@@ -138,60 +227,54 @@ getFeaturePointTemplate = () => {
     };
 };
 
-module.exports.totalDiarioCidades = (cb) => {
-    var total = dadosCidades.map((info) => {
-        return {
-            deaths: info.deaths,
-            totalCases: info.totalCases,
-            newDeaths: info.newDeaths,
-            newCases: info.newCases,
-            recovered: "Sem dados",
-            date: info.date,
-        };
-    });
-    cb(total);
-};
-
-module.exports.totalDiarioEstados = (cb) => {
-    var total = dadosEstados.map((info) => {
-        return {
-            deaths: info.deaths,
-            totalCases: info.totalCases,
-            newDeaths: info.newDeaths,
-            newCases: info.newCases,
-            recovered: info.recovered,
-            date: info.date,
-        };
-    });
-    cb(total);
-};
-
-module.exports.totalDiarioBrasil = (cb) => {
-    var totalBrasil = dadosBrasil.map((info) => {
-        return {
-            deaths: info.deaths,
-            totalCases: info.totalCases,
-            newDeaths: info.newDeaths,
-            newCases: info.newCases,
-            recovered: info.recovered,
-            date: info.date,
-        };
-    });
-    cb(totalBrasil);
-};
+function getDataSource(location, groupData) {
+    if (groupData === 'day') {
+        switch (location) {
+            case 'city':
+                return dadosCidades.slice()
+            case 'state':
+                return dadosEstados.slice()
+            case 'regions':
+                return dayRegions.slice()
+            case 'api':
+                return dayApi.slice()
+            case 'sapi':
+                return daySapi.slice()
+            case 'country':
+                return dadosBrasil.slice()
+            default:
+                return null
+        }
+    }
+    switch (location) {
+        case 'city':
+            return weekCities.slice()
+        case 'state':
+            return weekStates.slice()
+        case 'regions':
+            return weekRegions.slice()
+        case 'api':
+            return weekApi.slice()
+        case 'sapi':
+            return weekSapi.slice()
+        case 'country':
+            return weekCountry.slice()
+        default:
+            return null
+    }
+}
 
 module.exports.getCircleThemeData = (location, cb) => {
     cb({
         day: this.getCircleThemeDayData(location),
         week: this.getCircleThemeWeekData(location)
     });
-};
+}
 
 module.exports.getCircleThemeDayData = (location) => {
-    let sourceData =
-        location === "city" ? dadosCidades.slice() : dadosEstados.slice();
+    let dataSource = getDataSource(location, "day")
     let geojson = getGeoJsonCollectionTemplate();
-    geojson.features = sourceData.map((info) => {
+    geojson.features = dataSource.map((info) => {
         let feat = getFeaturePointTemplate();
         feat.geometry.coordinates =
             location === "city" ? [info.centroid_long, info.centroid_lat] : [info.CENTROID_X, info.CENTROID_Y];
@@ -201,21 +284,24 @@ module.exports.getCircleThemeDayData = (location) => {
         feat.properties.newDeaths = info.newDeaths;
         feat.properties.state = info.state;
         feat.properties.city = info.city;
-        feat.properties.date = info.date;
-        feat.properties.ibgeID =
-            location === "city" ? info.ibgeID : STATES_MAP[info.state.toLowerCase()];
-        feat.properties.recovered =
-            location === "city" ? "Sem dados" : info.recovered;
-        return feat;
+        feat.properties.totalRecovered = info.totalRecovered
+        feat.properties.date = info.date
+        if (location === "city") {
+            feat.properties.ibgeID = info.ibgeID
+            feat.properties.recovered = "Sem dados"
+        } else if (location === "state") {
+            feat.properties.ibgeID = STATES_MAP[info.state.toLowerCase()]
+            feat.properties.recovered = info.recovered
+        }
+        return feat
     });
     return geojson.features.length > 0 ? geojson : "";
 };
 
 module.exports.getCircleThemeWeekData = (location) => {
-    let sourceData =
-        location === "city" ? weekCities.slice() : weekStates.slice();
+    let dataSource = getDataSource(location, "week")
     let geojson = getGeoJsonCollectionTemplate();
-    geojson.features = sourceData.map((info) => {
+    geojson.features = dataSource.map((info) => {
         let feat = getFeaturePointTemplate();
         feat.geometry.coordinates =
             location === "city" ? [info.centroid_long, info.centroid_lat] : [info.CENTROID_X, info.CENTROID_Y];
@@ -224,30 +310,40 @@ module.exports.getCircleThemeWeekData = (location) => {
         feat.properties.newCases = info.newCases;
         feat.properties.newDeaths = info.newDeaths;
         feat.properties.state = info.state;
-        feat.properties.city = info.city;
+        feat.properties.totalRecovered = info.totalRecovered
+        feat.properties.city = info.city
         feat.properties.week = info.semana
-        feat.properties.ibgeID =
-            location === "city" ? info.ibgeID : STATES_MAP[info.state.toLowerCase()];
-        feat.properties.recovered =
-            location === "city" ? "Sem dados" : info.recovered;
-        return feat;
+        if (location === "city") {
+            feat.properties.ibgeID = info.ibgeID
+            feat.properties.recovered = "Sem dados"
+        } else if (location === "state") {
+            feat.properties.ibgeID = STATES_MAP[info.state.toLowerCase()]
+            feat.properties.recovered = info.recovered
+        }
+        return feat
     });
     return geojson.features.length > 0 ? geojson : "";
 };
 
 
-module.exports.getHeatThemeData = (cb) => {
+module.exports.getHeatThemeData = (location, cb) => {
     cb({
-        day: this.getHeatThemeDayData(),
-        week: this.getHeatThemeWeekData()
+        day: this.getHeatThemeDayData(location),
+        week: this.getHeatThemeWeekData(location)
     });
 };
 
-module.exports.getHeatThemeDayData = () => {
-    var sourceData = dadosCidades.slice();
-    var heatCitiesData = sourceData.map((info) => {
+module.exports.getHeatThemeDayData = (location) => {
+    let dataSource = (["city", "state"].includes(location))?
+        getDataSource("city", "day"): getDataSource(location, "day")
+    var heatCitiesData = dataSource.map((info) => {
+        if(info.CENTROID_Y && info.CENTROID_X){
+            latlong = [info.CENTROID_Y, info.CENTROID_X]
+        } else{
+            latlong = [info.lat, info.lon]
+        } 
         return {
-            latlong: [info.lat, info.lon],
+            latlong : latlong,
             deaths: info.deaths,
             totalCases: info.totalCases,
             date: info.date,
@@ -258,11 +354,17 @@ module.exports.getHeatThemeDayData = () => {
     return heatCitiesData
 };
 
-module.exports.getHeatThemeWeekData = () => {
-    var sourceData = weekCities.slice();
-    var heatCitiesData = sourceData.map((info) => {
+module.exports.getHeatThemeWeekData = (location) => {
+    let dataSource = (["city", "state"].includes(location))?
+        getDataSource("city", "week"): getDataSource(location, "week")
+    var heatCitiesData = dataSource.map((info) => {
+        if(info.CENTROID_Y && info.CENTROID_X){
+            latlong = [info.CENTROID_Y, info.CENTROID_X]
+        } else{
+            latlong = [info.lat, info.lon]
+        }
         return {
-            latlong: [info.lat, info.lon],
+            latlong: latlong,
             deaths: info.deaths,
             totalCases: info.totalCases,
             week: info.semana,
@@ -281,15 +383,17 @@ module.exports.getChoroplethThemeData = (location, cb) => {
 };
 
 module.exports.getChoroplethThemeDayData = (location) => {
-    let sourceData =
-        location === "city" ? dadosCidades.slice() : dadosEstados.slice();
-    var choroplethStatesData = sourceData.map((info) => {
+    let dataSource = getDataSource(location, "day")
+    var choroplethStatesData = dataSource.map((info) => {
         var data = {
             nrDiasDobraCasos: info.nrDiasDobraCasos,
             nrDiasDobraMortes: info.nrDiasDobraMortes,
             date: info.date,
             totalCases: info.totalCases,
+            totalRecovered: info.totalRecovered,
+            shortName: info.state,
             newCases: info.newCases,
+            fatalityRate: ((+info.deaths / +info.totalCases) * 100).toFixed(1),
             deaths: info.deaths,
             newDeaths: info.newDeaths,
             meanCases: info.meanCases,
@@ -321,14 +425,15 @@ module.exports.getChoroplethThemeDayData = (location) => {
 };
 
 module.exports.getChoroplethThemeWeekData = (location) => {
-    let sourceData =
-        location === "city" ? weekCities.slice() : weekStates.slice();
-    var choroplethStatesData = sourceData.map((info) => {
+    let dataSource = getDataSource(location, "week")
+    var choroplethStatesData = dataSource.map((info) => {
         var data = {
             nrDiasDobraCasos: info.nrDiasDobraCasos,
             nrDiasDobraMortes: info.nrDiasDobraMortes,
             week: info.semana,
+            shortName: info.state,
             totalCases: info.totalCases,
+            totalRecovered: info.totalRecovered,
             newCases: info.newCases,
             deaths: info.deaths,
             newDeaths: info.newDeaths,
@@ -368,36 +473,46 @@ module.exports.getCountryInformation = (cb) => {
 };
 
 module.exports.getCountryDayInformation = () => {
-    var sourceData = dadosBrasil.slice();
-    let data = sourceData.map((info) => {
+    let dataSource = getDataSource("country", "day")
+    let data = dataSource.map((info) => {
         return {
             deaths: info.deaths,
             totalCases: info.totalCases,
             newDeaths: info.newDeaths,
             newCases: info.newCases,
             recovered: info.recovered,
+            totalRecovered: info.totalRecovered,
             date: info.date,
+            fatalityRate: ((+info.deaths / +info.totalCases) * 100).toFixed(1),
+            shortName: 'BR',
             meanCases: info.meanCases,
             meanRecovered: info.meanRecovered,
-            meanDeaths: info.meanDeaths
+            meanDeaths: info.meanDeaths,
+            totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
+            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants
         };
     });
     return data
 };
 
 module.exports.getCountryWeekInformation = () => {
-    var sourceData = weekCountry.slice();
-    let data = sourceData.map((info) => {
+    let dataSource = getDataSource("country", "week")
+    let data = dataSource.map((info) => {
         return {
             deaths: info.deaths,
             totalCases: info.totalCases,
             newDeaths: info.newDeaths,
             newCases: info.newCases,
             recovered: info.recovered,
+            totalRecovered: info.totalRecovered,
+            shortName: 'BR',
+            fatalityRate: ((+info.deaths / +info.totalCases) * 100).toFixed(1),
             week: info.semana,
             meanCases: info.meanCases,
             meanRecovered: info.meanRecovered,
-            meanDeaths: info.meanDeaths
+            meanDeaths: info.meanDeaths,
+            totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
+            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants
         };
     });
     return data

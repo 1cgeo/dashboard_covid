@@ -13,10 +13,10 @@ class Signal {
         }
     }
 
-    trigger(eventName, value) {
+    trigger(eventName, ...value) {
         if (this.events[eventName]) {
             for (var i = this.events[eventName].length; i--;) {
-                this.events[eventName][i](value)
+                this.events[eventName][i](...value)
             }
         }
     }

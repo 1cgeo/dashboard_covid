@@ -17,7 +17,7 @@ class HeatLayer extends Layer {
       this.options.map.getMap().removeControl(this.currentLegend);
       this.currentLegend = null;
     }
-    for (var i = this.layers.length; i--; ) {
+    for (var i = this.layers.length; i--;) {
       this.options.map.getFeatureGroup().removeLayer(this.layers[i]);
     }
     this.layers = [];
@@ -39,7 +39,7 @@ class HeatLayer extends Layer {
 
   updateAnimation() {
     var locations = this.processData(
-      this.options.map.getDataSource().getHeatData(),
+      this.getDataset(),
       "ibgeID"
     );
     this.layer.setLatLngs(locations);
@@ -47,14 +47,14 @@ class HeatLayer extends Layer {
 
   stopAnimation() {
     this.layer.setLatLngs(
-      this.processData(this.options.map.getDataSource().getHeatData(), "ibgeID")
+      this.processData(this.getDataset(), "ibgeID")
     );
   }
 
   processData(jsonData, comp) {
     var listedId = [];
     var locations = [];
-    for (var i = jsonData.length; i--; ) {
+    for (var i = jsonData.length; i--;) {
       if (!jsonData[i].latlong[0] || !jsonData[i].latlong[1]) {
         continue;
       }
@@ -66,9 +66,10 @@ class HeatLayer extends Layer {
   }
 
   create() {
+    this.loadTimeInterval()
     var processKey = this.createUUID();
     this.currentProcessKey = processKey;
-    var jsonData = this.options.map.getDataSource().getHeatData();
+    var jsonData = this.getDataset()
     if (jsonData.length < 1) {
       return;
     }
@@ -115,7 +116,7 @@ class HeatLayer extends Layer {
     if (mapLayers.length < 1) {
       return;
     }
-    for (var i = mapLayers.length; i--; ) {
+    for (var i = mapLayers.length; i--;) {
       this.idField = mapLayers[i].idField;
       var isMain = mapLayers[i].main;
       var layer = this.createVectorGrid(
@@ -167,10 +168,10 @@ class HeatLayer extends Layer {
       div.innerHTML = `
             <div class="container-gradient">
             <div class="${
-              this.options.attributeName === "deaths"
-                ? "gradient-value-deaths"
-                : "gradient-value-cases"
-            }""></div>
+        this.options.attributeName === "deaths"
+          ? "gradient-value-deaths"
+          : "gradient-value-cases"
+        }""></div>
             <div class="gradient-text1"><b>Alta</b></div>
             <div class="gradient-text2"><b>Média</b></div>
             <div class="gradient-text3"><b>Baixa</b></div>

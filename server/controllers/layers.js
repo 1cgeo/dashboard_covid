@@ -6,10 +6,16 @@ module.exports.getVectorTilePbf = async (req, res) => {
     let x = parseInt(req.params.x)
     let y = parseInt(req.params.y)
     let tilePbf
-    if (place == 'city') 
+    if (place == 'city')
         tilePbf = layersModel.getCitiesVectorTilePbf(z, x, y)
-    else if ('state') 
+    else if (place == 'state')
         tilePbf = layersModel.getStatesVectorTilePbf(z, x, y)
+    else if (place == 'regions')
+        tilePbf = layersModel.getRegionsVectorTilePbf(z, x, y)
+    else if (place == 'api')
+        tilePbf = layersModel.getAPIVectorTilePbf(z, x, y)
+    else if (place == 'sapi')
+        tilePbf = layersModel.getSAPIVectorTilePbf(z, x, y)
     if (!tilePbf) {
         res.writeHead(204, { 'Content-Type': 'text/plain' })
         res.end("Not Content")
