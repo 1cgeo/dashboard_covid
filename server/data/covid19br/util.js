@@ -241,6 +241,7 @@ const modify_csv_estado_semana = (file, output) => {
         data[id].dias_semana = 0;
         data[id].state = d.state;
         data[id].nome = d.nome;
+        data[id].regiao = d.regiao;
         data[id].newDeaths = 0;
         data[id].newCases = 0;
         data[id].recovered = 0;
@@ -426,12 +427,12 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           );
           const d1 = last14AvgCases[dataArray[i].nome][0];
           const d2 = last14AvgCases[dataArray[i].nome][13];
-          if (d2 > d1 * 2.5) {
+          if (d2 > d1 * 2.0) {
             dataArray[i].tendencia_casos = "Crescendo 3";
           } else if (d2 > d1 * 1.5) {
             dataArray[i].tendencia_casos = "Crescendo 2";
           } else if (d2 > d1 * 1.05) {
-            dataArray[i].tendencia_casos = "Crescendo 3";
+            dataArray[i].tendencia_casos = "Crescendo 1";
           } else if (d2 > d1 * 0.95) {
             dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
           } else {
@@ -467,12 +468,12 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
         } else {
           const d1 = last14AvgDeaths[dataArray[i].nome][0];
           const d2 = last14AvgDeaths[dataArray[i].nome][13];
-          if (d2 > d1 * 2.5) {
+          if (d2 > d1 * 2.0) {
             dataArray[i].tendencia_obitos = "Crescendo 3";
           } else if (d2 > d1 * 1.5) {
             dataArray[i].tendencia_obitos = "Crescendo 2";
           } else if (d2 > d1 * 1.05) {
-            dataArray[i].tendencia_obitos = "Crescendo 3";
+            dataArray[i].tendencia_obitos = "Crescendo 1";
           } else if (d2 > d1 * 0.95) {
             dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
           } else {
@@ -662,12 +663,12 @@ const modify_csv_estado = (file, nomes, output) => {
               ].join("|");
               const d1 = last14AvgCases[dataArray[i].state][0];
               const d2 = last14AvgCases[dataArray[i].state][13];
-              if (d2 > d1 * 2.5) {
+              if (d2 > d1 * 2.0) {
                 dataArray[i].tendencia_casos = "Crescendo 3";
               } else if (d2 > d1 * 1.5) {
                 dataArray[i].tendencia_casos = "Crescendo 2";
               } else if (d2 > d1 * 1.05) {
-                dataArray[i].tendencia_casos = "Crescendo 3";
+                dataArray[i].tendencia_casos = "Crescendo 1";
               } else if (d2 > d1 * 0.95) {
                 dataArray[i].tendencia_casos = "Aproximadamente o mesmo";
               } else {
@@ -705,12 +706,12 @@ const modify_csv_estado = (file, nomes, output) => {
             } else {
               const d1 = last14AvgDeaths[dataArray[i].state][0];
               const d2 = last14AvgDeaths[dataArray[i].state][13];
-              if (d2 > d1 * 2.5) {
+              if (d2 > d1 * 2.0) {
                 dataArray[i].tendencia_obitos = "Crescendo 3";
               } else if (d2 > d1 * 1.5) {
                 dataArray[i].tendencia_obitos = "Crescendo 2";
               } else if (d2 > d1 * 1.05) {
-                dataArray[i].tendencia_obitos = "Crescendo 3";
+                dataArray[i].tendencia_obitos = "Crescendo 1";
               } else if (d2 > d1 * 0.95) {
                 dataArray[i].tendencia_obitos = "Aproximadamente o mesmo";
               } else {
@@ -807,6 +808,8 @@ const modify_csv_cidade_semana = (file, output) => {
         data[id].state = d.state;
         data[id].city = d.city;
         data[id].ibgeID = d.ibgeID;
+        data[id].api = d.api;
+        data[id].sapi = d.sapi;
         data[id].newDeaths = 0;
         data[id].newCases = 0;
       }
@@ -1011,12 +1014,12 @@ const modify_csv_cidade = (
                       ].join("|");
                       const d1 = last14AvgCases[dataArray[i].ibgeID][0];
                       const d2 = last14AvgCases[dataArray[i].ibgeID][13];
-                      if (d2 > d1 * 2.5) {
+                      if (d2 > d1 * 2.0) {
                         dataArray[i].tendencia_casos = "Crescendo 3";
                       } else if (d2 > d1 * 1.5) {
                         dataArray[i].tendencia_casos = "Crescendo 2";
                       } else if (d2 > d1 * 1.05) {
-                        dataArray[i].tendencia_casos = "Crescendo 3";
+                        dataArray[i].tendencia_casos = "Crescendo 1";
                       } else if (d2 > d1 * 0.95) {
                         dataArray[i].tendencia_casos =
                           "Aproximadamente o mesmo";
@@ -1061,12 +1064,12 @@ const modify_csv_cidade = (
                     } else {
                       const d1 = last14AvgDeaths[dataArray[i].ibgeID][0];
                       const d2 = last14AvgDeaths[dataArray[i].ibgeID][13];
-                      if (d2 > d1 * 2.5) {
+                      if (d2 > d1 * 2.0) {
                         dataArray[i].tendencia_obitos = "Crescendo 3";
                       } else if (d2 > d1 * 1.5) {
                         dataArray[i].tendencia_obitos = "Crescendo 2";
                       } else if (d2 > d1 * 1.05) {
-                        dataArray[i].tendencia_obitos = "Crescendo 3";
+                        dataArray[i].tendencia_obitos = "Crescendo 1";
                       } else if (d2 > d1 * 0.95) {
                         dataArray[i].tendencia_obitos =
                           "Aproximadamente o mesmo";
@@ -1089,25 +1092,33 @@ const modify_csv_cidade = (
                     }
                   });
 
-                  const fields = Object.keys(dataArrayFiltered[0]);
-                  const opts = { fields };
-                  const parser = new Parser(opts);
-                  const result = parser.parse(dataArrayFiltered);
+                  var fields = Object.keys(dataArrayFiltered[0]);
+                  var opts = { fields };
+                  var parser = new Parser(opts);
+                  var result = parser.parse(dataArrayFiltered);
 
                   fs.writeFileSync(output, result);
+
+                  var fields = Object.keys(dataArray[0]);
+                  var opts = { fields };
+                  var parser = new Parser(opts);
+                  var result = parser.parse(dataArray);
+                  const total = `${output.split(".")[0]}_total.csv`
+
+                  fs.writeFileSync(total, result);
                   console.log("Preparo do CSV dos Municipios FINALIZADO!");
                   modify_csv_cidade_semana(
-                    output,
+                    total,
                     `${output.split(".")[0]}_semana.csv`
                   );
                   agrupa_area_geografica(
-                    output,
+                    total,
                     `${output.split(".")[0]}_api.csv`,
                     "api",
                     centroide_api
                   );
                   agrupa_area_geografica(
-                    output,
+                    total,
                     `${output.split(".")[0]}_sapi.csv`,
                     "sapi",
                     centroide_sapi
