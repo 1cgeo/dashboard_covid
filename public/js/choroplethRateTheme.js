@@ -91,12 +91,12 @@ class ChoroplethRateLayer extends Layer {
     }
   }
 
- /*  getJsonData() {
-    if (this.options.layerId == 0) {
-      return this.options.map.getDataSource().getStateChoroplethData();
-    }
-    return this.options.map.getDataSource().getCityChoroplethData();
-  } */
+  /*  getJsonData() {
+     if (this.options.layerId == 0) {
+       return this.options.map.getDataSource().getStateChoroplethData();
+     }
+     return this.options.map.getDataSource().getCityChoroplethData();
+   } */
 
   loadTimeInterval() {
     this.options.map.getDataSource().setChoroplethTimeInterval(
@@ -147,12 +147,7 @@ class ChoroplethRateLayer extends Layer {
         pane: "limitpane",
         rendererFactory: L.canvas.tile,
         vectorTileLayerStyles: {
-          data: {
-            weight:
-              this.options.layerId == 0 ? 0.5 : mapLayers[i].main ? 0.1 : 0.5,
-            opacity: 1,
-            color: "black",
-          },
+          data: mapLayers[i].styleLimit
         },
         interactive: true,
         getFeatureId: (feature) => {
@@ -212,6 +207,10 @@ class ChoroplethRateLayer extends Layer {
     };
   }
 
+  getRate() {
+    return this.getOptions().rate
+  }
+
   getColor(attrLabel1, attrLabel2) {
     var colors = this.getHexColors();
     if (+attrLabel2 === 0) {
@@ -219,11 +218,11 @@ class ChoroplethRateLayer extends Layer {
     } else if (+attrLabel2 < this.getLimiteValue()) {
       return "#bdbdbd";
     } else {
-      return attrLabel1 < 7
+      return attrLabel1 < this.getRate()[0]
         ? colors[3]
-        : attrLabel1 < 14
+        : attrLabel1 < this.getRate()[1]
           ? colors[2]
-          : attrLabel1 < 30
+          : attrLabel1 < this.getRate()[2]
             ? colors[1]
             : colors[0];
     }
@@ -283,13 +282,13 @@ class ChoroplethRateLayer extends Layer {
                     </div>
                 </div>
                 <div class="h" style="width:50px;">
-                    <div>7 dias</div>
+                    <div>${this.getRate()[0]} dias</div>
                 </div>
                 <div class="i" style="width:50px; height:15px; background-color: none;">
-                    <div>14 dias</div>
+                    <div>${this.getRate()[1]} dias</div>
                 </div>
                 <div class="j" style="width:50px; height:15px; background-color: none;">
-                    <div>30 dias</div>
+                    <div>${this.getRate()[2]} dias</div>
                 </div>
                 <div class="l" style="width:90px; height:15px; background-color: none;">
                     <div> &lt; ${this.getLimiteValue()} ${tag.toLowerCase()}</div>

@@ -576,12 +576,17 @@ class DataSource {
                             fillOpacity: 0.7,
                             fillColor: "#cfcfcf",
                         },
+                        styleLimit: {
+                            weight: 0.5,
+                            opacity: 1,
+                            color: 'black'
+                        },
                         idField: "CD_GEOCUF",
                         main: true,
                     },
                 ],
                 themeLayers: [
-                    {
+                    /* {
                         name: "Mapa de calor de casos",
                         attributeName: "totalCases",
                         type: "heat",
@@ -596,7 +601,7 @@ class DataSource {
                         datasetCallback: this.getHeatData.bind(this),
                         loadTimeIntervalCallback: this.setHeatTimeInterval.bind(this),
                         id: 1,
-                    },
+                    }, */
                     {
                         name: "Tendência de casos",
                         attributeName: "tendencyCases",
@@ -622,6 +627,7 @@ class DataSource {
                         attributeName: "nrDiasDobraCasos",
                         attributeNameSecondary: "totalCases",
                         type: "choroplethRate",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getStateChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         id: 2,
@@ -630,6 +636,7 @@ class DataSource {
                         name: "Taxa de crescimento de óbitos",
                         attributeName: "nrDiasDobraMortes",
                         attributeNameSecondary: "deaths",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getStateChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         type: "choroplethRate",
@@ -644,7 +651,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [10000, 50000, 100000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -662,7 +669,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [500, 5000, 10000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -680,7 +687,7 @@ class DataSource {
                         id: 6,
                         popupAttributeTitle: "Número de recuperados",
                         scaleFactor: 0.0015,
-                        scaleLenged: [10000, 50000, 100000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#009624",
                             color: "#009624",
@@ -711,6 +718,11 @@ class DataSource {
                             opacity: 0.7,
                             color: "black",
                         },
+                        styleLimit: {
+                            weight: 0.5,
+                            opacity: 1,
+                            color: 'black'
+                        },
                         idField: "CD_GEOCUF",
                     },
                     {
@@ -725,6 +737,11 @@ class DataSource {
                         },
                         idField: "CD_GEOCMU",
                         main: true,
+                        styleLimit: {
+                            weight: 0.1,
+                            opacity: 1,
+                            color: 'black'
+                        },
                     },
                 ],
                 themeLayers: [
@@ -774,7 +791,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [10000, 50000, 100000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -792,7 +809,7 @@ class DataSource {
                         id: 5,
                         popupAttributeTitle: "Número de óbitos",
                         scaleFactor: 0.015,
-                        scaleLenged: [500, 5000, 10000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -821,7 +838,15 @@ class DataSource {
                         style: {
                             weight: 1,
                             opacity: 0.7,
-                            color: "black",
+                            color: "white",
+                            fill: true,
+                            fillOpacity: 0.7,
+                            fillColor: "#cfcfcf",
+                        },
+                        styleLimit: {
+                            weight: 0.5,
+                            opacity: 1,
+                            color: 'black'
                         },
                         idField: "REGIAO",
                         main: true,
@@ -869,6 +894,7 @@ class DataSource {
                         attributeName: "nrDiasDobraCasos",
                         attributeNameSecondary: "totalCases",
                         type: "choroplethRate",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getRegionsChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         id: 2,
@@ -877,6 +903,7 @@ class DataSource {
                         name: "Taxa de crescimento de óbitos",
                         attributeName: "nrDiasDobraMortes",
                         attributeNameSecondary: "deaths",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getRegionsChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         type: "choroplethRate",
@@ -891,7 +918,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [10000, 50000, 100000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -909,7 +936,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [500, 5000, 10000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -927,7 +954,7 @@ class DataSource {
                         id: 6,
                         popupAttributeTitle: "Número de recuperados",
                         scaleFactor: 0.0015,
-                        scaleLenged: [10000, 50000, 100000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#009624",
                             color: "#009624",
@@ -956,7 +983,15 @@ class DataSource {
                         style: {
                             weight: 1,
                             opacity: 0.7,
-                            color: "black",
+                            color: "white",
+                            fill: true,
+                            fillOpacity: 0.7,
+                            fillColor: "#cfcfcf",
+                        },
+                        styleLimit: {
+                            weight: 0.5,
+                            opacity: 1,
+                            color: 'black'
                         },
                         idField: "nome",
                         main: true,
@@ -1004,6 +1039,7 @@ class DataSource {
                         attributeName: "nrDiasDobraCasos",
                         attributeNameSecondary: "totalCases",
                         type: "choroplethRate",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getAPIChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         id: 2,
@@ -1012,6 +1048,7 @@ class DataSource {
                         name: "Taxa de crescimento de óbitos",
                         attributeName: "nrDiasDobraMortes",
                         attributeNameSecondary: "deaths",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getAPIChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         type: "choroplethRate",
@@ -1026,7 +1063,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [10000, 50000, 100000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -1044,7 +1081,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [500, 5000, 10000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -1091,7 +1128,15 @@ class DataSource {
                         style: {
                             weight: 1,
                             opacity: 0.7,
-                            color: "black",
+                            color: "white",
+                            fill: true,
+                            fillOpacity: 0.7,
+                            fillColor: "#cfcfcf",
+                        },
+                        styleLimit: {
+                            weight: 0.5,
+                            opacity: 1,
+                            color: 'black'
                         },
                         idField: "nome",
                         main: true,
@@ -1139,6 +1184,7 @@ class DataSource {
                         attributeName: "nrDiasDobraCasos",
                         attributeNameSecondary: "totalCases",
                         type: "choroplethRate",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getSAPIChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         id: 2,
@@ -1147,6 +1193,7 @@ class DataSource {
                         name: "Taxa de crescimento de óbitos",
                         attributeName: "nrDiasDobraMortes",
                         attributeNameSecondary: "deaths",
+                        rate: [14, 30, 50],
                         datasetCallback: this.getSAPIChoroplethData.bind(this),
                         loadTimeIntervalCallback: this.setChoroplethTimeInterval.bind(this),
                         type: "choroplethRate",
@@ -1161,7 +1208,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [10000, 50000, 100000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -1179,7 +1226,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [500, 5000, 10000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",

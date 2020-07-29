@@ -30,8 +30,8 @@ class SliderDate {
                 max: this.options.dataTimeInterval[1]
             },
             //tooltips: [true, true],
-            behaviour: 'drag',
-            connect: true,
+            behaviour: 'tap',
+            connect: [true, true, false],
             step: 24 * 60 * 60 * 1000,
             start: this.options.dataTimeInterval,
             format: {
@@ -75,23 +75,29 @@ class SliderDate {
         )
     }
 
-    getLabelValue(values, handle) {
+    getTimeFormated(values, handle) {
         if (this.options.dataSource.getCurrentGroupData() == 'day') {
-            var date = new Date(values[handle]),
-                text
+            var date = new Date(values[handle])
+            return `${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
+        }
+        return `${Math.floor(values[handle])}`
+    }
+
+    getLabelValue(values, handle) {
+        var timeFormated = this.getTimeFormated(values, handle),
+        text
+        if (this.options.dataSource.getCurrentGroupData() == 'day') {
             if (handle === 0) {
-                text = `Data inicial:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
+                text = `Data inicial:    ${timeFormated}`
             } else {
-                text = `Data final:    ${date.getDate()}/${this.months[date.getMonth()]}/${date.getFullYear()}`
+                text = `Data final:    ${timeFormated}`
             }
             return text
         }
-        var week = Math.floor(values[handle]),
-            text
         if (handle === 0) {
-            text = `Semana inicial:    ${week}`
+            text = `Semana inicial:    ${timeFormated}`
         } else {
-            text = `Semana final:    ${week}`
+            text = `Semana final:    ${timeFormated}`
         }
         return text
     }

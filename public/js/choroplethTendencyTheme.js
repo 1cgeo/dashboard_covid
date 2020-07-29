@@ -125,11 +125,7 @@ class ChoroplethTendencyLayer extends Layer {
                 pane: 'limitpane',
                 rendererFactory: L.canvas.tile,
                 vectorTileLayerStyles: {
-                    "data": {
-                        weight: (this.options.layerId == 0) ? 0.5 : (mapLayers[i].main) ? 0.1 : 0.5,
-                        opacity: 1,
-                        color: 'black'
-                    }
+                    "data": mapLayers[i].styleLimit
                 },
                 interactive: true,
                 getFeatureId: (feature) => {

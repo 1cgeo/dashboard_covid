@@ -17,16 +17,9 @@ class BarChart {
         this.createMarkers()
         this.createTooltip()
         this.createAreaChart()
-        this.connectDownloadBtn()
         window.addEventListener("resize", () => {
             this.draw()
         })
-    }
-
-    connectDownloadBtn() {
-        $(`#${this.options.downloadBtnId}`).click(() => {
-            this.downloadChart()
-        });
     }
 
     downloadChart() {
@@ -36,32 +29,30 @@ class BarChart {
         $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
         var options = Object.assign({}, this.options)
         options.parentId = ""
-        options.offsetHeight = 152
-        options.offsetWidth = 900
+        options.barWithLabels = true
+        options.offsetHeight = 400
+        options.offsetWidth = 1200
         options.elementId = chartId
+        options.customMargin = { top: 30, right: 10, bottom: 50, left: 70 }
+        options.customStyles = {
+            /* '.line-chart-mean': {
+                'stroke-width': '2px'
+            }, */
+            'text': {
+                'style': 'font: bold 12px sans-serif;'
+            }
+        }
         var copyChart = factories.createBarChart(options.chartType, options)
-        copyChart.currentData = deepCopy(this.currentData)
-        copyChart.maxValue = this.maxValue
-        copyChart.loadChart()
-        copyStyles(
-            `#${this.options.elementId}`,
-            `#${chartId}`,
-            [
-                'fill',
-                'stroke',
-                'stroke-width',
-                'stroke-dasharray',
-                'position',
-                'left',
-                'bottom',
-                'font-size'
-
-            ]
-        )
-        d3ToPng(`#${chartId}`, this.options.chartType, {
-            scale: 3,
+        copyChart.loadData(deepCopy(this.dataset.slice(-15)))
+        d3ToPng(`#${chartId}`, this.getDownloadName(), {
+            scale: 5,
             quality: 0.01,
         })
+    }
+
+    getDownloadName() {
+        var suffix = (this.options.dataSource.getCurrentGroupData() == 'week') ? 'semanal' : 'diario'
+        return `${this.options.downloadName}-${suffix}`
     }
 
     loadSvg() {
@@ -156,6 +147,7 @@ class BarChart {
     }
 
     loadData(data) {
+        this.dataset = data
         this.currentData = []
         if (data.length < 0) return
         this.currentData = this.formatInputData(data)
@@ -172,7 +164,26 @@ class BarChart {
         this.draw()
     }
 
+    loadCSS() {
+        var css = this.getCSS()
+        for (var selector in css) {
+            this.loadElementStyles(
+                this.g.selectAll(selector),
+                css[selector]
+            )
+            if (this.options.customStyles && this.options.customStyles[selector]) {
+                this.loadElementStyles(
+                    this.g.selectAll(selector),
+                    this.options.customStyles[selector]
+                )
+            }
+        }
+    }
+
     getMargin() {
+        if (this.options.customMargin) {
+            return this.options.customMargin
+        }
         return { top: 30, right: 10, bottom: 30, left: 70 }
     }
 
@@ -180,7 +191,10 @@ class BarChart {
         var groupData = this.options.dataSource.getCurrentGroupData()
         this.tooltip = d3.select("body").append("div").attr("class", "toolTip")
         this.tootipMouseover = function (d) { }
-        this.tooltipMousemove = (d) => {
+        this.tooltipMousemove = (d, idx) => {
+            var currentBar = this.g.selectAll('.bar')
+                .filter(function (d, i) { return i === idx; })
+            this.loadElementStyles(currentBar, this.getHoverCSS()['active'])
             this.tooltip
                 .style("left", d3.event.pageX - 100 + "px")
                 .style("top", d3.event.pageY - 110 + "px")
@@ -199,15 +213,23 @@ class BarChart {
         
         ${(groupData == 'day') ? `${Math.floor(+d[this.options.attributeYLine] * this.maxValue)} média` : ``}`)
         }
-        this.tooltipMouseleave = (d) => { this.tooltip.style("display", "none") }
+        this.tooltipMouseleave = (d, idx) => {
+            var currentBar = this.g.selectAll('.bar')
+                .filter(function (d, i) { return i === idx; })
+            this.loadElementStyles(currentBar, this.getHoverCSS()['deactive'])
+            this.tooltip.style("display", "none")
+        }
     }
-
 
     createLineChart(attributeX, attributeY) {
         return d3.line()
             .x((d) => { return this.x(d[attributeX]) + this.x.bandwidth() / 2 })
             .y((d) => { return this.y(d[attributeY]) })
             .curve(d3.curveMonotoneX)
+    }
+
+    createLineLabels() {
+        
     }
 
     createAreaChart() {
@@ -235,22 +257,27 @@ class BarChart {
         }
     }
 
+    getAxisXlabelFormat() {
+        if (this.options.barWithLabels) {
+            return (this.options.dataSource.getCurrentGroupData() == 'week') ?
+                d3.axisBottom(this.x).ticks(1) : d3.axisBottom(this.x).tickFormat(d3.timeFormat('%d %b'))
+        }
+        return (this.options.dataSource.getCurrentGroupData() == 'week') ?
+            d3.axisBottom(this.x).ticks(1) : d3.axisBottom(this.x).tickFormat(d3.timeFormat('%b'))
+    }
+
     drawAxisX(width, height) {
         this.x.rangeRound([0, width]);
         this.g.select(".axis--x")
             .attr("transform", "translate(0," + height + ")")
-            .call(
-                (this.options.dataSource.getCurrentGroupData() == 'day') ?
-                    d3.axisBottom(this.x).tickFormat(d3.timeFormat('%b')) :
-                    d3.axisBottom(this.x).ticks(1)
-            )
+            .call(this.getAxisXlabelFormat())
             .selectAll("text")
             .attr("y", 0)
-            .attr("x", 7)
+            .attr("x", (this.options.barWithLabels) ? 25 : 7)
             .attr("dy", ".35em")
             .attr("transform", "rotate(45)")
             .style("text-anchor", "start")
-        if (this.options.dataSource.getCurrentGroupData() != 'day') {
+        if (this.options.dataSource.getCurrentGroupData() != 'day' || this.options.barWithLabels) {
             return
         }
         var xTicks = this.g.select(".axis--x").selectAll(".tick text").nodes()
@@ -284,6 +311,12 @@ class BarChart {
                     d[this.options.attributeY] = 0.5
                     return d
                 })))
+    }
+
+    loadElementStyles(element, css) {
+        for (var key in css) {
+            element.attr(key, css[key])
+        }
     }
 
     drawLineYTop() {
@@ -322,6 +355,7 @@ class BarChart {
         if (this.currentData.length < 1) return
         this.g.append("path")
             .attr("class", "line-chart-mean")
+            .attr('fill', 'none')
             .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeYLine)(
                 this.currentData
             ))
@@ -332,7 +366,7 @@ class BarChart {
             .attr("text-anchor", "middle")
             .attr("class", "label-chart-mean")
             .attr("x", this.x(xValue))
-            .attr("y", this.y(1.1))
+            .attr("y", this.y(1))
             .text("Média de 7 dias");
         this.g.append("path")
             .attr("class", "arrow")
@@ -346,7 +380,34 @@ class BarChart {
             .attr('stroke-linecap', 'round')
     }
 
-    drawBars(height) {
+    createBarsLabels(bars) {
+        var text = bars.enter().append("text")
+            .attr("x", (d) => {
+                return this.x(d[this.options.attributeX])
+            })
+            .attr("y", (d) => {
+                return this.y(d[this.options.attributeY]) + 8
+            })
+        text.append('tspan')
+            .text((d) => {
+                return `${numberWithPoint(this.getFormatedValue(d[this.options.attributeY]))}`
+            })
+         text.append('tspan')
+            .text((d) => {
+                var mean = Math.floor(+d[this.options.attributeYLine] * this.maxValue)
+                if(mean == 0){
+                    return ''
+                }
+                return `${mean} média`
+            })
+        .attr("x", (d) => {
+            return this.x(d[this.options.attributeX])
+        })
+        //.attr("dx", 20)
+        .attr("dy", 12)
+    }
+
+    drawBars(width, height) {
         var bars = this.g.selectAll(".bar").data(this.currentData)
         bars
             .enter().append("rect")
@@ -358,6 +419,10 @@ class BarChart {
                 var h = height - this.y(d[this.options.attributeY])
                 return (h < 0) ? 0 : h;
             })
+
+        if (this.options.barWithLabels) {
+            this.createBarsLabels(bars)
+        }
 
         this.g.selectAll(".bar")
             .on("mouseover", this.tootipMouseover)
@@ -371,7 +436,9 @@ class BarChart {
                 var h = height - this.y(d[this.options.attributeY])
                 return (h < 0) ? 0 : h;
             })
+
         bars.exit().remove()
+
     }
 
     getCurrentHeigth() {
@@ -390,10 +457,11 @@ class BarChart {
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-        this.drawBars(height)
+        this.drawBars(width, height)
         this.drawLine()
         this.drawLineYMiddle()
         this.drawLineYTop()
+        this.loadCSS()
     }
 
 
@@ -413,13 +481,73 @@ class BarChartRecovered extends BarChart {
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-        this.drawBars(height)
+        this.drawBars(width, height)
         this.removeLine()
         if (this.options.dataSource.getCurrentGroupData() == 'day') {
             this.drawLine()
+            if (this.options.barWithLabels) {
+                this.createLineLabels()
+            }
         }
         this.drawLineYMiddle()
         this.drawLineYTop()
+        this.loadCSS()
+    }
+
+    getCSS() {
+        return {
+            'path.arrow': {
+                'stroke': 'rgb(0, 0, 0)',
+                'stroke-width': '0.5px',
+                'stroke-dasharray': '3'
+            },
+            'line': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': '#999',
+                'fill': 'none',
+                'stroke-width': '1.5'
+            },
+            '.line-chart-middle': {
+                'fill': 'none',
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-top': {
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-mean': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': '#009624'
+            },
+            'text': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'fill': '#121212',
+                'font-size': '13px',
+            },
+            '.bar': {
+                'fill': 'rgba(113, 206, 6, 0.835)'
+            }
+        }
+    }
+
+    getHoverCSS() {
+        return {
+            'deactive': {
+                'fill': 'rgba(113, 206, 6, 0.835)'
+            },
+            'active': {
+                'fill': 'rgb(66, 122, 2)'
+            }
+        }
     }
 
     formatInputData(jsonData) {
@@ -463,13 +591,73 @@ class BarChartCases extends BarChart {
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-        this.drawBars(height)
+        this.drawBars(width, height)
         this.removeLine()
         if (this.options.dataSource.getCurrentGroupData() == 'day') {
             this.drawLine()
+            if (this.options.barWithLabels) {
+                this.createLineLabels()
+            }
         }
         this.drawLineYMiddle()
         this.drawLineYTop()
+        this.loadCSS()
+    }
+
+    getCSS() {
+        return {
+            'path.arrow': {
+                'stroke': 'rgb(0, 0, 0)',
+                'stroke-width': '0.5px',
+                'stroke-dasharray': '3'
+            },
+            'line': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': '#999',
+                'fill': 'none',
+                'stroke-width': '1.5'
+            },
+            '.line-chart-middle': {
+                'fill': 'none',
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-top': {
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-mean': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': 'red'
+            },
+            'text': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'fill': '#121212',
+                'font-size': '13px',
+            },
+            '.bar': {
+                'fill': 'rgba(207, 17, 17, 0.2)'
+            }
+        }
+    }
+
+    getHoverCSS() {
+        return {
+            'deactive': {
+                'fill': 'rgba(207, 17, 17, 0.2)'
+            },
+            'active': {
+                'fill': '#cf1111'
+            }
+        }
     }
 
     formatInputData(jsonData) {
@@ -513,13 +701,73 @@ class BarChartDeaths extends BarChart {
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-        this.drawBars(height)
+        this.drawBars(width, height)
         this.removeLine()
         if (this.options.dataSource.getCurrentGroupData() == 'day') {
             this.drawLine()
+            if (this.options.barWithLabels) {
+                this.createLineLabels()
+            }
         }
         this.drawLineYMiddle()
         this.drawLineYTop()
+        this.loadCSS()
+    }
+
+    getCSS() {
+        return {
+            'path.arrow': {
+                'stroke': 'rgb(0, 0, 0)',
+                'stroke-width': '0.5px',
+                'stroke-dasharray': '3'
+            },
+            'line': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': '#999',
+                'fill': 'none',
+                'stroke-width': '1.5'
+            },
+            '.line-chart-middle': {
+                'fill': 'none',
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-top': {
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-mean': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': 'gray'
+            },
+            'text': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'fill': '#121212',
+                'font-size': '13px',
+            },
+            '.bar': {
+                'fill': 'rgba(85, 85, 85, 0.2)'
+            }
+        }
+    }
+
+    getHoverCSS() {
+        return {
+            'deactive': {
+                'fill': 'rgba(85, 85, 85, 0.2)'
+            },
+            'active': {
+                'fill': '#555555'
+            }
+        }
     }
 
     formatInputData(jsonData) {
@@ -556,6 +804,46 @@ class BarChartStates extends BarChart {
         super(newOptions)
     }
 
+    getHoverCSS() {
+        return { 'fill': '#cf1111' }
+    }
+
+    downloadChart() {
+        var downloadContainer = "print-container"
+        var chartId = "print-graph"
+        $(`#${downloadContainer}`).empty()
+        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
+        var options = Object.assign({}, this.options)
+        options.parentId = ""
+        options.barWithLabels = true
+        options.offsetHeight = 600
+        options.offsetWidth = 1400
+        options.elementId = chartId
+        options.customStyles = {
+            'text': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'fill': '#121212',
+                'font-size': '15px',
+                'style': 'font: bold 15px sans-serif;'
+            }
+        }
+        var copyChart = factories.createBarChart(options.chartType, options)
+        copyChart.currentData = deepCopy(this.currentData)
+        copyChart.maxValue = this.maxValue
+        copyChart.loadChart()
+        d3ToPng(`#${chartId}`, this.getDownloadName(), {
+            scale: 5,
+            quality: 0.01,
+        })
+    }
+
+    setTitleDate(value) {
+        var prefix = (this.options.dataSource.getCurrentGroupData() == 'day') ? 'Data:' : 'Semana:'
+        $(`#${this.options.dateTitleId}`).text(`[ ${prefix} ${value} ]`)
+    }
+
     draw() {
         this.svg.attr('width', this.getWidthSvg())
             .attr('height', this.getHeightSvg())
@@ -563,9 +851,34 @@ class BarChartStates extends BarChart {
         var height = this.getCurrentHeigth()
         this.drawAxisX(width, height)
         this.drawAxisY(height)
-        this.drawBars(height)
+        this.drawBars(width, height)
         this.drawLineYMiddle()
         this.drawLineYTop()
+        this.loadCSS()
+    }
+
+    getCSS() {
+        return {
+            '.line-chart-middle': {
+                'fill': 'none',
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-top': {
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            'text': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'fill': '#121212',
+                'font-size': '13px',
+                //'style': 'font: bold 30px sans-serif;'
+            }
+        }
     }
 
     formatInputData(jsonData) {
@@ -593,15 +906,26 @@ class BarChartStates extends BarChart {
     createTooltip() {
         this.tooltip = d3.select("body").append("div").attr("class", "toolTipState")
         this.tootipMouseover = function (d) { }
-        this.tooltipMousemove = (d) => {
+        this.tooltipMousemove = (d, idx) => {
+            var currentBar = this.g.selectAll('.bar')
+                .filter(function (d, i) { return i === idx; })
+            this.loadElementStyles(currentBar, this.getHoverCSS())
             this.tooltip
                 .style("left", d3.event.pageX - 100 + "px")
                 .style("top", d3.event.pageY - 110 + "px")
                 .style("display", "inline-block")
                 .html(`
-                ${this.getFormatedValue(d[this.options.attributeY])} ${this.options.title}`)
+                ${this.getFormatedValue(d[this.options.attributeY])} ${this.options.title}
+                <br>
+                UF: ${d[this.options.attributeShortName]}
+                `)
         }
-        this.tooltipMouseleave = (d) => { this.tooltip.style("display", "none") }
+        this.tooltipMouseleave = (d, idx) => {
+            var currentBar = this.g.selectAll('.bar')
+                .filter(function (d, i) { return i === idx; })
+            this.loadElementStyles(currentBar, { 'fill': this.getColorByShorName(d.shortName) })
+            this.tooltip.style("display", "none")
+        }
     }
 
     drawAxisX(width, height) {
@@ -615,13 +939,26 @@ class BarChartStates extends BarChart {
             )
             .selectAll("text")
             .attr("y", 0)
-            .attr("x", 7)
+            .attr("x", 17)
             .attr("dy", ".35em")
             .attr("transform", "rotate(45)")
             .style("text-anchor", "start")
     }
 
-    drawBars(height) {
+    createBarsLabels(bars) {
+        bars.enter().append("text")
+            .text((d) => {
+                return this.getFormatedValue(d[this.options.attributeY]);
+            })
+            .attr("x", (d) => {
+                return this.x(d[this.options.attributeX])
+            })
+            .attr("y", (d) => {
+                return this.y(d[this.options.attributeY]) + 12
+            })
+    }
+
+    drawBars(width, height) {
         var bars = this.g.selectAll(".bar").data(this.currentData)
         bars
             .enter().append("rect")
@@ -636,6 +973,10 @@ class BarChartStates extends BarChart {
             .attr("fill", (d) => {
                 return this.getColorByShorName(d.shortName)
             })
+
+        if (this.options.barWithLabels) {
+            this.createBarsLabels(bars)
+        }
 
         this.g.selectAll(".bar")
             .on("mouseover", this.tootipMouseover)
@@ -652,6 +993,7 @@ class BarChartStates extends BarChart {
             .attr("fill", (d) => {
                 return this.getColorByShorName(d.shortName)
             })
+
         bars.exit().remove()
     }
 
@@ -663,13 +1005,64 @@ class BarChartLethality extends BarChartStates {
         super(newOptions)
     }
 
-    getColorByShorName(shortName) {
-        if (shortName == 'BR') {
-            return "#6a6767"
-        }
-        return "#f4cfcd"
+    createBarsLabels(bars) {
+        bars.enter().append("text")
+            .text((d) => {
+                return `${this.getFormatedValue(d[this.options.attributeY])}%`;
+            })
+            .attr("x", (d) => {
+                return this.x(d[this.options.attributeX])
+            })
+            .attr("y", (d) => {
+                return this.y(d[this.options.attributeY]) + 12;
+            })
     }
 
+    drawAxisY(height) {
+        this.y.rangeRound([height, 0]);
+        this.g.select(".axis--y")
+            .call(d3.axisLeft(this.y).ticks(2).tickSize(0))
+        this.g.select(".axis--y").select('.domain').remove()
+        var xTicks = this.g.select(".axis--y").selectAll(".tick text").nodes()
+        xTicks.forEach((n, idx) => {
+            if (!n.textContent) return
+            n.textContent = `${mFormatter(this.getFormatedValue(+n.textContent))}%`
+        })
+    }
+
+    createTooltip() {
+        this.tooltip = d3.select("body").append("div").attr("class", "toolTipState")
+        this.tootipMouseover = function (d) {
+            //d3.select(this).attr()
+        }
+        this.tooltipMousemove = (d, idx) => {
+            var currentBar = this.g.selectAll('.bar')
+                .filter(function (d, i) { return i === idx; })
+            this.loadElementStyles(currentBar, this.getHoverCSS())
+            this.tooltip
+                .style("left", d3.event.pageX - 100 + "px")
+                .style("top", d3.event.pageY - 110 + "px")
+                .style("display", "inline-block")
+                .html(`
+                ${this.getFormatedValue(d[this.options.attributeY])}% ${this.options.title}
+                <br>
+                UF: ${d[this.options.attributeShortName]}
+                `)
+        }
+        this.tooltipMouseleave = (d, idx) => {
+            var currentBar = this.g.selectAll('.bar')
+                .filter(function (d, i) { return i === idx; })
+            this.loadElementStyles(currentBar, { 'fill': this.getColorByShorName(d.shortName) })
+            this.tooltip.style("display", "none")
+        }
+    }
+
+    getColorByShorName(shortName) {
+        if (shortName == 'BR') {
+            return "#8c9eff"
+        }
+        return "#90caf9"
+    }
 
 }
 
@@ -681,12 +1074,10 @@ class BarChartIncidence extends BarChartStates {
 
     getColorByShorName(shortName) {
         if (shortName == 'BR') {
-            return "#6a6767"
+            return "#8c9eff"
         }
-        return "#90caf9"
+        return "#f4cfcd"
     }
-
-
 }
 
 class BarChartMortality extends BarChartStates {
@@ -697,9 +1088,8 @@ class BarChartMortality extends BarChartStates {
 
     getColorByShorName(shortName) {
         if (shortName == 'BR') {
-            return "#6a6767"
+            return "#8c9eff"
         }
         return "#dddddd"
     }
-
 }

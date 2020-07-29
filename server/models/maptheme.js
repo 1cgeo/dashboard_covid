@@ -436,6 +436,7 @@ module.exports.getChoroplethThemeWeekData = (location) => {
             totalRecovered: info.totalRecovered,
             newCases: info.newCases,
             deaths: info.deaths,
+            fatalityRate: ((+info.deaths / +info.totalCases) * 100).toFixed(1),
             newDeaths: info.newDeaths,
             meanCases: info.meanCases,
             meanRecovered: info.meanRecovered,

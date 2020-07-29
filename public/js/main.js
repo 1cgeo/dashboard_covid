@@ -27,11 +27,13 @@ dataSource.loadAllData(() => {
         }
     )
 
+    var initTimeInterval = dataSource.getDataTimeInterval()
+
     var locationStatus = new Status(dataSource)
 
     var dateSlider = new SliderDate({
         dataSource: dataSource,
-        dataTimeInterval: dataSource.getDataTimeInterval(),
+        dataTimeInterval: initTimeInterval,
         dateValues: [
             document.getElementById('start-date'),
             document.getElementById('end-date')
@@ -48,8 +50,11 @@ dataSource.loadAllData(() => {
             attributeY: "newCases",
             attributeYLine: "meanCases",
             title: "Casos",
-            downloadBtnId: "download-cases"
+            downloadName: "casos"
         })
+    $(`#download-cases`).click(() => {
+        barChartCases.downloadChart()
+    });
 
 
     var barChartDeaths = factories.createBarChart(
@@ -62,9 +67,12 @@ dataSource.loadAllData(() => {
             attributeY: "newDeaths",
             attributeYLine: "meanDeaths",
             title: "Óbitos",
-            downloadBtnId: "download-deaths"
+            downloadName: "obitos"
         }
     )
+    $(`#download-deaths`).click(() => {
+        barChartDeaths.downloadChart()
+    });
 
     var barChartRecovered = factories.createBarChart(
         'recovered',
@@ -76,9 +84,12 @@ dataSource.loadAllData(() => {
             attributeY: "recovered",
             attributeYLine: "meanRecovered",
             title: "Recuperados",
-            downloadBtnId: "download-recovered"
+            downloadName: "recuperados"
         }
     )
+    $(`#download-recovered`).click(() => {
+        barChartRecovered.downloadChart()
+    });
 
     var barChartLethality = factories.createBarChart(
         'lethality',
@@ -90,8 +101,12 @@ dataSource.loadAllData(() => {
             attributeShortName: "shortName",
             attributeY: "fatalityRate",
             title: "Letalidade",
-            downloadBtnId: "download-lethality"
+            dateTitleId: "lethality-date",
+            downloadName: "letalidade"
         })
+    $(`#download-lethality`).click(() => {
+        barChartLethality.downloadChart()
+    });
 
     var barChartIncidence = factories.createBarChart(
         'incidence',
@@ -103,8 +118,12 @@ dataSource.loadAllData(() => {
             attributeShortName: "shortName",
             attributeY: "totalCases_per_100k_inhabitants",
             title: "Incidência",
-            downloadBtnId: "download-incidence"
+            dateTitleId: "incidence-date",
+            downloadName: "casos-por-100k-hab"
         })
+    $(`#download-incidence`).click(() => {
+        barChartIncidence.downloadChart()
+    });
 
     var barChartMortality = factories.createBarChart(
         'mortality',
@@ -116,9 +135,12 @@ dataSource.loadAllData(() => {
             attributeShortName: "shortName",
             attributeY: "deaths_per_100k_inhabitants",
             title: "Mortalidade",
-            downloadBtnId: "download-mortality"
+            dateTitleId: "mortality-date",
+            downloadName: "obitos-por-100k-hab"
         })
-
+    $(`#download-mortality`).click(() => {
+        barChartMortality.downloadChart()
+    });
 
 
     var covidTable = new CovidTable({
@@ -146,10 +168,16 @@ dataSource.loadAllData(() => {
                 "render": function (data, type, row, meta) {
                     return ``
                 },
+                "targets": 7
+            },
+            {
+                "render": function (data, type, row, meta) {
+                    return `${data} %`
+                },
                 "targets": 6
             },
             {
-                "targets": 6,
+                "targets": 7,
                 "createdCell": function (td, cellData, rowData, row, col) {
                     $(td).attr('id', `linechart-container-${row}`)
                 }
@@ -169,6 +197,7 @@ dataSource.loadAllData(() => {
             { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
             { title: "Óbitos", data: "deaths" },
             { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+            { title: "Letalidade", data: "fatalityRate" },
             {
                 title: "Tendência de casos dos últimos 14 dias",
                 sortable: false,
@@ -186,7 +215,7 @@ dataSource.loadAllData(() => {
                     min: timeInterval[0],
                     max: timeInterval[1]
                 },
-                behaviour: 'drag',
+                //behaviour: 'drag',
                 connect: true,
                 step: 24 * 60 * 60 * 1000,
                 start: timeInterval,
@@ -202,7 +231,7 @@ dataSource.loadAllData(() => {
                 start: timeInterval,
                 step: 1,
                 connect: true,
-                behaviour: 'drag',
+                //behaviour: 'drag',
                 range: {
                     'min': timeInterval[0],
                     'max': timeInterval[1]
@@ -234,7 +263,7 @@ dataSource.loadAllData(() => {
                     max: timeInterval[1]
                 },
                 behaviour: 'drag',
-                connect: true,
+                connect: [true, true, false],
                 step: 24 * 60 * 60 * 1000,
                 start: timeInterval,
                 format: {
@@ -248,7 +277,7 @@ dataSource.loadAllData(() => {
             sliderOptions = {
                 start: timeInterval,
                 step: 1,
-                connect: true,
+                connect: [true, true, false],
                 behaviour: 'drag',
                 range: {
                     'min': timeInterval[0],
@@ -268,11 +297,15 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
+        barChartLethality.setTitleDate(currentDateChart)
+        barChartIncidence.setTitleDate(currentDateChart)
+        barChartMortality.setTitleDate(currentDateChart)
         covidTable.updateDataset(dataSource)
     })
 
     dateSlider.on('endChange', (sliderTimeInterval) => {
-        var timeInterval = [dataSource.getDataTimeInterval()[0], sliderTimeInterval[1]]
+        var timeInterval = sliderTimeInterval//[dataSource.getDataTimeInterval()[0], sliderTimeInterval[1]]
         dataSource.setDataTimeInterval(timeInterval)
         var statisticsData = dataSource.getStatisticsData(
             covidmap.getCurrentPopoverLayer()
@@ -284,6 +317,14 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        var stateStatistics = dataSource.getStateStatistics()
+        barChartLethality.loadData(deepCopy(stateStatistics))
+        barChartIncidence.loadData(deepCopy(stateStatistics))
+        barChartMortality.loadData(deepCopy(stateStatistics))
+        var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
+        barChartLethality.setTitleDate(currentDateChart)
+        barChartIncidence.setTitleDate(currentDateChart)
+        barChartMortality.setTitleDate(currentDateChart)
         covidmap.updateAnimation(timeInterval)
         setTimeout(() => {
             covidTable.updateDataset(dataSource)
@@ -406,6 +447,11 @@ dataSource.loadAllData(() => {
     barChartLethality.loadData(deepCopy(stateStatistics))
     barChartIncidence.loadData(deepCopy(stateStatistics))
     barChartMortality.loadData(deepCopy(stateStatistics))
+
+    var currentDateChart = dateSlider.getTimeFormated(initTimeInterval, 1)
+    barChartLethality.setTitleDate(currentDateChart)
+    barChartIncidence.setTitleDate(currentDateChart)
+    barChartMortality.setTitleDate(currentDateChart)
 
     $('#loader').hide()
 })

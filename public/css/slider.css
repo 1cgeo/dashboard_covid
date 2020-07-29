@@ -17,3 +17,15 @@
 #current-date.active {
     color: red;
 }
+
+#slider-date > div > div:nth-child(2) > div {
+    width: 10px;
+}
+
+#slider-date > div > div:nth-child(2) > div:after {
+    content: none;
+ }
+
+ #slider-date > div > div:nth-child(2) > div:before {
+    content: none;
+ }
