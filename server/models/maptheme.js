@@ -82,7 +82,7 @@ const DAY_API_FILE_PATH = path.join(
     "..",
     "data",
     "covid19br",
-    "cidades_api.csv"
+    "cidades_area.csv"
 );
 
 const WEEK_API_FILE_PATH = path.join(
@@ -90,7 +90,7 @@ const WEEK_API_FILE_PATH = path.join(
     "..",
     "data",
     "covid19br",
-    "cidades_api_semana.csv"
+    "cidades_area_semana.csv"
 );
 
 const DAY_SAPI_FILE_PATH = path.join(
@@ -98,7 +98,7 @@ const DAY_SAPI_FILE_PATH = path.join(
     "..",
     "data",
     "covid19br",
-    "cidades_sapi.csv"
+    "cidades_subarea.csv"
 );
 
 const WEEK_SAPI_FILE_PATH = path.join(
@@ -106,7 +106,7 @@ const WEEK_SAPI_FILE_PATH = path.join(
     "..",
     "data",
     "covid19br",
-    "cidades_sapi_semana.csv"
+    "cidades_subarea_semana.csv"
 );
 
 const DAY_REGIONS_FILE_PATH = path.join(

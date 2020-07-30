@@ -37,7 +37,7 @@ download(
           path.join(__dirname, "cases-brazil-cities-time.csv"),
           path.join(__dirname, "gps_cities.csv"),
           path.join(__dirname, "centroides_municipios.csv"),
-          path.join(__dirname, "area_protecao_integrada.csv"),
+          path.join(__dirname, "area_subarea.csv"),
           path.join(__dirname, "cidades.csv")
         );
       }

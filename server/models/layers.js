@@ -7,9 +7,9 @@ var statesTileIndex = geojsonvt(statesGeoJSON)
 
 const regionsGeoJSON = require('../data/geojson/regioes.json')
 var regionsTileIndex = geojsonvt(regionsGeoJSON)
-const APIGeoJSON = require('../data/geojson/api.json')
+const APIGeoJSON = require('../data/geojson/area.json')
 var APITileIndex = geojsonvt(APIGeoJSON)
-const SAPIGeoJSON = require('../data/geojson/sapi.json')
+const SAPIGeoJSON = require('../data/geojson/subarea.json')
 var SAPITileIndex = geojsonvt(SAPIGeoJSON)
 
 module.exports.getCitiesVectorTilePbf = (z, x, y) => {

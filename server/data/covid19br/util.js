@@ -14,22 +14,22 @@ const centroide_regiao = {
 };
 
 const centroide_sapi = {
-  "2ª Bda C Mec": [-56.216524268499995, -29.86198892635],
-  "AD/5": [-48.940353771, -25.2165291457],
-  "AD/3": [-52.9869266145, -28.061558283300002],
-  "15ª Bda Inf Mtz": [-52.70053074965, -24.55801220175],
-  "5ª Bda C Bld": [-50.363856212, -24.88686601825],
-  "14ª Bda Inf Mtz": [-51.09759413615, -27.65545385525],
-  "3ª Bda C Mec": [-54.61908440495, -30.997590611249997],
-  "8ª Bda Inf Mtz": [-51.71784407045, -30.653584850999998],
-  "6ª Bda Inf Bld": [-53.664214672499995, -29.6236634728],
-  "1ª Bda C Mec": [-55.1459490654, -28.37737602875],
+  "Subárea de Uruguaiana": [-56.216524268499995, -29.86198892635],
+  "Subárea de Curitiba": [-48.940353771, -25.2165291457],
+  "Subárea de Cruz Alta": [-52.9869266145, -28.061558283300002],
+  "Subárea de Cascavel": [-52.70053074965, -24.55801220175],
+  "Subárea de Ponta Grossa": [-50.363856212, -24.88686601825],
+  "Subárea de Florianópolis": [-51.09759413615, -27.65545385525],
+  "Subárea de Bagé": [-54.61908440495, -30.997590611249997],
+  "Subárea de Pelotas": [-51.71784407045, -30.653584850999998],
+  "Subárea de Santa Maria": [-53.664214672499995, -29.6236634728],
+  "Subárea de Santiago": [-55.1459490654, -28.37737602875],
 };
 
 const centroide_api = {
-  "3ª DE": [-54.6053580925, -28.9089720818],
-  "6ª DE": [-52.99074199945, -30.653584850999998],
-  "5ª DE": [-51.32162136865, -25.935863894249998],
+  "Área Oeste do RS": [-54.6053580925, -28.9089720818],
+  "Área Leste do RS": [-52.99074199945, -30.653584850999998],
+  "Área de SC e PR": [-51.32162136865, -25.935863894249998],
 };
 
 const STATES_MAP = {
@@ -366,8 +366,13 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
         data[id].deaths += +d.deaths;
         data[id].newCases += +d.newCases;
         data[id].totalCases += +d.totalCases;
-        data[id].populacao +=
+        if(+d.totalCases_per_100k_inhabitants > 0){
+          data[id].populacao +=
           +data[id].totalCases / +d.totalCases_per_100k_inhabitants;
+        } else { 
+          data[id].populacao += 0.1
+        }
+
         data[id].recovered += +d.recovered;
         data[id].totalRecovered += +d.totalRecovered;
       }
@@ -376,11 +381,11 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
       const dataArray = [];
       for (var key in data) {
         data[key].deaths_by_totalCases =
-          data[key].deaths / data[key].totalCases;
+        Math.round(10*data[key].deaths / data[key].totalCases)/10;
         data[key].totalCases_per_100k_inhabitants =
-          data[key].totalCases / data[key].populacao;
+        Math.round(data[key].totalCases / data[key].populacao);
         data[key].deaths_per_100k_inhabitants =
-          data[key].deaths / data[key].populacao;
+        Math.round(data[key].deaths / data[key].populacao);
         dataArray.push(data[key]);
       }
       const last7Cases = {};
@@ -1113,13 +1118,13 @@ const modify_csv_cidade = (
                   );
                   agrupa_area_geografica(
                     total,
-                    `${output.split(".")[0]}_api.csv`,
+                    `${output.split(".")[0]}_area.csv`,
                     "api",
                     centroide_api
                   );
                   agrupa_area_geografica(
                     total,
-                    `${output.split(".")[0]}_sapi.csv`,
+                    `${output.split(".")[0]}_subarea.csv`,
                     "sapi",
                     centroide_sapi
                   );

@@ -16,13 +16,10 @@ estados_semana.csv
 cidades_semana.csv
 estados_regiao.csv
 estados_regiao_semana.csv
-cidades_api.csv
-cidades_api_semana.csv
-cidades_sapi.csv
-cidades_sapi_semana.csv
-api.json
-sapi.json
-area_protecao_integrada.csv
+cidades_area.csv
+cidades_area_semana.csv
+cidades_subarea.csv
+cidades_subarea_semana.csv
 cases-brazil-cities-time.csv
 gps_cities.csv
 cases-brazil-states.csv
