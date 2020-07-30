@@ -393,18 +393,26 @@ class BarChart {
                 return `${numberWithPoint(this.getFormatedValue(d[this.options.attributeY]))}`
             })
             .style("text-anchor", "middle")
-        text.append('tspan')
+        var lastData = this.currentData[this.currentData.length - 1]
+        var meanText = this.g.append('text')
+        meanText.append('tspan')
             .text((d, idx, arr) => {
                 if (idx !== (arr.length - 1)) return
-                var mean = Math.floor(+d[this.options.attributeYLine] * this.maxValue)
-                if (mean == 0) {
-                    return ''
-                }
-                return `Média: ${numberWithPoint(mean)}`
+                return `Média:`
             })
-            .attr("x", (d) => {
-                return this.x(d[this.options.attributeX])
+            .attr("x", this.x(lastData[this.options.attributeX]) + this.x.bandwidth())
+            .attr("y", this.y(lastData[this.options.attributeYLine]))
+            .attr("dy", 20)
+            .attr('font-size', '15px')
+            //.attr('class', 'custom-text')
+            .style("text-anchor", "start")
+        meanText.append('tspan')
+            .text((d, idx, arr) => {
+                if (idx !== (arr.length - 1)) return
+                var mean = Math.floor(+lastData[this.options.attributeYLine] * this.maxValue)
+                return `${numberWithPoint(mean)}`
             })
+            .attr("x", this.x(lastData[this.options.attributeX]) + this.x.bandwidth())
             //.attr("dx", 20)
             .attr("dy", 20)
             .attr('font-size', '15px')
@@ -539,7 +547,7 @@ class BarChartRecovered extends BarChart {
                 'font-size': '13px',
             },
             '.bar': {
-                'fill': '#76ff03'
+                'fill': '#b2ff59'
             }
         }
     }
@@ -547,7 +555,7 @@ class BarChartRecovered extends BarChart {
     getHoverCSS() {
         return {
             'deactive': {
-                'fill': '#76ff03'
+                'fill': '#b2ff59'
             },
             'active': {
                 'fill': 'rgb(66, 122, 2)'
