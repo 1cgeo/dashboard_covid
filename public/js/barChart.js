@@ -23,6 +23,29 @@ class BarChart {
     }
 
     downloadChart() {
+        var downloadContainer = "print-container"
+        var chartId = "print-graph"
+        $(`#${downloadContainer}`).empty()
+        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
+        var options = Object.assign({}, this.options)
+        options.parentId = ""
+        options.barWithLabels = true
+        options.toDownload = true
+        options.offsetHeight = 400
+        options.offsetWidth = 1200
+        options.elementId = chartId
+        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
+        options.customStyles = {
+            'text': {
+                'style': 'font: bold 12px sans-serif;'
+            }
+        }
+        var copyChart = factories.createBarChart(options.chartType, options)
+        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
+        d3ToPng(`#${chartId}`, this.getDownloadName(), {
+            scale: 5,
+            quality: 0.01,
+        })
     }
 
     getDownloadName() {
@@ -454,35 +477,6 @@ class BarChartRecovered extends BarChart {
         super(newOptions)
     }
 
-    downloadChart() {
-        var downloadContainer = "print-container"
-        var chartId = "print-graph"
-        $(`#${downloadContainer}`).empty()
-        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
-        var options = Object.assign({}, this.options)
-        options.parentId = ""
-        options.barWithLabels = true
-        options.toDownload = true
-        options.offsetHeight = 400
-        options.offsetWidth = 1200
-        options.elementId = chartId
-        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
-        options.customStyles = {
-            '.bar': {
-                'fill': 'rgba(113, 206, 6)'
-            },
-            'text': {
-                'style': 'font: bold 12px sans-serif;'
-            }
-        }
-        var copyChart = factories.createBarChart(options.chartType, options)
-        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
-        d3ToPng(`#${chartId}`, this.getDownloadName(), {
-            scale: 5,
-            quality: 0.01,
-        })
-    }
-
     draw() {
         this.svg.attr('width', this.getWidthSvg())
             .attr('height', this.getHeightSvg())
@@ -543,7 +537,7 @@ class BarChartRecovered extends BarChart {
                 'font-size': '13px',
             },
             '.bar': {
-                'fill': 'rgba(113, 206, 6, 0.835)'
+                'fill': '#76ff03'
             }
         }
     }
@@ -551,7 +545,7 @@ class BarChartRecovered extends BarChart {
     getHoverCSS() {
         return {
             'deactive': {
-                'fill': 'rgba(113, 206, 6, 0.835)'
+                'fill': '#76ff03'
             },
             'active': {
                 'fill': 'rgb(66, 122, 2)'
@@ -613,36 +607,6 @@ class BarChartCases extends BarChart {
         this.loadCSS()
     }
 
-    downloadChart() {
-        var downloadContainer = "print-container"
-        var chartId = "print-graph"
-        $(`#${downloadContainer}`).empty()
-        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
-        var options = Object.assign({}, this.options)
-        options.parentId = ""
-        options.barWithLabels = true
-        options.toDownload = true
-        options.offsetHeight = 400
-        options.offsetWidth = 1200
-        options.elementId = chartId
-        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
-        options.customStyles = {
-            '.bar': {
-                'fill': 'rgba(207, 17, 17)'
-            },
-            'text': {
-                'font-size': '15px',
-                'style': 'font: bold 12px sans-serif;'
-            }
-        }
-        var copyChart = factories.createBarChart(options.chartType, options)
-        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
-        d3ToPng(`#${chartId}`, this.getDownloadName(), {
-            scale: 5,
-            quality: 0.01,
-        })
-    }
-
     getCSS() {
         return {
             'path.arrow': {
@@ -683,7 +647,7 @@ class BarChartCases extends BarChart {
                 'font-size': '13px',
             },
             '.bar': {
-                'fill': 'rgba(207, 17, 17, 0.2)'
+                'fill': "#f4cfcd"
             }
         }
     }
@@ -691,7 +655,7 @@ class BarChartCases extends BarChart {
     getHoverCSS() {
         return {
             'deactive': {
-                'fill': 'rgba(207, 17, 17, 0.2)'
+                'fill': "#f4cfcd"
             },
             'active': {
                 'fill': '#cf1111'
@@ -753,35 +717,6 @@ class BarChartDeaths extends BarChart {
         this.loadCSS()
     }
 
-    downloadChart() {
-        var downloadContainer = "print-container"
-        var chartId = "print-graph"
-        $(`#${downloadContainer}`).empty()
-        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
-        var options = Object.assign({}, this.options)
-        options.parentId = ""
-        options.barWithLabels = true
-        options.toDownload = true
-        options.offsetHeight = 400
-        options.offsetWidth = 1200
-        options.elementId = chartId
-        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
-        options.customStyles = {
-            '.bar': {
-                'fill': 'rgba(85, 85, 85)'
-            },
-            'text': {
-                'style': 'font: bold 12px sans-serif;'
-            }
-        }
-        var copyChart = factories.createBarChart(options.chartType, options)
-        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
-        d3ToPng(`#${chartId}`, this.getDownloadName(), {
-            scale: 5,
-            quality: 0.01,
-        })
-    }
-
     getCSS() {
         return {
             'path.arrow': {
@@ -822,7 +757,7 @@ class BarChartDeaths extends BarChart {
                 'font-size': '13px',
             },
             '.bar': {
-                'fill': 'rgba(85, 85, 85, 0.2)'
+                'fill': "#dddddd"
             }
         }
     }
@@ -830,7 +765,7 @@ class BarChartDeaths extends BarChart {
     getHoverCSS() {
         return {
             'deactive': {
-                'fill': 'rgba(85, 85, 85, 0.2)'
+                'fill': "#dddddd"
             },
             'active': {
                 'fill': '#555555'
