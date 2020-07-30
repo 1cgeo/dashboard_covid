@@ -34,7 +34,7 @@ class BarChart {
         options.offsetHeight = 400
         options.offsetWidth = 1200
         options.elementId = chartId
-        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
+        options.customMargin = { top: 30, right: 70, bottom: 50, left: 70 }
         options.customStyles = {
             'text': {
                 'style': 'font: bold 12px sans-serif;'
@@ -50,7 +50,7 @@ class BarChart {
 
     getDownloadName() {
         var suffix = (this.options.dataSource.getCurrentGroupData() == 'week') ? 'semanal' : 'diario'
-        var time = (this.options.dataSource.getCurrentGroupData() == 'week') ? this.dataset[this.dataset.length-1].week : this.dataset[this.dataset.length-1].date
+        var time = (this.options.dataSource.getCurrentGroupData() == 'week') ? this.dataset[this.dataset.length - 1].week : this.dataset[this.dataset.length - 1].date
         return `${this.options.downloadName}-${suffix}-${time}`
     }
 
@@ -383,7 +383,7 @@ class BarChart {
     createBarsLabels(bars) {
         var text = bars.enter().append("text")
             .attr("x", (d) => {
-                return this.x(d[this.options.attributeX])  + this.x.bandwidth() / 2
+                return this.x(d[this.options.attributeX]) + this.x.bandwidth() / 2
             })
             .attr("y", (d) => {
                 return this.y(d[this.options.attributeY]) - 12
@@ -406,7 +406,9 @@ class BarChart {
                 return this.x(d[this.options.attributeX])
             })
             //.attr("dx", 20)
-            .attr("dy", 12)
+            .attr("dy", 20)
+            .attr('font-size', '15px')
+            //.attr('class', 'custom-text')
             .style("text-anchor", "start")
     }
 
@@ -719,6 +721,9 @@ class BarChartDeaths extends BarChart {
 
     getCSS() {
         return {
+            /* 'tspan.custom-text': {
+                'font-size': '15px'
+            }, */
             'path.arrow': {
                 'stroke': 'rgb(0, 0, 0)',
                 'stroke-width': '0.5px',
