@@ -30,10 +30,11 @@ class BarChart {
         var options = Object.assign({}, this.options)
         options.parentId = ""
         options.barWithLabels = true
+        options.toDownload = true
         options.offsetHeight = 400
         options.offsetWidth = 1200
         options.elementId = chartId
-        options.customMargin = { top: 30, right: 10, bottom: 50, left: 70 }
+        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
         options.customStyles = {
             /* '.line-chart-mean': {
                 'stroke-width': '2px'
@@ -43,7 +44,7 @@ class BarChart {
             }
         }
         var copyChart = factories.createBarChart(options.chartType, options)
-        copyChart.loadData(deepCopy(this.dataset.slice(-15)))
+        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
         d3ToPng(`#${chartId}`, this.getDownloadName(), {
             scale: 5,
             quality: 0.01,
@@ -52,7 +53,7 @@ class BarChart {
 
     getDownloadName() {
         var suffix = (this.options.dataSource.getCurrentGroupData() == 'week') ? 'semanal' : 'diario'
-        return `${this.options.downloadName}-${suffix}`
+        return `${this.options.downloadName}-${suffix}-${this.dataset[0].date}`
     }
 
     loadSvg() {
@@ -229,7 +230,7 @@ class BarChart {
     }
 
     createLineLabels() {
-        
+
     }
 
     createAreaChart() {
@@ -359,6 +360,7 @@ class BarChart {
             .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeYLine)(
                 this.currentData
             ))
+        if (this.options.toDownload) return
         var idx = Math.floor(this.currentData.length / 2)
         var xValue = this.currentData[idx][this.options.attributeX]
         var yValue = this.currentData[idx][this.options.attributeYLine]
@@ -383,28 +385,31 @@ class BarChart {
     createBarsLabels(bars) {
         var text = bars.enter().append("text")
             .attr("x", (d) => {
-                return this.x(d[this.options.attributeX])
+                return this.x(d[this.options.attributeX])  + this.x.bandwidth() / 2
             })
             .attr("y", (d) => {
-                return this.y(d[this.options.attributeY]) + 8
+                return this.y(d[this.options.attributeY]) - 12
             })
         text.append('tspan')
             .text((d) => {
                 return `${numberWithPoint(this.getFormatedValue(d[this.options.attributeY]))}`
             })
-         text.append('tspan')
-            .text((d) => {
+            .style("text-anchor", "middle")
+        text.append('tspan')
+            .text((d, idx, arr) => {
+                if (idx !== (arr.length - 1)) return
                 var mean = Math.floor(+d[this.options.attributeYLine] * this.maxValue)
-                if(mean == 0){
+                if (mean == 0) {
                     return ''
                 }
                 return `${mean} média`
             })
-        .attr("x", (d) => {
-            return this.x(d[this.options.attributeX])
-        })
-        //.attr("dx", 20)
-        .attr("dy", 12)
+            .attr("x", (d) => {
+                return this.x(d[this.options.attributeX])
+            })
+            //.attr("dx", 20)
+            .attr("dy", 12)
+            .style("text-anchor", "start")
     }
 
     drawBars(width, height) {
@@ -819,6 +824,8 @@ class BarChartStates extends BarChart {
         options.offsetHeight = 600
         options.offsetWidth = 1400
         options.elementId = chartId
+        options.toDownload = true
+        options.customMargin = { top: 30, right: 10, bottom: 50, left: 70 }
         options.customStyles = {
             'text': {
                 'position': 'absolute',
@@ -938,8 +945,8 @@ class BarChartStates extends BarChart {
                 })
             )
             .selectAll("text")
-            .attr("y", 0)
-            .attr("x", 17)
+            .attr("y", 10)
+            .attr("x", (this.options.toDownload) ? 19 : 4)
             .attr("dy", ".35em")
             .attr("transform", "rotate(45)")
             .style("text-anchor", "start")
@@ -948,14 +955,15 @@ class BarChartStates extends BarChart {
     createBarsLabels(bars) {
         bars.enter().append("text")
             .text((d) => {
-                return this.getFormatedValue(d[this.options.attributeY]);
+                return Math.floor(this.getFormatedValue(d[this.options.attributeY]));
             })
             .attr("x", (d) => {
                 return this.x(d[this.options.attributeX])
             })
             .attr("y", (d) => {
-                return this.y(d[this.options.attributeY]) + 12
+                return this.y(d[this.options.attributeY]) - 12
             })
+            .style("text-anchor", "middle")
     }
 
     drawBars(width, height) {
@@ -1014,8 +1022,9 @@ class BarChartLethality extends BarChartStates {
                 return this.x(d[this.options.attributeX])
             })
             .attr("y", (d) => {
-                return this.y(d[this.options.attributeY]) + 12;
+                return this.y(d[this.options.attributeY]) - 12;
             })
+            .style("text-anchor", "middle")
     }
 
     drawAxisY(height) {

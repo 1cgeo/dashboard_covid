@@ -338,9 +338,9 @@ class DataSource {
         return this.filterChoroplethData(data, "CD_GEOCUF")
     }
 
-    getStateStatiscData(){
+    getStateStatisticData() {
         var broupBy = this.getCurrentGroupData()
-        return this.stateChoroplethData[broupBy] 
+        return this.stateChoroplethData[broupBy]
     }
 
     setCityChoroplethData(data) {
@@ -353,9 +353,9 @@ class DataSource {
         return this.filterChoroplethData(data, "CD_GEOCMU")
     }
 
-    getCityStatiscData(){
+    getCityStatiscData() {
         var broupBy = this.getCurrentGroupData()
-        return this.cityChoroplethData[broupBy] 
+        return this.cityChoroplethData[broupBy]
     }
 
     setRegionsChoroplethData(data) {
@@ -368,9 +368,9 @@ class DataSource {
         return this.filterChoroplethData(data, "name")
     }
 
-    getRegionsStatiscData(){
+    getRegionsStatiscData() {
         var broupBy = this.getCurrentGroupData()
-        return this.regionsChoroplethData[broupBy] 
+        return this.regionsChoroplethData[broupBy]
     }
 
     setAPIChoroplethData(data) {
@@ -383,9 +383,9 @@ class DataSource {
         return this.filterChoroplethData(data, "name")
     }
 
-    getAPIStatiscData(){
+    getAPIStatiscData() {
         var broupBy = this.getCurrentGroupData()
-        return this.apiChoroplethData[broupBy] 
+        return this.apiChoroplethData[broupBy]
     }
 
     setSAPIChoroplethData(data) {
@@ -398,14 +398,25 @@ class DataSource {
         return this.filterChoroplethData(data, "name")
     }
 
-    getSAPIStatiscData(){
+    getSAPIStatiscData() {
         var broupBy = this.getCurrentGroupData()
-        return this.sapiChoroplethData[broupBy] 
+        return this.sapiChoroplethData[broupBy]
     }
 
     setChoroplethTimeInterval(layerId) {
         var broupBy = this.getCurrentGroupData()
-        var data = (layerId == 0) ? this.stateChoroplethData[broupBy] : this.cityChoroplethData[broupBy]
+        var data
+        if (layerId == 0) {
+            data = this.stateChoroplethData[broupBy]
+        } else if (layerId == 1) {
+            data = this.cityChoroplethData[broupBy]
+        } else if (layerId == 2) {
+            data = this.regionsChoroplethData[broupBy]
+        } else if (layerId == 3) {
+            data = this.apiChoroplethData[broupBy]
+        } else if (layerId == 4) {
+            data = this.sapiChoroplethData[broupBy]
+        }
         if (broupBy == 'day') {
             this.setDataTimeInterval([
                 new Date(data[0].date.replace(/\-/g, "/")).getTime(),
@@ -559,7 +570,7 @@ class DataSource {
                 center: [-12.940292375503162, -50.44921875000001],
                 zoom: 3,
                 popoverLayer: {
-                    statisticDataset: this.getStateStatiscData.bind(this),
+                    statisticDataset: this.getStateStatisticData.bind(this),
                     fieldIdGeojson: "CD_GEOCUF",
                     fieldIdDataset: "CD_GEOCUF",
                     fieldTitle: "NM_ESTADO",
@@ -651,7 +662,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -669,7 +680,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -687,7 +698,7 @@ class DataSource {
                         id: 6,
                         popupAttributeTitle: "Número de recuperados",
                         scaleFactor: 0.0015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#009624",
                             color: "#009624",
@@ -791,7 +802,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -809,7 +820,7 @@ class DataSource {
                         id: 5,
                         popupAttributeTitle: "Número de óbitos",
                         scaleFactor: 0.015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -918,7 +929,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -936,7 +947,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -954,7 +965,7 @@ class DataSource {
                         id: 6,
                         popupAttributeTitle: "Número de recuperados",
                         scaleFactor: 0.0015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#009624",
                             color: "#009624",
@@ -1063,7 +1074,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -1081,7 +1092,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -1208,7 +1219,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [50000, 100000, 300000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -1226,7 +1237,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleLenged: [2000, 5000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",

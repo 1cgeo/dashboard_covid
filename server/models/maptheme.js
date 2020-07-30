@@ -334,16 +334,16 @@ module.exports.getHeatThemeData = (location, cb) => {
 };
 
 module.exports.getHeatThemeDayData = (location) => {
-    let dataSource = (["city", "state"].includes(location))?
-        getDataSource("city", "day"): getDataSource(location, "day")
+    let dataSource = (["city", "state"].includes(location)) ?
+        getDataSource("city", "day") : getDataSource(location, "day")
     var heatCitiesData = dataSource.map((info) => {
-        if(info.CENTROID_Y && info.CENTROID_X){
+        if (info.CENTROID_Y && info.CENTROID_X) {
             latlong = [info.CENTROID_Y, info.CENTROID_X]
-        } else{
+        } else {
             latlong = [info.lat, info.lon]
-        } 
+        }
         return {
-            latlong : latlong,
+            latlong: latlong,
             deaths: info.deaths,
             totalCases: info.totalCases,
             date: info.date,
@@ -355,12 +355,12 @@ module.exports.getHeatThemeDayData = (location) => {
 };
 
 module.exports.getHeatThemeWeekData = (location) => {
-    let dataSource = (["city", "state"].includes(location))?
-        getDataSource("city", "week"): getDataSource(location, "week")
+    let dataSource = (["city", "state"].includes(location)) ?
+        getDataSource("city", "week") : getDataSource(location, "week")
     var heatCitiesData = dataSource.map((info) => {
-        if(info.CENTROID_Y && info.CENTROID_X){
+        if (info.CENTROID_Y && info.CENTROID_X) {
             latlong = [info.CENTROID_Y, info.CENTROID_X]
-        } else{
+        } else {
             latlong = [info.lat, info.lon]
         }
         return {
@@ -392,6 +392,9 @@ module.exports.getChoroplethThemeDayData = (location) => {
             totalCases: info.totalCases,
             totalRecovered: info.totalRecovered,
             shortName: info.state,
+            region: info.regiao,
+            api: info.api,
+            sapi: info.sapi,
             newCases: info.newCases,
             fatalityRate: ((+info.deaths / +info.totalCases) * 100).toFixed(1),
             deaths: info.deaths,
@@ -431,6 +434,9 @@ module.exports.getChoroplethThemeWeekData = (location) => {
             nrDiasDobraCasos: info.nrDiasDobraCasos,
             nrDiasDobraMortes: info.nrDiasDobraMortes,
             week: info.semana,
+            region: info.regiao,
+            api: info.api,
+            sapi: info.sapi,
             shortName: info.state,
             totalCases: info.totalCases,
             totalRecovered: info.totalRecovered,

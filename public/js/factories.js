@@ -44,4 +44,36 @@ class Factories {
         }
         return barChart;
     }
+
+    createTable(type, options) {
+        var table
+        if (type === "state") {
+            table = new CovidTableState(options)
+        } else if (type === "city") {
+            table = new CovidTableCity(options)
+        } else if (type === "regions") {
+            table = new CovidTableRegions(options)
+        } else if (type === "api") {
+            table = new CovidTableAPI(options)
+        } else if (type === "sapi") {
+            table = new CovidTableSAPI(options)
+        } 
+        return table;
+    }
+
+    createTableFromLayerId(layerId, options) {
+        var table
+        if (+layerId === 0) {
+            table = this.createTable('state', options)
+        } else if (+layerId === 1) {
+            table = this.createTable('city', options)
+        } else if (+layerId === 2) {
+            table = this.createTable('regions', options)
+        } else if (+layerId === 3) {
+            table = this.createTable('api', options)
+        } else if (+layerId === 4) {
+            table = this.createTable('sapi', options)
+        } 
+        return table;
+    }
 }

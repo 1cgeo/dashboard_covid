@@ -143,69 +143,13 @@ dataSource.loadAllData(() => {
     });
 
 
-    var covidTable = new CovidTable({
-        elementId: 'covid-table',
-        dataset: dataSource.getStateChoroplethData().data,
-        "drawCallback": function (settings) {
-            var api = this.api()
-            var rowIds = api.rows({ page: 'current' }).indexes()
-            for (var i = rowIds.length; i--;) {
-                var containerId = `linechart-container-${rowIds[i]}`
-                var lineChart = new LineChart({
-                    width: 90,
-                    height: 40,
-                    data: api.row(rowIds[i]).data().last14AvgCases,
-                    containerId: containerId,
-                    color: dataSource.getTendencyColor(
-                        api.row(rowIds[i]).data().tendencyCases
-                    )
-                })
-                $(`#${containerId}`).append(lineChart.create())
-            }
-        },
-        "columnDefs": [
-            {
-                "render": function (data, type, row, meta) {
-                    return ``
-                },
-                "targets": 7
-            },
-            {
-                "render": function (data, type, row, meta) {
-                    return `${data} %`
-                },
-                "targets": 6
-            },
-            {
-                "targets": 7,
-                "createdCell": function (td, cellData, rowData, row, col) {
-                    $(td).attr('id', `linechart-container-${row}`)
-                }
-            },
-            {
-                "render": function (data, type, row, meta) {
-                    return numberWithPoint(Math.floor(data))
-                },
-                "targets": [2, 3, 4, 5]
-            },
-            { type: 'formatted-num', targets: [2, 3, 4, 5] }
-        ],
-        columns: [
-            { title: "id", visible: false, data: "id", },
-            { title: "Estados", data: "name" },
-            { title: "Casos confirmados", data: "totalCases" },
-            { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
-            { title: "Óbitos", data: "deaths" },
-            { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
-            { title: "Letalidade", data: "fatalityRate" },
-            {
-                title: "Tendência de casos dos últimos 14 dias",
-                sortable: false,
-                data: "last14AvgCases",
-                "width": "12%"
-            }
-        ]
-    })
+    var covidTable = factories.createTable(
+        'state',
+        {
+            elementId: 'covid-table',
+            dataSource: dataSource,
+        }
+    )
 
     dataSource.on('changeTimeInterval', (timeInterval) => {
         var sliderOptions
@@ -216,7 +160,7 @@ dataSource.loadAllData(() => {
                     max: timeInterval[1]
                 },
                 //behaviour: 'drag',
-                connect: true,
+                connect: [true, true, false],
                 step: 24 * 60 * 60 * 1000,
                 start: timeInterval,
                 format: {
@@ -230,7 +174,7 @@ dataSource.loadAllData(() => {
             sliderOptions = {
                 start: timeInterval,
                 step: 1,
-                connect: true,
+                connect: [true, true, false],
                 //behaviour: 'drag',
                 range: {
                     'min': timeInterval[0],
@@ -249,7 +193,7 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
-        covidTable.updateDataset(dataSource)
+        covidTable.updateDataset()
     })
 
     dataSource.on('changeGroupData', (groupName) => {
@@ -301,7 +245,7 @@ dataSource.loadAllData(() => {
         barChartLethality.setTitleDate(currentDateChart)
         barChartIncidence.setTitleDate(currentDateChart)
         barChartMortality.setTitleDate(currentDateChart)
-        covidTable.updateDataset(dataSource)
+        covidTable.updateDataset()
     })
 
     dateSlider.on('endChange', (sliderTimeInterval) => {
@@ -327,7 +271,7 @@ dataSource.loadAllData(() => {
         barChartMortality.setTitleDate(currentDateChart)
         covidmap.updateAnimation(timeInterval)
         setTimeout(() => {
-            covidTable.updateDataset(dataSource)
+            covidTable.updateDataset()
         }, 500)
     })
 
@@ -347,8 +291,19 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+
+        var stateStatistics = dataSource.getStateStatistics()
+        barChartLethality.loadData(deepCopy(stateStatistics))
+        barChartIncidence.loadData(deepCopy(stateStatistics))
+        barChartMortality.loadData(deepCopy(stateStatistics))
+
+        var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
+        barChartLethality.setTitleDate(currentDateChart)
+        barChartIncidence.setTitleDate(currentDateChart)
+        barChartMortality.setTitleDate(currentDateChart)
+
         setTimeout(() => {
-            covidTable.updateDataset(dataSource)
+            covidTable.updateDataset()
         }, 500)
 
     }).connectStopAnimation((timeInterval) => {
@@ -364,8 +319,19 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+
+        var stateStatistics = dataSource.getStateStatistics()
+        barChartLethality.loadData(deepCopy(stateStatistics))
+        barChartIncidence.loadData(deepCopy(stateStatistics))
+        barChartMortality.loadData(deepCopy(stateStatistics))
+
+        var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
+        barChartLethality.setTitleDate(currentDateChart)
+        barChartIncidence.setTitleDate(currentDateChart)
+        barChartMortality.setTitleDate(currentDateChart)
+
         setTimeout(() => {
-            covidTable.updateDataset(dataSource)
+            covidTable.updateDataset()
         }, 500)
     })
 
@@ -380,32 +346,14 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
-        setTimeout(() => {
-            if (!layerClicked) {
-                if (covidmap.getCurrentLayerOptions().id == 0) {
-                    if (covidTable.getColumnName(1) == 'Municípios') {
-                        covidTable.reloadDataset(
-                            dataSource.getStateChoroplethData().data
-                        )
-                    }
-                }
-                covidTable.filterColumn(0, '')
-            }
-            else if (layerClicked.properties.CD_GEOCUF) {
-                covidTable.changeColumnName(1, 'Municípios')
-                covidTable.reloadDataset(
-                    dataSource.getCityChoroplethData().data
-                )
-                covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCUF}`)
-            } else if (layerClicked.properties.CD_GEOCMU) {
-                covidTable.filterColumn(0, `^${layerClicked.properties.CD_GEOCMU.slice(0, 2)}`)
-            }
-        }, 500)
+        covidTable.changeLocation(layerClicked)
     })
 
     covidmap.on('changeLayer', (layerId) => {
-        var statisticsData = dataSource.getStatisticsData(
-            covidmap.getCurrentPopoverLayer()
+        var statisticsData = dataSource.getCountryData()
+        locationStatus.loadData(
+            deepCopy(statisticsData),
+            'Brasil'
         )
         if ([1, 3, 4].includes(+layerId)) {
             $(".recovered").each(function () {
@@ -415,19 +363,15 @@ dataSource.loadAllData(() => {
             $(".recovered").each(function () {
                 $(this).removeClass('hide')
             })
-        }
-        if (+layerId === 1) {
-            covidTable.changeColumnName(1, 'Municípios')
-            covidTable.reloadDataset(
-                dataSource.getCityChoroplethData().data
-            )
-        } else {
             barChartRecovered.loadData(deepCopy(statisticsData))
-            covidTable.changeColumnName(1, 'Estados')
-            covidTable.reloadDataset(
-                dataSource.getStateChoroplethData().data
-            )
         }
+        covidTable = factories.createTableFromLayerId(
+            layerId,
+            {
+                elementId: 'covid-table',
+                dataSource: dataSource,
+            }
+        )
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
     })
