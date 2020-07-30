@@ -23,37 +23,12 @@ class BarChart {
     }
 
     downloadChart() {
-        var downloadContainer = "print-container"
-        var chartId = "print-graph"
-        $(`#${downloadContainer}`).empty()
-        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
-        var options = Object.assign({}, this.options)
-        options.parentId = ""
-        options.barWithLabels = true
-        options.toDownload = true
-        options.offsetHeight = 400
-        options.offsetWidth = 1200
-        options.elementId = chartId
-        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
-        options.customStyles = {
-            /* '.line-chart-mean': {
-                'stroke-width': '2px'
-            }, */
-            'text': {
-                'style': 'font: bold 12px sans-serif;'
-            }
-        }
-        var copyChart = factories.createBarChart(options.chartType, options)
-        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
-        d3ToPng(`#${chartId}`, this.getDownloadName(), {
-            scale: 5,
-            quality: 0.01,
-        })
     }
 
     getDownloadName() {
         var suffix = (this.options.dataSource.getCurrentGroupData() == 'week') ? 'semanal' : 'diario'
-        return `${this.options.downloadName}-${suffix}-${this.dataset[0].date}`
+        var time = (this.options.dataSource.getCurrentGroupData() == 'week') ? this.dataset[this.dataset.length-1].week : this.dataset[this.dataset.length-1].date
+        return `${this.options.downloadName}-${suffix}-${time}`
     }
 
     loadSvg() {
@@ -212,7 +187,7 @@ class BarChart {
                             ))} ${this.options.title}
         <br>
         
-        ${(groupData == 'day') ? `${Math.floor(+d[this.options.attributeYLine] * this.maxValue)} média` : ``}`)
+        ${(groupData == 'day') ? `${numberWithPoint(Math.floor(+d[this.options.attributeYLine] * this.maxValue))} média` : ``}`)
         }
         this.tooltipMouseleave = (d, idx) => {
             var currentBar = this.g.selectAll('.bar')
@@ -402,7 +377,7 @@ class BarChart {
                 if (mean == 0) {
                     return ''
                 }
-                return `${mean} média`
+                return `Média: ${numberWithPoint(mean)}`
             })
             .attr("x", (d) => {
                 return this.x(d[this.options.attributeX])
@@ -477,6 +452,35 @@ class BarChartRecovered extends BarChart {
 
     constructor(newOptions) {
         super(newOptions)
+    }
+
+    downloadChart() {
+        var downloadContainer = "print-container"
+        var chartId = "print-graph"
+        $(`#${downloadContainer}`).empty()
+        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
+        var options = Object.assign({}, this.options)
+        options.parentId = ""
+        options.barWithLabels = true
+        options.toDownload = true
+        options.offsetHeight = 400
+        options.offsetWidth = 1200
+        options.elementId = chartId
+        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
+        options.customStyles = {
+            '.bar': {
+                'fill': 'rgba(113, 206, 6)'
+            },
+            'text': {
+                'style': 'font: bold 12px sans-serif;'
+            }
+        }
+        var copyChart = factories.createBarChart(options.chartType, options)
+        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
+        d3ToPng(`#${chartId}`, this.getDownloadName(), {
+            scale: 5,
+            quality: 0.01,
+        })
     }
 
     draw() {
@@ -609,6 +613,36 @@ class BarChartCases extends BarChart {
         this.loadCSS()
     }
 
+    downloadChart() {
+        var downloadContainer = "print-container"
+        var chartId = "print-graph"
+        $(`#${downloadContainer}`).empty()
+        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
+        var options = Object.assign({}, this.options)
+        options.parentId = ""
+        options.barWithLabels = true
+        options.toDownload = true
+        options.offsetHeight = 400
+        options.offsetWidth = 1200
+        options.elementId = chartId
+        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
+        options.customStyles = {
+            '.bar': {
+                'fill': 'rgba(207, 17, 17)'
+            },
+            'text': {
+                'font-size': '15px',
+                'style': 'font: bold 12px sans-serif;'
+            }
+        }
+        var copyChart = factories.createBarChart(options.chartType, options)
+        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
+        d3ToPng(`#${chartId}`, this.getDownloadName(), {
+            scale: 5,
+            quality: 0.01,
+        })
+    }
+
     getCSS() {
         return {
             'path.arrow': {
@@ -717,6 +751,35 @@ class BarChartDeaths extends BarChart {
         this.drawLineYMiddle()
         this.drawLineYTop()
         this.loadCSS()
+    }
+
+    downloadChart() {
+        var downloadContainer = "print-container"
+        var chartId = "print-graph"
+        $(`#${downloadContainer}`).empty()
+        $(`<svg id="${chartId}"></svg>`).appendTo(`#${downloadContainer}`)
+        var options = Object.assign({}, this.options)
+        options.parentId = ""
+        options.barWithLabels = true
+        options.toDownload = true
+        options.offsetHeight = 400
+        options.offsetWidth = 1200
+        options.elementId = chartId
+        options.customMargin = { top: 30, right: 30, bottom: 50, left: 70 }
+        options.customStyles = {
+            '.bar': {
+                'fill': 'rgba(85, 85, 85)'
+            },
+            'text': {
+                'style': 'font: bold 12px sans-serif;'
+            }
+        }
+        var copyChart = factories.createBarChart(options.chartType, options)
+        copyChart.loadData(deepCopy(this.dataset.slice(-28)))
+        d3ToPng(`#${chartId}`, this.getDownloadName(), {
+            scale: 5,
+            quality: 0.01,
+        })
     }
 
     getCSS() {

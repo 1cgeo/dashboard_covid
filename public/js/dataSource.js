@@ -977,7 +977,7 @@ class DataSource {
                 ],
             },
             {
-                name: "API",
+                name: "Área",
                 id: 3,
                 center: [-27.790788301514944, -51.48193359375001],
                 zoom: 5,
@@ -1122,7 +1122,7 @@ class DataSource {
                 ],
             },
             {
-                name: "SAPI",
+                name: "Subárea",
                 id: 4,
                 center: [-27.790788301514944, -51.48193359375001],
                 zoom: 5,

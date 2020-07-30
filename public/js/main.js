@@ -206,7 +206,7 @@ dataSource.loadAllData(() => {
                     min: timeInterval[0],
                     max: timeInterval[1]
                 },
-                behaviour: 'drag',
+                //behaviour: 'drag',
                 connect: [true, true, false],
                 step: 24 * 60 * 60 * 1000,
                 start: timeInterval,
@@ -222,7 +222,7 @@ dataSource.loadAllData(() => {
                 start: timeInterval,
                 step: 1,
                 connect: [true, true, false],
-                behaviour: 'drag',
+                //behaviour: 'drag',
                 range: {
                     'min': timeInterval[0],
                     'max': timeInterval[1]
