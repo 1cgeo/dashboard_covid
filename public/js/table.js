@@ -456,7 +456,7 @@ class CovidTableAPI extends CovidTable {
             ],
             columns: [
                 { title: "id", visible: false, data: "name", },
-                { title: "API", data: "name" },
+                { title: "Área", data: "name" },
                 { title: "Casos confirmados", data: "totalCases" },
                 { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
                 { title: "Óbitos", data: "deaths" },
@@ -482,11 +482,11 @@ class CovidTableAPI extends CovidTable {
     changeLocation(featureClicked) {
         if (!featureClicked) {
             if (this.getColumnName(1) == 'Municípios') {
-                this.changeColumnName(1, 'API')
+                this.changeColumnName(1, 'Área')
                 this.setOptions({
                     columns: [
                         { title: "id", visible: false, data: "name", },
-                        { title: "API", data: "name" },
+                        { title: "Área", data: "name" },
                         { title: "Casos confirmados", data: "totalCases" },
                         { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
                         { title: "Óbitos", data: "deaths" },
@@ -583,7 +583,7 @@ class CovidTableSAPI extends CovidTable {
             ],
             columns: [
                 { title: "id", visible: false, data: "name", },
-                { title: "SAPI", data: "name" },
+                { title: "Subárea", data: "name" },
                 { title: "Casos confirmados", data: "totalCases" },
                 { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
                 { title: "Óbitos", data: "deaths" },
@@ -609,11 +609,11 @@ class CovidTableSAPI extends CovidTable {
     changeLocation(featureClicked) {
         if (!featureClicked) {
             if (this.getColumnName(1) == 'Municípios') {
-                this.changeColumnName(1, 'SAPI')
+                this.changeColumnName(1, 'Subárea')
                 this.setOptions({
                     columns: [
                         { title: "id", visible: false, data: "name", },
-                        { title: "SAPI", data: "name" },
+                        { title: "Subárea", data: "name" },
                         { title: "Casos confirmados", data: "totalCases" },
                         { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
                         { title: "Óbitos", data: "deaths" },
