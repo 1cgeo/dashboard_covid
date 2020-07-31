@@ -28,19 +28,11 @@ download(
   path.join(__dirname, "cases-brazil-cities-time.csv"),
   function (err, data) {
     if (err) return console.error(err);
-    download(
-      "https://raw.githubusercontent.com/wcota/covid19br/master/gps_cities.csv",
-      path.join(__dirname, "gps_cities.csv"),
-      function (err, data) {
-        if (err) return console.error(err);
-        modify_csv_cidade(
-          path.join(__dirname, "cases-brazil-cities-time.csv"),
-          path.join(__dirname, "gps_cities.csv"),
-          path.join(__dirname, "centroides_municipios.csv"),
-          path.join(__dirname, "area_subarea.csv"),
-          path.join(__dirname, "cidades.csv")
-        );
-      }
+    modify_csv_cidade(
+      path.join(__dirname, "cases-brazil-cities-time.csv"),
+      path.join(__dirname, "dados_municipios.csv"),
+      path.join(__dirname, "area_subarea.csv"),
+      path.join(__dirname, "cidades.csv")
     );
   }
 );
