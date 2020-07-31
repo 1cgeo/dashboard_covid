@@ -15,7 +15,6 @@ class BarChart {
         this.svg = this.loadSvg()
         this.g = this.loadGroup()
         this.createMarkers()
-        this.createTooltip()
         this.createAreaChart()
         window.addEventListener("resize", () => {
             this.draw()
@@ -146,11 +145,13 @@ class BarChart {
     }
 
     loadData(data) {
+        this.createTooltip()
         this.dataset = data
         this.currentData = []
         if (data.length < 0) return
         this.currentData = this.formatInputData(data)
         this.loadChart()
+        
     }
 
     loadChart() {
