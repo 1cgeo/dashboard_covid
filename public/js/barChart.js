@@ -366,7 +366,7 @@ class BarChart {
             .attr("text-anchor", "middle")
             .attr("class", "label-chart-mean")
             .attr("x", this.x(xValue))
-            .attr("y", this.y(1))
+            .attr("y", this.y(1.2))
             .text("Média de 7 dias");
         this.g.append("path")
             .attr("class", "arrow")
@@ -374,7 +374,7 @@ class BarChart {
                 .x((d) => { return this.x(d[0]) + this.x.bandwidth() / 2 })
                 .y((d) => { return this.y(d[1]) })
                 .curve(d3.curveMonotoneX)([
-                    [xValue, 1.009],
+                    [xValue, 1.2],
                     [xValue, yValue]
                 ]))
             .attr('stroke-linecap', 'round')
