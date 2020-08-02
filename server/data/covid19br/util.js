@@ -404,8 +404,13 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
     .on("end", function () {
       const dataArray = [];
       for (var key in data) {
-        data[key].deaths_by_totalCases =
-          Math.round((10 * data[key].deaths) / data[key].totalCases) / 10;
+        if (data[key].totalCases > 0) {
+          data[key].deaths_by_totalCases =
+            Math.round((10 * data[key].deaths) / data[key].totalCases) / 10;
+        } else {
+          data[key].deaths_by_totalCases = 0;
+        }
+
         data[key].totalCases_per_100k_inhabitants = Math.round(
           data[key].totalCases / data[key].pop_100k
         );
