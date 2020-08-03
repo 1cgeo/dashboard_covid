@@ -51,7 +51,7 @@ class CovidMap {
                 },
                 onChooseEvent: () => {
                     var selectedData = $("#locations").getSelectedItemData()
-                    if (this.getCurrentLayerOptions().id == 0) {
+                    if (this.getCurrentLayerOptions().id != 1) {
                         this.loadMapData(1)
                         $("input[name='layer'][value='1']").prop('checked', true)
                     }

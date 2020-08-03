@@ -278,19 +278,19 @@ class PopoverLayer extends Layer {
                     <div><b>Letalidade: </b></div>
                 </div>
                 <div class="value5-popup">
-                    <div class="text-center">${(data) ? `${((+data.deaths / +data.totalCases) * 100).toFixed(1)} %` : 'sem dados'}</div>
+                    <div class="text-center">${(data && data.fatalityRate) ? `${data.fatalityRate}%` : 'sem dados'}</div>
                 </div>
                 <div class="row6-popup">
                     <div><b>Dias para dobrar casos: </b></div>
                 </div>
                 <div class="value6-popup">
-                    <div class="text-center">${(data) ? data.nrDiasDobraCasos : 'sem dados'}</div>
+                    <div class="text-center">${(data &&  data.nrDiasDobraCasos) ? data.nrDiasDobraCasos : 'sem dados'}</div>
                 </div>
                 <div class="row7-popup">
                     <div><b>Dias para dobrar óbitos: </b></div>
                 </div>
                 <div class="value7-popup">
-                    <div class="text-center">${(data) ? data.nrDiasDobraMortes : 'sem dados'}</div>
+                    <div class="text-center">${(data && data.nrDiasDobraMortes) ? data.nrDiasDobraMortes : 'sem dados'}</div>
                 </div>
             </div>`
         return popupContent

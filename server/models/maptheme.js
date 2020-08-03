@@ -385,6 +385,7 @@ module.exports.getChoroplethThemeData = (location, cb) => {
 module.exports.getChoroplethThemeDayData = (location) => {
     let dataSource = getDataSource(location, "day")
     var choroplethStatesData = dataSource.map((info) => {
+        var fatalityRate = ((+info.deaths / +info.totalCases) * 100).toFixed(1)
         var data = {
             nrDiasDobraCasos: info.nrDiasDobraCasos,
             nrDiasDobraMortes: info.nrDiasDobraMortes,
@@ -396,7 +397,7 @@ module.exports.getChoroplethThemeDayData = (location) => {
             api: info.api,
             sapi: info.sapi,
             newCases: info.newCases,
-            fatalityRate: ((+info.deaths / +info.totalCases) * 100).toFixed(1),
+            fatalityRate: (isNaN(fatalityRate) ? 0 : fatalityRate),
             deaths: info.deaths,
             newDeaths: info.newDeaths,
             meanCases: info.meanCases,
@@ -430,6 +431,7 @@ module.exports.getChoroplethThemeDayData = (location) => {
 module.exports.getChoroplethThemeWeekData = (location) => {
     let dataSource = getDataSource(location, "week")
     var choroplethStatesData = dataSource.map((info) => {
+        var fatalityRate = ((+info.deaths / +info.totalCases) * 100).toFixed(1)
         var data = {
             nrDiasDobraCasos: info.nrDiasDobraCasos,
             nrDiasDobraMortes: info.nrDiasDobraMortes,
@@ -442,7 +444,7 @@ module.exports.getChoroplethThemeWeekData = (location) => {
             totalRecovered: info.totalRecovered,
             newCases: info.newCases,
             deaths: info.deaths,
-            fatalityRate: ((+info.deaths / +info.totalCases) * 100).toFixed(1),
+            fatalityRate: (isNaN(fatalityRate) ? 0 : fatalityRate),
             newDeaths: info.newDeaths,
             meanCases: info.meanCases,
             meanRecovered: info.meanRecovered,
