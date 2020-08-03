@@ -34,7 +34,7 @@ O painel utiliza dados diários compilados pela equipe do pesquisador [Wesley Co
 
 Caso tenha problemas em executar o download diretamente (devido a proxy por exemplo) os seguintes passos devem ser executados como alternativa ao passo 3:
 
-3a. Realizar o download do [CSV nível Estadual](https://github.com/wcota/covid19br/blob/master/cases-brazil-states.csv) e do [CSV nível Municipal](https://github.com/wcota/covid19br/blob/master/cases-brazil-cities-time.csv)
+3a. Realizar o download do [CSV nível Estadual](https://github.com/wcota/covid19br/blob/master/cases-brazil-states.csv) e do [CSV nível Municipal](https://github.com/wcota/covid19br/blob/master/cases-brazil-cities-time.csv). Os arquivos devem ser nomeados *cases-brazil-states.csv* e *cases-brazil-cities-time.csv* (manter o mesmo nome).
 
 3b. Inserir ambos os arquivos na pasta /server/data/covid19br
 
