@@ -151,7 +151,7 @@ class BarChart {
         if (data.length < 0) return
         this.currentData = this.formatInputData(data)
         this.loadChart()
-        
+
     }
 
     loadChart() {
@@ -394,6 +394,7 @@ class BarChart {
                 return `${numberWithPoint(this.getFormatedValue(d[this.options.attributeY]))}`
             })
             .style("text-anchor", "middle")
+        if (this.options.dataSource.getCurrentGroupData() == 'week') return
         var lastData = this.currentData[this.currentData.length - 1]
         var meanText = this.g.append('text')
         meanText.append('tspan')
