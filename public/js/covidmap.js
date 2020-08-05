@@ -94,7 +94,9 @@ class CovidMap {
             position: 'topright'
         }).addTo(this.map)
 
-        this.map.addControl(new L.Control.Fullscreen());
+        this.map.addControl(new L.Control.Fullscreen({
+            position: 'topright'
+        }))
 
     }
 
