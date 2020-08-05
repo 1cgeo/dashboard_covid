@@ -96,6 +96,7 @@ class CovidMap {
 
         L.easyPrint({
             title: 'Download mapa',
+            exportOnly: true,
             position: 'topright',
             sizeModes: ['A4Portrait', 'A4Landscape'],
             defaultSizeTitles: { A4Landscape: 'A4 Paisagem', A4Portrait: 'A4 Retrato' }
