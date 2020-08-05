@@ -94,16 +94,8 @@ class CovidMap {
             position: 'topright'
         }).addTo(this.map)
 
-        L.easyPrint({
-            title: 'Download mapa',
-            exportOnly: true,
-            position: 'topright',
-            sizeModes: ['A4Portrait', 'A4Landscape'],
-            defaultSizeTitles: { A4Landscape: 'A4 Paisagem', A4Portrait: 'A4 Retrato' }
-        }).addTo(this.map)
-        /* $('#leafletEasyPrint').html(`<i title="Download" style="color:#607d8b;" class="material-icons">
-        cloud_download
-    </i>`) */
+        this.map.addControl(new L.Control.Fullscreen());
+
     }
 
     connectEvents() {
