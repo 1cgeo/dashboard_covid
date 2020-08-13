@@ -359,7 +359,7 @@ class BarChart {
             .attr("d", this.createLineChart(this.options.attributeX, this.options.attributeYLine)(
                 this.currentData
             ))
-        if (this.options.toDownload) return
+        /* if (this.options.toDownload) return
         var idx = Math.floor(this.currentData.length / 2)
         var xValue = this.currentData[idx][this.options.attributeX]
         var yValue = this.currentData[idx][this.options.attributeYLine]
@@ -378,7 +378,7 @@ class BarChart {
                     [xValue, 1.2],
                     [xValue, yValue]
                 ]))
-            .attr('stroke-linecap', 'round')
+            .attr('stroke-linecap', 'round') */
     }
 
     createBarsLabels(bars) {
