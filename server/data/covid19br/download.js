@@ -23,11 +23,12 @@ download(
   }
 );
 
-download(
-  "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv",
+downloadzip(
+  "https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv.gz",
   path.join(__dirname, "cases-brazil-cities-time.csv"),
   function (err, data) {
     if (err) return console.error(err);
+
     modify_csv_cidade(
       path.join(__dirname, "cases-brazil-cities-time.csv"),
       path.join(__dirname, "dados_municipios.csv"),

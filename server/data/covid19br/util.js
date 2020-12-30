@@ -141,6 +141,10 @@ const download = (url, dest, cb) => {
     });
 };
 
+const downloadzip = (url, dest, cb) => {
+//todo
+};
+
 const calcSemana = (date) => {
   return epi.calculate(date).week;
 };
@@ -1092,7 +1096,7 @@ const modify_csv_cidade = (file, info, areas, output) => {
                 "Cidades: média ultimos 7 dias de obitos/casos adicionado"
               );
 
-              const filterWeek = dataArray[dataArray.length - 1].epi_week - 5;
+              const filterWeek = dataArray[dataArray.length - 1].epi_week - 10;
               const dataArrayFiltered = [];
 
               dataArray.forEach((d) => {
@@ -1108,26 +1112,20 @@ const modify_csv_cidade = (file, info, areas, output) => {
 
               fs.writeFileSync(output, result);
 
-              var fields = Object.keys(dataArray[0]);
-              var opts = { fields };
-              var parser = new Parser(opts);
-              var result = parser.parse(dataArray);
-              const total = `${output.split(".")[0]}_total.csv`;
 
-              fs.writeFileSync(total, result);
               console.log("Preparo do CSV dos Municipios FINALIZADO!");
               modify_csv_cidade_semana(
-                total,
+                output,
                 `${output.split(".")[0]}_semana.csv`
               );
               agrupa_area_geografica(
-                total,
+                output,
                 `${output.split(".")[0]}_area.csv`,
                 "api",
                 centroide_api
               );
               agrupa_area_geografica(
-                total,
+                output,
                 `${output.split(".")[0]}_subarea.csv`,
                 "sapi",
                 centroide_sapi
