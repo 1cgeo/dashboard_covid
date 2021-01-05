@@ -4,6 +4,7 @@ const {
   csv_brasil,
   modify_csv_cidade,
   download,
+  downloadzip
 } = require("./util");
 
 download(

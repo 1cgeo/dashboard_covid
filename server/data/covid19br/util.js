@@ -4,6 +4,7 @@ const path = require("path");
 const csv = require("csv-parser");
 const { Parser } = require("json2csv");
 const epi = require("./epidemiological-week");
+const gunzip = require('gunzip-file')
 
 const centroide_regiao = {
   Sudeste: [-46.388371766, -19.772750807599998],
@@ -122,6 +123,14 @@ const CENTROID = {
   17: [-48.329230191330495, -10.150316285695997],
 };
 
+const gunzipfile = (filepath, dest, cb) => {
+  console.log(`Extração de ${filepath} iniciada.`)
+  gunzip(filepath, dest, () => {
+    console.log(`Extração de ${filepath} FINALIZADA!`)
+    cb()
+  })
+}
+
 const download = (url, dest, cb) => {
   const file = fs.createWriteStream(dest);
   console.log(`Download de ${dest} iniciado.`);
@@ -142,7 +151,14 @@ const download = (url, dest, cb) => {
 };
 
 const downloadzip = (url, dest, cb) => {
-//todo
+  var gzipfile = `${dest}.gz`
+  download(
+    url,
+    gzipfile,
+    (err, data) => {
+      gunzipfile(gzipfile, dest, cb)
+    }
+  );
 };
 
 const calcSemana = (date) => {
@@ -1137,6 +1153,7 @@ const modify_csv_cidade = (file, info, areas, output) => {
 
 module.exports = {
   download: download,
+  downloadzip: downloadzip,
   modify_csv_cidade: modify_csv_cidade,
   modify_csv_estado: modify_csv_estado,
   csv_brasil: csv_brasil,
