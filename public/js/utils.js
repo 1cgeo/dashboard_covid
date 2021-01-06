@@ -21,7 +21,13 @@ function sleep(ms) {
 }
 
 function mFormatter(num) {
-    return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + ' mil' : Math.sign(num) * Math.abs(num)
+    if (Math.abs(num) > 999999) {
+        return Math.sign(num) * ((Math.abs(num) / 1000000).toFixed(1)) + ' mi'
+    } else if (Math.abs(num) > 999 && Math.abs(num) < 999999) {
+        return Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + ' mil'
+    } else {
+        return Math.sign(num) * Math.abs(num)
+    }
 }
 
 const copyStyles = (source, target, whiteListCssTag = []) => {

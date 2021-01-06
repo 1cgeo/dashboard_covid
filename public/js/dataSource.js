@@ -661,8 +661,8 @@ class DataSource {
                         datasetCallback: this.getStateCircleData.bind(this),
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
-                        scaleFactor: 0.0015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleFactor: 0.00015,
+                        scaleLenged: [500000, 1500000, 3000000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -679,8 +679,8 @@ class DataSource {
                         popupAttributeTitle: "Número de óbitos",
                         type: "circles",
                         id: 5,
-                        scaleFactor: 0.015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleFactor: 0.0015,
+                        scaleLenged: [20000, 75000, 200000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -697,8 +697,8 @@ class DataSource {
                         type: "circles",
                         id: 6,
                         popupAttributeTitle: "Número de recuperados",
-                        scaleFactor: 0.0015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleFactor: 0.00015,
+                        scaleLenged: [500000, 1500000, 3000000],
                         cicleStyle: {
                             fillColor: "#009624",
                             color: "#009624",
@@ -802,7 +802,7 @@ class DataSource {
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
                         scaleFactor: 0.0015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleLenged: [50000, 150000, 300000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -820,7 +820,7 @@ class DataSource {
                         id: 5,
                         popupAttributeTitle: "Número de óbitos",
                         scaleFactor: 0.015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [2000, 10000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -928,8 +928,8 @@ class DataSource {
                         datasetCallback: this.getRegionsCircleData.bind(this),
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
-                        scaleFactor: 0.0015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleFactor: 0.00015,
+                        scaleLenged: [100000, 1500000, 3000000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -947,7 +947,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [2000, 10000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -964,8 +964,8 @@ class DataSource {
                         type: "circles",
                         id: 6,
                         popupAttributeTitle: "Número de recuperados",
-                        scaleFactor: 0.0015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleFactor: 0.00015,
+                        scaleLenged: [100000, 1500000, 3000000],
                         cicleStyle: {
                             fillColor: "#009624",
                             color: "#009624",
@@ -1073,8 +1073,8 @@ class DataSource {
                         datasetCallback: this.getAPICircleData.bind(this),
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
-                        scaleFactor: 0.0015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleFactor: 0.00015,
+                        scaleLenged: [100000, 1500000, 3000000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -1092,7 +1092,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [2000, 10000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
@@ -1218,8 +1218,8 @@ class DataSource {
                         datasetCallback: this.getSAPICircleData.bind(this),
                         loadTimeIntervalCallback: this.setCircleTimeInterval.bind(this),
                         popupAttributeTitle: "Número de casos",
-                        scaleFactor: 0.0015,
-                        scaleLenged: [50000, 100000, 300000],
+                        scaleFactor: 0.00015,
+                        scaleLenged: [100000, 1500000, 3000000],
                         cicleStyle: {
                             fillColor: "#CF1111",
                             color: "#cf1111",
@@ -1237,7 +1237,7 @@ class DataSource {
                         type: "circles",
                         id: 5,
                         scaleFactor: 0.015,
-                        scaleLenged: [2000, 5000, 20000],
+                        scaleLenged: [2000, 10000, 20000],
                         cicleStyle: {
                             fillColor: "#555555",
                             color: "#555555",
