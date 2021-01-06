@@ -237,10 +237,11 @@ const csv_brasil_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = calcSemana(d.date);
+      let semana = d.epi_week;
       if (!(semana in data)) {
         data[semana] = {};
         data[semana].semana = semana;
+        data[semana].epi_week = semana;
         data[semana].dias_semana = 0;
         data[semana].nome = "Brasil";
         data[semana].newDeaths = 0;
@@ -283,11 +284,12 @@ const modify_csv_estado_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = calcSemana(d.date);
+      let semana = d.epi_week;
       let id = `${semana}_${d.state}`;
       if (!(id in data)) {
         data[id] = {};
         data[id].semana = semana;
+        data[id].epi_week = semana;
         data[id].dias_semana = 0;
         data[id].state = d.state;
         data[id].nome = d.nome;
@@ -341,11 +343,12 @@ const agrupa_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = calcSemana(d.date);
+      let semana = d.epi_week;
       let id = `${semana}_${d.nome}`;
       if (!(id in data)) {
         data[id] = {};
         data[id].semana = semana;
+        data[id].epi_week = semana;
         data[id].dias_semana = 0;
         data[id].nome = d.nome;
         data[id].newDeaths = 0;
@@ -402,6 +405,8 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           data[id].nome = d[chave];
           data[id].date = d.date;
           data[id].newDeaths = 0;
+          data[id].semana = d.epi_week;
+          data[id].epi_week = d.epi_week;
           data[id].deaths = 0;
           data[id].newCases = 0;
           data[id].totalCases = 0;
@@ -622,6 +627,7 @@ const modify_csv_estado = (file, nomes, output) => {
             data.CENTROID_Y = +CENTROID[data.CD_GEOCUF][1];
             data.populacao = pop_estadual[data.CD_GEOCUF];
             data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
+            data.semana = data.epi_week
             dataArray.push(data);
           }
         })
@@ -855,11 +861,12 @@ const modify_csv_cidade_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = calcSemana(d.date);
+      let semana = d.epi_week;
       let id = `${semana}_${d.city}`;
       if (!(id in data)) {
         data[id] = {};
         data[id].semana = semana;
+        data[id].epi_week = semana;
         data[id].dias_semana = 0;
         data[id].country = d.country;
         data[id].state = d.state;
@@ -1112,7 +1119,8 @@ const modify_csv_cidade = (file, info, areas, output) => {
                 "Cidades: média ultimos 7 dias de obitos/casos adicionado"
               );
 
-              const filterWeek = dataArray[dataArray.length - 1].epi_week - 10;
+              //const filterWeek = dataArray[dataArray.length - 1].epi_week - 10;
+              const filterWeek = 40;
               const dataArrayFiltered = [];
 
               dataArray.forEach((d) => {
