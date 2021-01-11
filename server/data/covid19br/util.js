@@ -165,6 +165,14 @@ const calcSemana = (date) => {
   return epi.calculate(date).week;
 };
 
+const fixsemana = (semana) => {
+  if(semana > 100){
+    return semana- 47
+  } else {
+    return semana
+  }
+};
+
 const csv_brasil = (file, output) => {
   console.log("Preparo do CSV do Brasil iniciado.");
   const dataArray = [];
@@ -237,7 +245,7 @@ const csv_brasil_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = d.epi_week;
+      let semana = fixsemana(d.epi_week);
       if (!(semana in data)) {
         data[semana] = {};
         data[semana].semana = semana;
@@ -284,7 +292,7 @@ const modify_csv_estado_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = d.epi_week;
+      let semana = fixsemana(d.epi_week);
       let id = `${semana}_${d.state}`;
       if (!(id in data)) {
         data[id] = {};
@@ -343,7 +351,7 @@ const agrupa_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = d.epi_week;
+      let semana = fixsemana(d.epi_week);
       let id = `${semana}_${d.nome}`;
       if (!(id in data)) {
         data[id] = {};
@@ -405,8 +413,8 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           data[id].nome = d[chave];
           data[id].date = d.date;
           data[id].newDeaths = 0;
-          data[id].semana = d.epi_week;
-          data[id].epi_week = d.epi_week;
+          data[id].semana = fixsemana(d.epi_week);
+          data[id].epi_week = fixsemana(d.epi_week);
           data[id].deaths = 0;
           data[id].newCases = 0;
           data[id].totalCases = 0;
@@ -627,7 +635,7 @@ const modify_csv_estado = (file, nomes, output) => {
             data.CENTROID_Y = +CENTROID[data.CD_GEOCUF][1];
             data.populacao = pop_estadual[data.CD_GEOCUF];
             data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
-            data.semana = data.epi_week
+            data.semana = fixsemana(data.epi_week)
             dataArray.push(data);
           }
         })
@@ -861,7 +869,7 @@ const modify_csv_cidade_semana = (file, output) => {
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", function (d) {
-      let semana = d.epi_week;
+      let semana = fixsemana(d.epi_week);
       let id = `${semana}_${d.city}`;
       if (!(id in data)) {
         data[id] = {};
