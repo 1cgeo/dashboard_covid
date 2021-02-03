@@ -475,7 +475,7 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
         data[id].totalRecovered += +d.totalRecovered;
 
         data[id].vaccinated += +d.vaccinated;
-        data[id].totalVaccinated = +d.totalVaccinated;
+        data[id].totalVaccinated += +d.totalVaccinated;
       }
     })
     .on("end", function () {
