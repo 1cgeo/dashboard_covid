@@ -407,6 +407,7 @@ dataSource.loadAllData(() => {
 
     covidmap.on('changeLayer', (layerId) => {
         var statisticsData = dataSource.getCountryData()
+        var stateStatistics = dataSource.getStateStatistics()
         locationStatus.loadData(
             deepCopy(statisticsData),
             'Brasil'
@@ -427,8 +428,8 @@ dataSource.loadAllData(() => {
             })
             barChartRecovered.loadData(deepCopy(statisticsData))
             barChartVaccinated.loadData(deepCopy(statisticsData))
-            var stateStatistics = dataSource.getStateStatistics()
             barChartVaccinated100k.loadData(deepCopy(stateStatistics))
+            
         }
         covidTable = factories.createTableFromLayerId(
             layerId,
@@ -437,11 +438,8 @@ dataSource.loadAllData(() => {
                 dataSource: dataSource,
             }
         )
-        barChartCases.loadData(deepCopy(statisticsData))
-        barChartDeaths.loadData(deepCopy(statisticsData))
         var stateStatistics = dataSource.getStateStatistics()
-        barChartIncidence.loadData(deepCopy(stateStatistics))
-        barChartMortality.loadData(deepCopy(stateStatistics))
+        barChartLethality.loadData(deepCopy(stateStatistics))
     })
 
     var statisticsData = dataSource.getStatisticsData(

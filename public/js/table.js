@@ -53,15 +53,6 @@ class CovidTable {
         ).draw()
     }
 
-    updateDataset(layerOptions) {
-    }
-
-    changeLayer(layerOptions) {
-    }
-
-    changeLocation(featureClicked, layerOptions) {
-    }
-
     getColumnName(colIdx) {
         return this.getOptions().columns[colIdx].title
     }
@@ -172,6 +163,7 @@ class CovidTableState extends CovidTable {
         }
         super(Object.assign(optionsDefault, newOptions))
         this.updateDataset()
+        this.optionsDefault = optionsDefault
     }
 
     updateDataset() {
@@ -183,6 +175,7 @@ class CovidTableState extends CovidTable {
         if (!featureClicked) {
             if (this.getColumnName(1) == 'Municípios') {
                 this.changeColumnName(1, 'Estados')
+                this.setOptions(this.optionsDefault)
                 this.reloadDataset(
                     this.getOptions().dataSource.getStateChoroplethData().data
                 )
@@ -191,6 +184,50 @@ class CovidTableState extends CovidTable {
         }
         else {
             this.changeColumnName(1, 'Municípios')
+            this.setOptions({
+                "columnDefs": [
+                    {
+                        "render": function (data, type, row, meta) {
+                            return ``
+                        },
+                        "targets": 7
+                    },
+                    {
+                        "render": function (data, type, row, meta) {
+                            return `${data} %`
+                        },
+                        "targets": 6
+                    },
+                    {
+                        "targets": 7,
+                        "createdCell": function (td, cellData, rowData, row, col) {
+                            $(td).attr('id', `linechart-container-${row}`)
+                        }
+                    },
+                    {
+                        "render": function (data, type, row, meta) {
+                            return numberWithPoint(Math.floor(data))
+                        },
+                        "targets": [2, 3, 4, 5]
+                    },
+                    { type: 'formatted-num', targets: [2, 3, 4, 5] }
+                ],
+                columns: [
+                    { title: "id", visible: false, data: "id", },
+                    { title: "Municípios", data: "name" },
+                    { title: "Casos confirmados", data: "totalCases" },
+                    { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
+                    { title: "Óbitos", data: "deaths" },
+                    { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+                    { title: "Letalidade", data: "fatalityRate" },
+                    {
+                        title: "Tendência de casos dos últimos 14 dias",
+                        sortable: false,
+                        data: "last14AvgCases",
+                        "width": "12%"
+                    }
+                ]
+            })
             this.reloadDataset(
                 this.getOptions().dataSource.getCityChoroplethData().data
             )
@@ -349,6 +386,7 @@ class CovidTableRegions extends CovidTable {
         }
         super(Object.assign(optionsDefault, newOptions))
         this.updateDataset()
+        this.optionsDefault = optionsDefault
     }
 
     updateDataset() {
@@ -360,23 +398,7 @@ class CovidTableRegions extends CovidTable {
         if (!featureClicked) {
             if (this.getColumnName(1) == 'Estados') {
                 this.changeColumnName(1, 'Regiões')
-                this.setOptions({
-                    columns: [
-                        { title: "id", visible: false, data: "name", },
-                        { title: "Regiões", data: "name" },
-                        { title: "Casos confirmados", data: "totalCases" },
-                        { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
-                        { title: "Óbitos", data: "deaths" },
-                        { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
-                        { title: "Letalidade", data: "fatalityRate" },
-                        {
-                            title: "Tendência de casos dos últimos 14 dias",
-                            sortable: false,
-                            data: "last14AvgCases",
-                            "width": "12%"
-                        }
-                    ]
-                })
+                this.setOptions(this.optionsDefault)
                 this.reloadDataset(
                     this.getOptions().dataSource.getRegionsChoroplethData().data
                 )
@@ -387,12 +409,14 @@ class CovidTableRegions extends CovidTable {
             this.changeColumnName(1, 'Estados')
             this.setOptions({
                 columns: [
-                    { title: "id", visible: false, data: "region", },
+                    { title: "id", visible: false, data: "id", },
                     { title: "Estados", data: "name" },
                     { title: "Casos confirmados", data: "totalCases" },
                     { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
                     { title: "Óbitos", data: "deaths" },
                     { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+                    { title: "Vacinados", data: "totalVaccinated" },
+                    { title: "Vacinados a cada 100.000 hab.", data: "vaccinated_per_100k_inhabitants" },
                     { title: "Letalidade", data: "fatalityRate" },
                     {
                         title: "Tendência de casos dos últimos 14 dias",

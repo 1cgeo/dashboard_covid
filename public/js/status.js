@@ -23,8 +23,8 @@ class Status {
     this.setLastDeaths(numberWithPoint(lastdata.newDeaths), suffix)
     this.setLastRecovered(numberWithPoint(lastdata.recovered), suffix)
 
-    this.setTotalVaccinated(numberWithPoint(lastdata.totalVaccinated), suffix)
-    this.setLastVaccinated(numberWithPoint(lastdata.vaccinated), suffix)
+    isNaN(parseInt(lastdata.totalVaccinated)) ? '' : this.setTotalVaccinated(numberWithPoint(lastdata.totalVaccinated), suffix)
+    isNaN(parseInt(lastdata.vaccinated)) ? '' : this.setLastVaccinated(numberWithPoint(lastdata.vaccinated), suffix)
   }
 
   /* reduceValue(data, field) {
@@ -42,10 +42,12 @@ class Status {
     this.setTotalCases("Sem dados")
     this.setRecuperadosCases("Sem dados")
     this.setTotalDeaths("Sem dados")
+    this.setTotalVaccinated("Sem dados")
     this.setLethality("Sem dados")
     this.setLastCases("Sem dados")
     this.setLastDeaths("Sem dados")
     this.setLastRecovered("Sem dados")
+    this.setLastVaccinated("Sem dados")
   }
 
   setLocationName(locationName) {
