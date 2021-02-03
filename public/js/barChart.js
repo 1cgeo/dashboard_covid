@@ -129,12 +129,12 @@ class BarChart {
     }
 
     loadChart() {
-        this.x.domain(this.currentData.map((function (d) {
+        this.x.domain(this.currentData.map((d) => {
             return d[this.options.attributeX];
-        }).bind(this)));
-        this.y.domain([0, d3.max(this.currentData, (function (d) {
+        }));
+        this.y.domain([0, d3.max(this.currentData, (d) => {
             return d[this.options.attributeY];
-        }).bind(this))])
+        })])
         this.draw()
     }
 
@@ -241,7 +241,7 @@ class BarChart {
     }
 
     drawAxisX(width, height) {
-        this.x.rangeRound([0, width]);
+        this.x.range([30, width-20]);
         this.g.select(".axis--x")
             .attr("transform", "translate(0," + height + ")")
             .call(this.getAxisXlabelFormat())
