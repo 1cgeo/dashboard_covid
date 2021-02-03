@@ -1,9 +1,15 @@
 #cases-values,
 #recuperados-values,
 #deaths-values,
-#lethality-values {
+#lethality-values,
+#vaccinated-values {
   font-size: 25px;
   
+}
+
+#last-vaccinated-tag{
+  font-size: 10px;
+  color: #2196f3;
 }
 
 #last-cases-tag{
@@ -24,7 +30,8 @@
 .tag-cases,
 .tag-recuperados,
 .tag-deaths,
-.tag-lethality {
+.tag-lethality,
+.tag-vaccinated {
   font-size: 15px;
   
 }
@@ -53,6 +60,14 @@
 #last-recovered > .triangle-up {
   border-bottom-color: green;
 } 
+
+#last-vaccinated > .triangle-up {
+  border-bottom-color: #2196f3;
+} 
+
+#last-vaccinated-values {
+  color: #2196f3;
+}
 
 #last-deaths-values {
   color: gray;

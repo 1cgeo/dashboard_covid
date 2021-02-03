@@ -286,6 +286,8 @@ module.exports.getCircleThemeDayData = (location) => {
         feat.properties.city = info.city;
         feat.properties.totalRecovered = info.totalRecovered
         feat.properties.date = info.date
+        feat.vaccinated_per_100k_inhabitants = info.vaccinated_per_100k_inhabitants
+        feat.totalVaccinated = info.totalVaccinated
         if (location === "city") {
             feat.properties.ibgeID = info.ibgeID
             feat.properties.recovered = "Sem dados"
@@ -313,6 +315,8 @@ module.exports.getCircleThemeWeekData = (location) => {
         feat.properties.totalRecovered = info.totalRecovered
         feat.properties.city = info.city
         feat.properties.week = info.semana
+        feat.vaccinated_per_100k_inhabitants = info.vaccinated_per_100k_inhabitants
+        feat.totalVaccinated = info.totalVaccinated
         if (location === "city") {
             feat.properties.ibgeID = info.ibgeID
             feat.properties.recovered = "Sem dados"
@@ -349,6 +353,8 @@ module.exports.getHeatThemeDayData = (location) => {
             date: info.date,
             ibgeID: info.ibgeID,
             recovered: "Sem dados",
+            vaccinated_per_100k_inhabitants: info.vaccinated_per_100k_inhabitants,
+            totalVaccinated: info.totalVaccinated,
         };
     });
     return heatCitiesData
@@ -370,6 +376,8 @@ module.exports.getHeatThemeWeekData = (location) => {
             week: info.semana,
             ibgeID: info.ibgeID,
             recovered: "Sem dados",
+            vaccinated_per_100k_inhabitants: info.vaccinated_per_100k_inhabitants,
+            totalVaccinated: info.totalVaccinated,
         };
     });
     return heatCitiesData
@@ -408,6 +416,10 @@ module.exports.getChoroplethThemeDayData = (location) => {
             tendencyDeaths: info.tendencia_obitos,
             totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
             deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants,
+            vaccinated_per_100k_inhabitants: info.vaccinated_per_100k_inhabitants,
+            totalVaccinated: info.totalVaccinated,
+            vaccinated: info.vaccinated,
+            meanVaccinated: info.meanVaccinated,
             id: (info.CD_GEOCUF) ? info.CD_GEOCUF : info.ibgeID
         };
         if (location === "city") {
@@ -454,6 +466,10 @@ module.exports.getChoroplethThemeWeekData = (location) => {
             tendencyDeaths: info.tendencia_obitos,
             totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
             deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants,
+            vaccinated_per_100k_inhabitants: info.vaccinated_per_100k_inhabitants,
+            totalVaccinated: info.totalVaccinated,
+            vaccinated: info.vaccinated,
+            meanVaccinated: info.meanVaccinated,
             id: (info.CD_GEOCUF) ? info.CD_GEOCUF : info.ibgeID
         };
         if (location === "city") {
@@ -498,7 +514,11 @@ module.exports.getCountryDayInformation = () => {
             meanRecovered: info.meanRecovered,
             meanDeaths: info.meanDeaths,
             totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
-            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants
+            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants,
+            vaccinated: info.vaccinated,
+            totalVaccinated: info.totalVaccinated,
+            meanVaccinated: info.meanVaccinated,
+            vaccinated_per_100k_inhabitants: info.vaccinated_per_100k_inhabitants,
         };
     });
     return data
@@ -521,7 +541,11 @@ module.exports.getCountryWeekInformation = () => {
             meanRecovered: info.meanRecovered,
             meanDeaths: info.meanDeaths,
             totalCases_per_100k_inhabitants: info.totalCases_per_100k_inhabitants,
-            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants
+            deaths_per_100k_inhabitants: info.deaths_per_100k_inhabitants,
+            vaccinated: info.vaccinated,
+            vaccinated_per_100k_inhabitants: info.vaccinated_per_100k_inhabitants,
+            totalVaccinated: info.totalVaccinated,
+            meanVaccinated: info.meanVaccinated
         };
     });
     return data

@@ -22,6 +22,9 @@ class Status {
     this.setLastCases(numberWithPoint(lastdata.newCases), suffix)
     this.setLastDeaths(numberWithPoint(lastdata.newDeaths), suffix)
     this.setLastRecovered(numberWithPoint(lastdata.recovered), suffix)
+
+    this.setTotalVaccinated(numberWithPoint(lastdata.totalVaccinated), suffix)
+    this.setLastVaccinated(numberWithPoint(lastdata.vaccinated), suffix)
   }
 
   /* reduceValue(data, field) {
@@ -78,5 +81,14 @@ class Status {
   setLastRecovered(total, suffix) {
     $("#last-recovered-values").text(total);
     $("#last-recovered-tag").text(suffix);
+  }
+
+  setTotalVaccinated(total) {
+    $("#vaccinated-values").text(total);
+  }
+
+  setLastVaccinated(total, suffix) {
+    $("#last-vaccinated-values").text(total);
+    $("#last-vaccinated-tag").text(suffix);
   }
 }

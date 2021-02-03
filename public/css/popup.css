@@ -64,6 +64,22 @@
     grid-area: value7;
 }
 
+.row8-popup {
+    grid-area: row8;
+}
+
+.value8-popup {
+    grid-area: value8;
+}
+
+.row9-popup {
+    grid-area: row9;
+}
+
+.value9-popup {
+    grid-area: value9;
+}
+
 .header-popup {}
 
 .header-popup,
@@ -79,6 +95,10 @@
 .value5-popup,
 .row6-popup,
 .value6-popup,
+.row7-popup,
+.value7-popup,
+.row8-popup,
+.value8-popup,
 .linechart-popup {
     border-bottom: 1px solid;
 }
@@ -94,7 +114,9 @@
     'row4 row4 row4 value4'
     'row5 row5 row5 value5'
     'row6 row6 row6 value6'
-    'row7 row7 row7 value7';
+    'row7 row7 row7 value7'
+    'row8 row8 row8 value8'
+    'row9 row9 row9 value9';
     margin-bottom: 10px;
     border-radius: 10px;
     min-width: 270px;

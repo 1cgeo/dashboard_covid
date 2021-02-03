@@ -39,6 +39,10 @@ class Factories {
             barChart = new BarChartLethality(options)
         } else if (type === "incidence") {
             barChart = new BarChartIncidence(options)
+        } else if (type === "vaccinated") {
+            barChart = new BarChartVaccinated(options)
+        } else if (type === "vaccinated100k") {
+            barChart = new BarChartVaccinated100k(options)
         } else if (type === "mortality") {
             barChart = new BarChartMortality(options)
         }
@@ -57,7 +61,7 @@ class Factories {
             table = new CovidTableAPI(options)
         } else if (type === "sapi") {
             table = new CovidTableSAPI(options)
-        } 
+        }
         return table;
     }
 
@@ -73,7 +77,7 @@ class Factories {
             table = this.createTable('api', options)
         } else if (+layerId === 4) {
             table = this.createTable('sapi', options)
-        } 
+        }
         return table;
     }
 }

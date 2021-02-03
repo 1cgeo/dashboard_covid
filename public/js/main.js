@@ -74,6 +74,22 @@ dataSource.loadAllData(() => {
         barChartDeaths.downloadChart()
     });
 
+    var barChartVaccinated = factories.createBarChart(
+        'vaccinated',
+        {
+            parentId: "vaccinated-chart-container",
+            elementId: "graph-vaccinated",
+            dataSource: dataSource,
+            attributeX: "date",
+            attributeY: "vaccinated",
+            attributeYLine: "meanVaccinated",
+            title: "Vacinados",
+            downloadName: "vacinados"
+        })
+    $(`#download-vaccinated`).click(() => {
+        barChartVaccinated.downloadChart()
+    });
+
     var barChartRecovered = factories.createBarChart(
         'recovered',
         {
@@ -123,6 +139,23 @@ dataSource.loadAllData(() => {
         })
     $(`#download-incidence`).click(() => {
         barChartIncidence.downloadChart()
+    });
+
+    var barChartVaccinated100k = factories.createBarChart(
+        'vaccinated100k',
+        {
+            parentId: "vaccinated100k-chart-container",
+            elementId: "graph-vaccinated100k",
+            dataSource: dataSource,
+            attributeX: "index",
+            attributeShortName: "shortName",
+            attributeY: "vaccinated_per_100k_inhabitants",
+            title: "Vacinados",
+            dateTitleId: "vaccinated100k-date",
+            downloadName: "vacinados-por-100k-hab"
+        })
+    $(`#download-vaccinated100k`).click(() => {
+        barChartVaccinated100k.downloadChart()
     });
 
     var barChartMortality = factories.createBarChart(
@@ -193,6 +226,7 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        barChartVaccinated.loadData(deepCopy(statisticsData))
         covidTable.updateDataset()
     })
 
@@ -241,13 +275,18 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        barChartVaccinated.loadData(deepCopy(statisticsData))
+
         var stateStatistics = dataSource.getStateStatistics()
         barChartLethality.loadData(deepCopy(stateStatistics))
         barChartIncidence.loadData(deepCopy(stateStatistics))
+        barChartVaccinated100k.loadData(deepCopy(stateStatistics))
         barChartMortality.loadData(deepCopy(stateStatistics))
+
         var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
         barChartLethality.setTitleDate(currentDateChart)
         barChartIncidence.setTitleDate(currentDateChart)
+        barChartVaccinated100k.setTitleDate(currentDateChart)
         barChartMortality.setTitleDate(currentDateChart)
         covidTable.updateDataset()
     })
@@ -265,14 +304,18 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        barChartVaccinated.loadData(deepCopy(statisticsData))
+
         var stateStatistics = dataSource.getStateStatistics()
         barChartLethality.loadData(deepCopy(stateStatistics))
         barChartIncidence.loadData(deepCopy(stateStatistics))
+        barChartVaccinated100k.loadData(deepCopy(stateStatistics))
         barChartMortality.loadData(deepCopy(stateStatistics))
         var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
         barChartLethality.setTitleDate(currentDateChart)
         barChartIncidence.setTitleDate(currentDateChart)
         barChartMortality.setTitleDate(currentDateChart)
+        barChartVaccinated100k.setTitleDate(currentDateChart)
         covidmap.updateAnimation(timeInterval)
         setTimeout(() => {
             covidTable.updateDataset()
@@ -295,16 +338,20 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        barChartVaccinated.loadData(deepCopy(statisticsData))
 
         var stateStatistics = dataSource.getStateStatistics()
         barChartLethality.loadData(deepCopy(stateStatistics))
         barChartIncidence.loadData(deepCopy(stateStatistics))
         barChartMortality.loadData(deepCopy(stateStatistics))
+        barChartVaccinated100k.loadData(deepCopy(stateStatistics))
 
         var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
         barChartLethality.setTitleDate(currentDateChart)
         barChartIncidence.setTitleDate(currentDateChart)
         barChartMortality.setTitleDate(currentDateChart)
+        barChartVaccinated100k.setTitleDate(currentDateChart)
+
 
         setTimeout(() => {
             covidTable.updateDataset()
@@ -323,16 +370,20 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        barChartVaccinated.loadData(deepCopy(statisticsData))
 
         var stateStatistics = dataSource.getStateStatistics()
         barChartLethality.loadData(deepCopy(stateStatistics))
         barChartIncidence.loadData(deepCopy(stateStatistics))
         barChartMortality.loadData(deepCopy(stateStatistics))
+        barChartVaccinated100k.loadData(deepCopy(stateStatistics))
 
         var currentDateChart = dateSlider.getTimeFormated(timeInterval, 1)
         barChartLethality.setTitleDate(currentDateChart)
         barChartIncidence.setTitleDate(currentDateChart)
         barChartMortality.setTitleDate(currentDateChart)
+        barChartVaccinated100k.setTitleDate(currentDateChart)
+
 
         setTimeout(() => {
             covidTable.updateDataset()
@@ -350,6 +401,7 @@ dataSource.loadAllData(() => {
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
         barChartRecovered.loadData(deepCopy(statisticsData))
+        barChartVaccinated.loadData(deepCopy(statisticsData))
         covidTable.changeLocation(layerClicked)
     })
 
@@ -363,11 +415,20 @@ dataSource.loadAllData(() => {
             $(".recovered").each(function () {
                 $(this).addClass('hide')
             })
+            $(".vaccinated").each(function () {
+                $(this).addClass('hide')
+            })
         } else {
             $(".recovered").each(function () {
                 $(this).removeClass('hide')
             })
+            $(".vaccinated").each(function () {
+                $(this).removeClass('hide')
+            })
             barChartRecovered.loadData(deepCopy(statisticsData))
+            barChartVaccinated.loadData(deepCopy(statisticsData))
+            var stateStatistics = dataSource.getStateStatistics()
+            barChartVaccinated100k.loadData(deepCopy(stateStatistics))
         }
         covidTable = factories.createTableFromLayerId(
             layerId,
@@ -378,6 +439,9 @@ dataSource.loadAllData(() => {
         )
         barChartCases.loadData(deepCopy(statisticsData))
         barChartDeaths.loadData(deepCopy(statisticsData))
+        var stateStatistics = dataSource.getStateStatistics()
+        barChartIncidence.loadData(deepCopy(stateStatistics))
+        barChartMortality.loadData(deepCopy(stateStatistics))
     })
 
     var statisticsData = dataSource.getStatisticsData(
@@ -390,16 +454,18 @@ dataSource.loadAllData(() => {
     barChartCases.loadData(deepCopy(statisticsData))
     barChartDeaths.loadData(deepCopy(statisticsData))
     barChartRecovered.loadData(deepCopy(statisticsData))
+    barChartVaccinated.loadData(deepCopy(statisticsData))
 
     var stateStatistics = dataSource.getStateStatistics()
     barChartLethality.loadData(deepCopy(stateStatistics))
     barChartIncidence.loadData(deepCopy(stateStatistics))
     barChartMortality.loadData(deepCopy(stateStatistics))
+    barChartVaccinated100k.loadData(deepCopy(stateStatistics))
 
     var currentDateChart = dateSlider.getTimeFormated(initTimeInterval, 1)
     barChartLethality.setTitleDate(currentDateChart)
     barChartIncidence.setTitleDate(currentDateChart)
     barChartMortality.setTitleDate(currentDateChart)
-
+    barChartVaccinated100k.setTitleDate(currentDateChart)
     $('#loader').hide()
 })

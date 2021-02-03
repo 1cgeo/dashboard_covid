@@ -63,6 +63,17 @@
                                 <div class="text-center" id="last-cases-tag"></div>
                             </div>
                         </div>
+                        <div class="d-flex flex-column vaccinated">
+                            <div class="tag-vaccinated text-center">
+                                <b>Vacinados</b>
+                            </div>
+                            <div class="text-center" id="vaccinated-values"></div>
+                            <div id="last-vaccinated" class="d-flex align-items-center justify-content-center">
+                                <div class="triangle-up"></div>
+                                <div class="p-2 text-center" id="last-vaccinated-values"></div>
+                                <div class="text-center" id="last-vaccinated-tag"></div>
+                            </div>
+                        </div>
                         <div class="d-flex flex-column recovered">
                             <div class="tag-recuperados text-center">
                                 <b>Recuperados</b>
@@ -187,13 +198,36 @@
                 </div>
             </div>
             <div
-                class="d-flex flex-column mb-2 flex-shrink-1 flex-md-column flex-xl-row flex-lg-row flex-sm-column col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card flex-fill">
+                class="d-flex flex-column mb-2 flex-shrink-1 flex-md-column flex-xl-row flex-lg-row flex-sm-column col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 vaccinated">
+
+                <div class="card chart-card w-100 flex-fill">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex flex-row justify-content-center">
                             <div class="flex-grow-1">
                                 <div class="text-center">
-                                    <b>Casos a cada 100.000 hab. <span id="incidence-date"></span></b>
+                                    <b>Vacinados <span id="vaccinated-date"></span></b>
+                                </div>
+                            </div>
+                            <a id="download-vaccinated" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
+                        <div id="vaccinated-chart-container" class="w-100 flex-fill">
+                            <svg id="graph-vaccinated"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="d-flex flex-column mb-2 flex-shrink-1 flex-md-column flex-xl-row flex-lg-row flex-sm-column col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card flex-fill">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="d-flex flex-row justify-content-center">
+                                <div class="text-center w-auto p-1">
+                                    <b>Casos a cada 100.000 hab.  <span id="incidence-date"></span></b>
                                 </div>
                             </div>
                             <a id="download-incidence" class="round-btn text-center">
@@ -207,12 +241,31 @@
                         </div>
                     </div>
                 </div>
+                <div class="card w-100 mr-lg-2 mr-xl-2 mb-lg-0 mb-xl-0 mb-2 chart-card flex-fill vaccinated">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex flex-row justify-content-center">
+                            <div class="d-flex flex-row justify-content-center">
+                                <div class="text-center w-auto">
+                                    <b>Vacinados a cada 100.000 hab.  <span id="vaccinated100k-date"></span></b>
+                                </div>
+                            </div>
+                            <a id="download-vaccinated100k" class="round-btn text-center">
+                                <i title="Download" style="color:#607d8b;" class="material-icons">
+                                    cloud_download
+                                </i>
+                            </a>
+                        </div>
+                        <div id="vaccinated100k-chart-container" class="w-100 flex-fill">
+                            <svg id="graph-vaccinated100k"></svg>
+                        </div>
+                    </div>
+                </div>
                 <div class="card chart-card w-100 flex-fill">
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex flex-row justify-content-center">
-                            <div class="flex-grow-1">
-                                <div class="text-center">
-                                    <b>Óbitos a cada 100.000 hab. <span id="mortality-date"></span></b>
+                            <div class="d-flex flex-row justify-content-center">
+                                <div class="text-center w-auto">
+                                    <b>Óbitos a cada 100.000 hab.  <span id="mortality-date"></span></b>
                                 </div>
                             </div>
                             <a id="download-mortality" class="round-btn text-center">

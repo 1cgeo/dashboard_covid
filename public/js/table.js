@@ -130,16 +130,16 @@ class CovidTableState extends CovidTable {
                     "render": function (data, type, row, meta) {
                         return ``
                     },
-                    "targets": 7
+                    "targets": 9
                 },
                 {
                     "render": function (data, type, row, meta) {
                         return `${data} %`
                     },
-                    "targets": 6
+                    "targets": 8
                 },
                 {
-                    "targets": 7,
+                    "targets": 9,
                     "createdCell": function (td, cellData, rowData, row, col) {
                         $(td).attr('id', `linechart-container-${row}`)
                     }
@@ -148,9 +148,9 @@ class CovidTableState extends CovidTable {
                     "render": function (data, type, row, meta) {
                         return numberWithPoint(Math.floor(data))
                     },
-                    "targets": [2, 3, 4, 5]
+                    "targets": [2, 3, 4, 5, 6, 7]
                 },
-                { type: 'formatted-num', targets: [2, 3, 4, 5] }
+                { type: 'formatted-num', targets: [2, 3, 4, 5, 6, 7] }
             ],
             columns: [
                 { title: "id", visible: false, data: "id", },
@@ -159,6 +159,8 @@ class CovidTableState extends CovidTable {
                 { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
                 { title: "Óbitos", data: "deaths" },
                 { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+                { title: "Vacinados", data: "totalVaccinated" },
+                { title: "Vacinados a cada 100.000 hab.", data: "vaccinated_per_100k_inhabitants" },
                 { title: "Letalidade", data: "fatalityRate" },
                 {
                     title: "Tendência de casos dos últimos 14 dias",
@@ -305,16 +307,16 @@ class CovidTableRegions extends CovidTable {
                     "render": function (data, type, row, meta) {
                         return ``
                     },
-                    "targets": 7
+                    "targets": 9
                 },
                 {
                     "render": function (data, type, row, meta) {
                         return `${data} %`
                     },
-                    "targets": 6
+                    "targets": 8
                 },
                 {
-                    "targets": 7,
+                    "targets": 9,
                     "createdCell": function (td, cellData, rowData, row, col) {
                         $(td).attr('id', `linechart-container-${row}`)
                     }
@@ -323,9 +325,9 @@ class CovidTableRegions extends CovidTable {
                     "render": function (data, type, row, meta) {
                         return numberWithPoint(Math.floor(data))
                     },
-                    "targets": [2, 3, 4, 5]
+                    "targets": [2, 3, 4, 5, 6, 7]
                 },
-                { type: 'formatted-num', targets: [2, 3, 4, 5] }
+                { type: 'formatted-num', targets: [2, 3, 4, 5, 6, 7] }
             ],
             columns: [
                 { title: "id", visible: false, data: "name", },
@@ -334,6 +336,8 @@ class CovidTableRegions extends CovidTable {
                 { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
                 { title: "Óbitos", data: "deaths" },
                 { title: "Óbitos a cada 100.000 hab.", data: "deaths_per_100k_inhabitants" },
+                { title: "Vacinados", data: "totalVaccinated" },
+                { title: "Vacinados a cada 100.000 hab.", data: "vaccinated_per_100k_inhabitants" },
                 { title: "Letalidade", data: "fatalityRate" },
                 {
                     title: "Tendência de casos dos últimos 14 dias",
