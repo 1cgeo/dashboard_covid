@@ -409,7 +409,7 @@ class CovidTableRegions extends CovidTable {
             this.changeColumnName(1, 'Estados')
             this.setOptions({
                 columns: [
-                    { title: "id", visible: false, data: "id", },
+                    { title: "id", visible: false, data: "region", },
                     { title: "Estados", data: "name" },
                     { title: "Casos confirmados", data: "totalCases" },
                     { title: "Casos a cada 100.000 hab.", data: "totalCases_per_100k_inhabitants" },
