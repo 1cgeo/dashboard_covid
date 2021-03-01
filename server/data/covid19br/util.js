@@ -1,3 +1,6 @@
+require('dotenv').config({ path: __dirname + '/.env' })
+var HttpsProxyAgent = require('https-proxy-agent');
+var url = require('url');
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
@@ -131,17 +134,18 @@ const gunzipfile = (filepath, dest, cb) => {
   })
 }
 
-const download = (url, dest, cb) => {
+const download = (endpoint, dest, cb) => {
   const file = fs.createWriteStream(dest);
   console.log(`Download de ${dest} iniciado.`);
-  const request = https
-    .get(url, function (response) {
-      response.pipe(file);
-      file.on("finish", function () {
-        console.log(`Download de ${dest} FINALIZADO!`);
-        file.close(cb); // close() is async, call cb after close completes.
-      });
-    })
+  var options = url.parse(endpoint);
+  process.env.PROXY ? options.agent = new HttpsProxyAgent(process.env.PROXY) : ''
+  const request = https.get(options, function (response) {
+    response.pipe(file);
+    file.on("finish", function () {
+      console.log(`Download de ${dest} FINALIZADO!`);
+      file.close(cb); // close() is async, call cb after close completes.
+    });
+  })
     .on("error", function (err) {
       // Handle errors
       fs.unlinkSync(dest); // Delete the file async. (But we don't check the result)
@@ -166,8 +170,8 @@ const calcSemana = (date) => { //deprecated
 };
 
 const fixsemana = (semana) => {
-  if(semana > 100){
-    return semana- 47
+  if (semana > 100) {
+    return semana - 47
   } else {
     return semana
   }
@@ -410,7 +414,7 @@ const agrupa_semana = (file, output) => {
       ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
 
       data[id].vaccinated_per_100k_inhabitants = +d.vaccinated_per_100k_inhabitants;
-      
+
       data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
       data[id].recovered += +d.recovered;
       data[id].totalRecovered = +d.totalRecovered;
@@ -498,7 +502,7 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           data[key].vaccinated / data[key].pop_100k
         );
 
-        
+
         dataArray.push(data[key]);
       }
       const last7Cases = {};

@@ -25,6 +25,7 @@
     "geojson-vt": "^3.2.1",
     "gunzip-file": "^0.1.1",
     "http-errors": "1.8.0",
+    "https-proxy-agent": "^5.0.0",
     "json2csv": "^5.0.1",
     "jsonwebtoken": "8.5.1",
     "moment": "^2.27.0",
@@ -39,6 +40,7 @@
     "qrcode": "1.4.4",
     "request": "2.88.2",
     "serve-favicon": "2.5.0",
+    "url": "^0.11.0",
     "util": "^0.12.3",
     "vt-pbf": "^3.1.1"
   }
