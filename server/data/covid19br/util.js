@@ -1,4 +1,3 @@
-require('dotenv').config({ path: __dirname + '/.env' })
 var HttpsProxyAgent = require('https-proxy-agent');
 var url = require('url');
 const https = require("https");
@@ -138,7 +137,7 @@ const download = (endpoint, dest, cb) => {
   const file = fs.createWriteStream(dest);
   console.log(`Download de ${dest} iniciado.`);
   var options = url.parse(endpoint);
-  process.env.PROXY ? options.agent = new HttpsProxyAgent(process.env.PROXY) : ''
+  process.env.http_proxy ? options.agent = new HttpsProxyAgent(process.env.http_proxy) : ''
   const request = https.get(options, function (response) {
     response.pipe(file);
     file.on("finish", function () {
