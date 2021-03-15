@@ -1,3 +1,5 @@
+const FILTER_WEEK = 50
+
 var HttpsProxyAgent = require('https-proxy-agent');
 var url = require('url');
 const https = require("https");
@@ -1232,7 +1234,7 @@ const modify_csv_cidade = (file, info, areas, output) => {
               );
 
               //const filterWeek = dataArray[dataArray.length - 1].epi_week - 10;
-              const filterWeek = 40;
+              const filterWeek = FILTER_WEEK;
               const dataArrayFiltered = [];
 
               dataArray.forEach((d) => {
