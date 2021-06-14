@@ -1,4 +1,4 @@
-const FILTER_WEEK = 50
+const FILTER_WEEK = 65
 
 var HttpsProxyAgent = require('https-proxy-agent');
 var url = require('url');
@@ -1233,8 +1233,8 @@ const modify_csv_cidade = (file, info, areas, output) => {
                 "Cidades: média ultimos 7 dias de obitos/casos adicionado"
               );
 
-              //const filterWeek = dataArray[dataArray.length - 1].epi_week - 10;
-              const filterWeek = FILTER_WEEK;
+              const filterWeek = dataArray[dataArray.length - 1].epi_week - 10;
+              //const filterWeek = FILTER_WEEK;
               const dataArrayFiltered = [];
 
               dataArray.forEach((d) => {
