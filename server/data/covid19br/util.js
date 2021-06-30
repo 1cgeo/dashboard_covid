@@ -764,7 +764,7 @@ const modify_csv_estado = (file, nomes, output) => {
             data.CENTROID_Y = +CENTROID[data.CD_GEOCUF][1];
             data.populacao = pop_estadual[data.CD_GEOCUF];
             data.vaccinated_per_100k_inhabitants = data.vaccinated_per_100_inhabitants*1000
-            data.vaccinated_second_per_100k_inhabitants = data.vaccinated_second_per_100k_inhabitants*1000
+            data.vaccinated_second_per_100k_inhabitants = data.vaccinated_second_per_100_inhabitants*1000
             data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
             data.totalVaccinated = data.vaccinated > 0 ? +data.vaccinated : 0;
             data.totalVaccinatedSecond = data.vaccinated_second > 0 ? +data.vaccinated_second : 0;
