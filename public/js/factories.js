@@ -45,6 +45,10 @@ class Factories {
             barChart = new BarChartVaccinated100k(options)
         } else if (type === "mortality") {
             barChart = new BarChartMortality(options)
+        } else if (type === "vaccinatedSecond") {
+            barChart = new BarChartVaccinatedSecond(options)
+        } else if (type === "vaccinated100kSecond") {
+            barChart = new BarChartVaccinated100kSecond(options)
         }
         return barChart;
     }

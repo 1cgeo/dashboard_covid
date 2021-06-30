@@ -25,6 +25,10 @@ class Status {
 
     isNaN(parseInt(lastdata.totalVaccinated)) ? '' : this.setTotalVaccinated(numberWithPoint(lastdata.totalVaccinated), suffix)
     isNaN(parseInt(lastdata.vaccinated)) ? '' : this.setLastVaccinated(numberWithPoint(lastdata.vaccinated), suffix)
+
+    isNaN(parseInt(lastdata.totalVaccinatedSecond)) ? '' : this.setTotalVaccinatedSecond(numberWithPoint(lastdata.totalVaccinatedSecond), suffix)
+    
+    isNaN(parseInt(lastdata.vaccinated_second)) ? '' : this.setLastVaccinatedSecond(numberWithPoint(lastdata.vaccinated_second), suffix)
   }
 
   /* reduceValue(data, field) {
@@ -92,5 +96,14 @@ class Status {
   setLastVaccinated(total, suffix) {
     $("#last-vaccinated-values").text(total);
     $("#last-vaccinated-tag").text(suffix);
+  }
+
+  setTotalVaccinatedSecond(total) {
+    $("#vaccinatedSecond-values").text(total);
+  }
+
+  setLastVaccinatedSecond(total, suffix) {
+    $("#last-vaccinatedSecond-values").text(total);
+    $("#last-vaccinatedSecond-tag").text(suffix);
   }
 }

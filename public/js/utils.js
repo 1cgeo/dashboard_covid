@@ -11,7 +11,7 @@ function deepCopy(data) {
 
 function getMax(items) {
     return items.reduce((acc, val) => {
-        acc = (acc === undefined || val > acc) ? val : acc
+        acc = (isNaN(acc) || val > acc) ? val : acc
         return acc;
     })
 }

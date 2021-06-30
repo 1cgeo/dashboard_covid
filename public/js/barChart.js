@@ -840,6 +840,121 @@ class BarChartVaccinated extends BarChartCustom {
 
 }
 
+class BarChartVaccinatedSecond extends BarChartCustom {
+
+    constructor(newOptions) {
+        super(newOptions)
+    }
+
+    draw() {
+        this.svg.attr('width', this.getWidthSvg())
+            .attr('height', this.getHeightSvg())
+        var width = this.getCurrentWidth()
+        var height = this.getCurrentHeigth()
+        this.drawAxisX(width, height)
+        this.drawAxisY(height)
+        this.drawBars(width, height)
+        this.removeLine()
+        if (this.options.dataSource.getCurrentGroupData() == 'day') {
+            this.drawLine()
+            if (this.options.barWithLabels) {
+                this.createLineLabels()
+            }
+        }
+        this.drawLineYMiddle()
+        this.drawLineYTop()
+        this.loadCSS()
+    }
+
+    getCSS() {
+        return {
+            /* 'tspan.custom-text': {
+                'font-size': '15px'
+            }, */
+            'path.arrow': {
+                'stroke': 'rgb(0, 0, 0)',
+                'stroke-width': '0.5px',
+                'stroke-dasharray': '3'
+            },
+            'line': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': '#999',
+                'fill': 'none',
+                'stroke-width': '1.5'
+            },
+            '.line-chart-middle': {
+                'fill': 'none',
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-top': {
+                'stroke': '#121212',
+                'stroke-width': '1',
+                'stroke-dasharray': '5'
+            },
+            '.line-chart-mean': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'stroke': '#0d47a1'
+            },
+            'text': {
+                'position': 'absolute',
+                'left': '0',
+                'bottom': '2px',
+                'fill': '#121212',
+                'font-size': '13px',
+            },
+            '.bar': {
+                'fill': "#00cbcc"
+            }
+        }
+    }
+
+    getHoverCSS() {
+        return {
+            'deactive': {
+                'fill': "#00cbcc"
+            },
+            'active': { 'fill': '#cf1111' }
+        }
+    }
+
+    formatInputData(jsonData) {
+        var attributeX = this.options.attributeX
+        var attributeY = this.options.attributeY
+        var attributeYLine = this.options.attributeYLine
+        var yValues = jsonData.map(elem => +elem[attributeY])
+        this.maxValue = (yValues.length < 1) ? 0 : getMax(yValues)
+        var dataFormated = []
+        for (var i = jsonData.length; i--;) {
+            var d = {}
+            if (this.options.dataSource.getCurrentGroupData() == 'day') {
+                d[attributeX] = new Date(jsonData[i][attributeX].replace(/\-/g, '/')).getTime()
+            } else {
+                d[attributeX] = +jsonData[i].week
+            }
+            d[attributeY] = (this.maxValue == 0 || isNaN(jsonData[i][attributeY])) ? 0 : (+jsonData[i][attributeY] / this.maxValue)
+            d[attributeYLine] = (this.maxValue == 0 || isNaN(jsonData[i][attributeYLine])) ? 0 : (+jsonData[i][attributeYLine] / this.maxValue)
+            dataFormated.push(d)
+        }
+        let removeItem = true
+        return dataFormated.sort(function (a, b) {
+            var dateA = new Date(a[attributeX]),
+                dateB = new Date(b[attributeX]);
+            return dateA - dateB;
+        }).filter(item => {
+            if (item[attributeY] != 0) removeItem = false
+            if (item[attributeY] == 0 && removeItem) return false
+            return true
+        })
+    }
+
+}
+
 class BarChartDeaths extends BarChartCustom {
 
     constructor(newOptions) {
@@ -1080,7 +1195,7 @@ class BarChartStates extends BarChart {
         this.tooltipMouseleave = (d, idx) => {
             var currentBar = this.g.selectAll('.bar')
                 .filter(function (d, i) { return i === idx; })
-            this.loadElementStyles(currentBar, { 'fill': this.getColorByShorName(d.shortName) })
+            this.loadElementStyles(currentBar, { 'fill': this.getColorByShortName(d.shortName) })
             this.tooltip.style("display", "none")
         }
     }
@@ -1129,7 +1244,7 @@ class BarChartStates extends BarChart {
                 return (h < 0) ? 0 : h;
             })
             .attr("fill", (d) => {
-                return this.getColorByShorName(d.shortName)
+                return this.getColorByShortName(d.shortName)
             })
 
         if (this.options.barWithLabels) {
@@ -1149,7 +1264,7 @@ class BarChartStates extends BarChart {
                 return (h < 0) ? 0 : h;
             })
             .attr("fill", (d) => {
-                return this.getColorByShorName(d.shortName)
+                return this.getColorByShortName(d.shortName)
             })
 
         bars.exit().remove()
@@ -1211,12 +1326,12 @@ class BarChartLethality extends BarChartStates {
         this.tooltipMouseleave = (d, idx) => {
             var currentBar = this.g.selectAll('.bar')
                 .filter(function (d, i) { return i === idx; })
-            this.loadElementStyles(currentBar, { 'fill': this.getColorByShorName(d.shortName) })
+            this.loadElementStyles(currentBar, { 'fill': this.getColorByShortName(d.shortName) })
             this.tooltip.style("display", "none")
         }
     }
 
-    getColorByShorName(shortName) {
+    getColorByShortName(shortName) {
         if (shortName == 'BR') {
             return "#8c9eff"
         }
@@ -1231,7 +1346,7 @@ class BarChartIncidence extends BarChartStates {
         super(newOptions)
     }
 
-    getColorByShorName(shortName) {
+    getColorByShortName(shortName) {
         if (shortName == 'BR') {
             return "#8c9eff"
         }
@@ -1245,11 +1360,25 @@ class BarChartVaccinated100k extends BarChartStates {
         super(newOptions)
     }
 
-    getColorByShorName(shortName) {
+    getColorByShortName(shortName) {
         if (shortName == 'BR') {
             return "#8c9eff"
         }
         return "#2196f3"
+    }
+}
+
+class BarChartVaccinated100kSecond extends BarChartStates {
+
+    constructor(newOptions) {
+        super(newOptions)
+    }
+
+    getColorByShortName(shortName) {
+        if (shortName == 'BR') {
+            return "#8c9eff"
+        }
+        return "#00cbcc"
     }
 }
 
@@ -1259,7 +1388,7 @@ class BarChartMortality extends BarChartStates {
         super(newOptions)
     }
 
-    getColorByShorName(shortName) {
+    getColorByShortName(shortName) {
         if (shortName == 'BR') {
             return "#8c9eff"
         }
