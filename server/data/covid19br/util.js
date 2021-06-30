@@ -185,8 +185,11 @@ const csv_brasil = (file, output) => {
     .pipe(csv())
     .on("data", function (data) {
       if (data.state == "TOTAL") {
+        data.vaccinated_per_100k_inhabitants = data.vaccinated_per_100_inhabitants*1000
+        data.vaccinated_second_per_100k_inhabitants = data.vaccinated_second_per_100_inhabitants*1000
         data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
         data.totalVaccinated = data.vaccinated > 0 ? +data.vaccinated : 0;
+        data.totalVaccinatedSecond = data.vaccinated_second > 0 ? +data.vaccinated_second : 0;
         dataArray.push(data);
       }
     })
@@ -197,9 +200,12 @@ const csv_brasil = (file, output) => {
           +dataArray[i].recovered - dataArray[i - 1].recovered;
       }
       dataArray[0].vaccinated = +dataArray[0].totalVaccinated;
+      dataArray[0].vaccinated_second = +dataArray[0].totalVaccinatedSecond;
       for (var i = dataArray.length - 1; i >= 1; i--) {
         dataArray[i].vaccinated =
           +dataArray[i].vaccinated - dataArray[i - 1].vaccinated;
+        dataArray[i].vaccinated_second =
+          +dataArray[i].vaccinated_second - dataArray[i - 1].vaccinated_second;
       }
 
       for (var i = 0; i < dataArray.length; i++) {
@@ -208,6 +214,7 @@ const csv_brasil = (file, output) => {
           dataArray[i].meanDeaths = +dataArray[i].newDeaths;
           dataArray[i].meanRecovered = +dataArray[i].recovered;
           dataArray[i].meanVaccinated = +dataArray[i].vaccinated;
+          dataArray[i].meanVaccinatedSecond = +dataArray[i].vaccinated_second;
         } else {
           dataArray[i].meanCases =
             (+dataArray[i].newCases +
@@ -247,6 +254,16 @@ const csv_brasil = (file, output) => {
               +dataArray[i - 5].vaccinated +
               +dataArray[i - 6].vaccinated) /
             7.0;
+
+            dataArray[i].meanVaccinatedSecond =
+            (+dataArray[i].vaccinated_second +
+              +dataArray[i - 1].vaccinated_second +
+              +dataArray[i - 2].vaccinated_second +
+              +dataArray[i - 3].vaccinated_second +
+              +dataArray[i - 4].vaccinated_second +
+              +dataArray[i - 5].vaccinated_second +
+              +dataArray[i - 6].vaccinated_second) /
+            7.0;
         }
       }
 
@@ -278,8 +295,10 @@ const csv_brasil_semana = (file, output) => {
         data[semana].newCases = 0;
         data[semana].recovered = 0;
         data[semana].vaccinated = 0;
+        data[semana].vaccinated_second = 0;
         data[semana].totalRecovered = 0;
         data[semana].totalVaccinated = 0;
+        data[semana].totalVaccinatedSecond = 0;
       }
 
       data[semana].dias_semana += 1;
@@ -292,12 +311,15 @@ const csv_brasil_semana = (file, output) => {
         semana
       ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
       data[semana].vaccinated_per_100k_inhabitants = +d.vaccinated_per_100k_inhabitants;
+      data[semana].vaccinated_second_per_100k_inhabitants = +d.vaccinated_second_per_100k_inhabitants;
       data[semana].deaths_by_totalCases = +d.deaths_by_totalCases;
       data[semana].recovered += +d.recovered;
       data[semana].totalRecovered = +d.totalRecovered;
 
       data[semana].vaccinated += +d.vaccinated;
+      data[semana].vaccinated_second += +d.vaccinated_second;
       data[semana].totalVaccinated = +d.totalVaccinated;
+      data[semana].totalVaccinatedSecond = +d.totalVaccinatedSecond;
     })
     .on("end", function () {
       const dataArray = [];
@@ -336,7 +358,9 @@ const modify_csv_estado_semana = (file, output) => {
         data[id].recovered = 0;
         data[id].totalRecovered = 0;
         data[id].vaccinated = 0;
+        data[id].vaccinated_second = 0;
         data[id].totalVaccinated = 0;
+        data[id].totalVaccinatedSecond = 0;
         data[id].CD_GEOCUF = d.CD_GEOCUF;
         data[id].CENTROID_X = d.CENTROID_X;
         data[id].CENTROID_Y = d.CENTROID_Y;
@@ -352,12 +376,15 @@ const modify_csv_estado_semana = (file, output) => {
         id
       ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
       data[id].vaccinated_per_100k_inhabitants = +d.vaccinated_per_100k_inhabitants;
+      data[id].vaccinated_second_per_100k_inhabitants = +d.vaccinated_second_per_100k_inhabitants;
       data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
       data[id].recovered += +d.recovered;
       data[id].totalRecovered = +d.totalRecovered;
 
       data[id].vaccinated += +d.vaccinated;
+      data[id].vaccinated_second += +d.vaccinated_second;
       data[id].totalVaccinated = +d.totalVaccinated;
+      data[id].totalVaccinatedSecond = +d.totalVaccinatedSecond;
 
       data[id].nrDiasDobraCasos = d.nrDiasDobraCasos;
       data[id].nrDiasDobraMortes = d.nrDiasDobraMortes;
@@ -399,7 +426,9 @@ const agrupa_semana = (file, output) => {
         data[id].newCases = 0;
         data[id].recovered = 0;
         data[id].vaccinated = 0;
+        data[id].vaccinated_second = 0;
         data[id].totalVaccinated = 0;
+        data[id].totalVaccinatedSecond = 0;
         data[id].CENTROID_X = d.CENTROID_X;
         data[id].CENTROID_Y = d.CENTROID_Y;
       }
@@ -415,13 +444,16 @@ const agrupa_semana = (file, output) => {
       ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
 
       data[id].vaccinated_per_100k_inhabitants = +d.vaccinated_per_100k_inhabitants;
+      data[id].vaccinated_second_per_100k_inhabitants = +d.vaccinated_second_per_100k_inhabitants;
 
       data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
       data[id].recovered += +d.recovered;
       data[id].totalRecovered = +d.totalRecovered;
 
       data[id].vaccinated += +d.vaccinated;
+      data[id].vaccinated_second += +d.vaccinated_second;
       data[id].totalVaccinated = +d.totalVaccinated;
+      data[id].totalVaccinatedSecond = +d.totalVaccinatedSecond;
 
       data[id].nrDiasDobraCasos = d.nrDiasDobraCasos;
       data[id].nrDiasDobraMortes = d.nrDiasDobraMortes;
@@ -465,7 +497,9 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           data[id].recovered = 0;
           data[id].totalRecovered = 0;
           data[id].vaccinated = 0;
+          data[id].vaccinated_second = 0;
           data[id].totalVaccinated = 0;
+          data[id].totalVaccinatedSecond = 0;
           data[id].pop_100k = 0;
           data[id].CENTROID_X = centroide[d[chave]][0];
           data[id].CENTROID_Y = centroide[d[chave]][1];
@@ -480,7 +514,9 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
         data[id].totalRecovered += +d.totalRecovered;
 
         data[id].vaccinated += +d.vaccinated;
+        data[id].vaccinated_second += +d.vaccinated_second;
         data[id].totalVaccinated += +d.totalVaccinated;
+        data[id].totalVaccinatedSecond += +d.totalVaccinatedSecond;
       }
     })
     .on("end", function () {
@@ -502,6 +538,9 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
         data[key].vaccinated_per_100k_inhabitants = Math.round(
           data[key].vaccinated / data[key].pop_100k
         );
+        data[key].vaccinated_second_per_100k_inhabitants = Math.round(
+          data[key].vaccinated_second / data[key].pop_100k
+        );
 
 
         dataArray.push(data[key]);
@@ -510,6 +549,7 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
       const last7Deaths = {};
       const last7Recovered = {};
       const last7Vaccinated = {};
+      const last7VaccinatedSecond = {};
 
       const last14AvgCases = {};
       const last14AvgDeaths = {};
@@ -637,6 +677,23 @@ const agrupa_area_geografica = (file, output, chave, centroide) => {
           );
         }
 
+
+        if (!(dataArray[i].nome in last7VaccinatedSecond)) {
+          last7VaccinatedSecond[dataArray[i].nome] = [];
+        }
+        last7VaccinatedSecond[dataArray[i].nome].push(dataArray[i].vaccinated_second);
+        if (last7VaccinatedSecond[dataArray[i].nome].length > 7) {
+          last7VaccinatedSecond[dataArray[i].nome].shift();
+        }
+
+        if (last7VaccinatedSecond[dataArray[i].nome].length < 7) {
+          dataArray[i].meanVaccinatedSecond = +dataArray[i].vaccinated_second;
+        } else {
+          dataArray[i].meanVaccinatedSecond = average(
+            last7VaccinatedSecond[dataArray[i].nome]
+          );
+        }
+
       }
 
       dataArray[0].nrDiasDobraCasos = 0;
@@ -706,8 +763,11 @@ const modify_csv_estado = (file, nomes, output) => {
             data.CENTROID_X = +CENTROID[data.CD_GEOCUF][0];
             data.CENTROID_Y = +CENTROID[data.CD_GEOCUF][1];
             data.populacao = pop_estadual[data.CD_GEOCUF];
+            data.vaccinated_per_100k_inhabitants = data.vaccinated_per_100_inhabitants*1000
+            data.vaccinated_second_per_100k_inhabitants = data.vaccinated_second_per_100k_inhabitants*1000
             data.totalRecovered = data.recovered > 0 ? +data.recovered : 0;
             data.totalVaccinated = data.vaccinated > 0 ? +data.vaccinated : 0;
+            data.totalVaccinatedSecond = data.vaccinated_second > 0 ? +data.vaccinated_second : 0;
             data.semana = fixsemana(data.epi_week)
             dataArray.push(data);
           }
@@ -773,10 +833,23 @@ const modify_csv_estado = (file, nomes, output) => {
             dataArray[i].vaccinated = rec > 0 ? +rec : 0;
           }
 
+          dataArray[0].vaccinated_second = dataArray[0].totalVaccinatedSecond;
+          for (var i = dataArray.length - 1; i >= 1; i--) {
+            let rec = 0;
+            for (var j = i - 1; j >= 0; j--) {
+              if (dataArray[i].state == dataArray[j].state) {
+                rec = +dataArray[i].vaccinated_second - dataArray[j].vaccinated_second;
+                break;
+              }
+            }
+            dataArray[i].vaccinated_second = rec > 0 ? +rec : 0;
+          }
+
           const last7Cases = {};
           const last7Deaths = {};
           const last7Recovered = {};
           const last7Vaccinated = {};
+          const last7VaccinatedSecond = {};
 
           const last14AvgCases = {};
           const last14AvgDeaths = {};
@@ -908,6 +981,22 @@ const modify_csv_estado = (file, nomes, output) => {
                 last7Vaccinated[dataArray[i].state]
               );
             }
+
+            if (!(dataArray[i].state in last7VaccinatedSecond)) {
+              last7VaccinatedSecond[dataArray[i].state] = [];
+            }
+            last7VaccinatedSecond[dataArray[i].state].push(dataArray[i].vaccinated_second);
+            if (last7VaccinatedSecond[dataArray[i].state].length > 7) {
+              last7VaccinatedSecond[dataArray[i].state].shift();
+            }
+
+            if (last7VaccinatedSecond[dataArray[i].state].length < 7) {
+              dataArray[i].meanVaccinatedSecond = +dataArray[i].vaccinated_second;
+            } else {
+              dataArray[i].meanVaccinatedSecond = average(
+                last7VaccinatedSecond[dataArray[i].state]
+              );
+            }
           }
 
           dataArray[0].nrDiasDobraCasos = 0;
@@ -1000,6 +1089,7 @@ const modify_csv_cidade_semana = (file, output) => {
       ].totalCases_per_100k_inhabitants = +d.totalCases_per_100k_inhabitants;
 
       data[id].vaccinated_per_100k_inhabitants = +d.vaccinated_per_100k_inhabitants;
+      data[id].vaccinated_second_per_100k_inhabitants = +d.vaccinated_second_per_100k_inhabitants;
 
       data[id].deaths_by_totalCases = +d.deaths_by_totalCases;
 
