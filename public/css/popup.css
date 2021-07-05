@@ -80,6 +80,22 @@
     grid-area: value9;
 }
 
+.row10-popup {
+    grid-area: row10;
+}
+
+.value10-popup {
+    grid-area: value10;
+}
+
+.row11-popup {
+    grid-area: row11;
+}
+
+.value11-popup {
+    grid-area: value11;
+}
+
 .header-popup {}
 
 .header-popup,
@@ -99,6 +115,10 @@
 .value7-popup,
 .row8-popup,
 .value8-popup,
+.row9-popup,
+.value9-popup,
+.row10-popup,
+.value10-popup,
 .linechart-popup {
     border-bottom: 1px solid;
 }
@@ -116,7 +136,9 @@
     'row6 row6 row6 value6'
     'row7 row7 row7 value7'
     'row8 row8 row8 value8'
-    'row9 row9 row9 value9';
+    'row9 row9 row9 value9'
+    'row10 row10 row10 value10'
+    'row11 row11 row11 value11';
     margin-bottom: 10px;
     border-radius: 10px;
     min-width: 270px;
