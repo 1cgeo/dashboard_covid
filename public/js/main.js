@@ -466,11 +466,17 @@ dataSource.loadAllData(() => {
             $(".vaccinated").each(function () {
                 $(this).addClass('hide')
             })
+            $(".vaccinatedSecond").each(function () {
+                $(this).addClass('hide')
+            })
         } else {
             $(".recovered").each(function () {
                 $(this).removeClass('hide')
             })
             $(".vaccinated").each(function () {
+                $(this).removeClass('hide')
+            })
+            $(".vaccinatedSecond").each(function () {
                 $(this).removeClass('hide')
             })
             barChartRecovered.loadData(deepCopy(statisticsData))
