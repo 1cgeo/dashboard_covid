@@ -171,7 +171,10 @@ const calcSemana = (date) => { //deprecated
 };
 
 const fixsemana = (semana) => {
-  if (semana > 100) {
+  if(semana > 200){
+    return semana - 47 - 49
+  }
+  else if (semana > 100) {
     return semana - 47
   } else {
     return semana
