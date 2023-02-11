@@ -32,7 +32,7 @@
     "mongoose": "5.9.22",
     "morgan": "^1.10.0",
     "node-cache": "^5.1.2",
-    "npm-check-updates": "^7.0.1",
+    "npm-check-updates": "^16.7.4",
     "passport": "0.4.1",
     "passport-local": "1.0.0",
     "pdfkit": "0.11.0",
